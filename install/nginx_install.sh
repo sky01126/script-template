@@ -371,7 +371,7 @@ make install
 
 # 링크 설정
 cd ${SERVER_HOME}
-ln -s ./${PROGRAME_HOME}/${NGINX_HOME} ${NGINX_ALIAS}
+ln -sf ./${PROGRAME_HOME}/${NGINX_HOME} ${NGINX_ALIAS}
 
 # Nginx 디렉토리 생성
 mkdir -p ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/bin

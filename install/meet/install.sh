@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# 멀티 쉘 실행 : bash <(curl -f -L -sS https://raw.githubusercontent.com/sky01126/develop-document/master/Template/install-script/meet/meet-pre-work.sh)
+# 멀티 쉘 실행 : bash <(curl -f -L -sS https://raw.githubusercontent.com/sky01126/script-template/master/install/meet/install.sh)
 #
 # 사전작업
 # FQDN 설정 /etc/hosts 파일 127.0.0.1 에 도메인 입력
@@ -108,14 +108,16 @@ echo "-------------------------- CJSON ---------------------------"
 mkdir src && cd src
 sudo luarocks download lua-cjson
 sudo luarocks unpack lua-cjson-2.1.0.6-1.src.rock
-cd lua-cjson-2.1.0.6-1/lua-cjson
-sed -i 's/lua_objlen/lua_rawlen/g' lua_cjson.c
-sed -i 's/5.1/5.2/g' Makefile
-sed -i 's|$(PREFIX)/include|/usr/include/lua5.2|g' Makefile
+
+sudo sed -i 's/lua_objlen/lua_rawlen/g' $HOME/src/lua-cjson-2.1.0.6-1/lua-cjson/lua_cjson.c
+sudo sed -i 's/5.1/5.2/g' $HOME/src/lua-cjson-2.1.0.6-1/lua-cjson/Makefile
+sudo sed -i 's|$(PREFIX)/include|/usr/include/lua5.2|g' $HOME/src/lua-cjson-2.1.0.6-1/lua-cjson/Makefile
+
+cd $HOME/src/lua-cjson-2.1.0.6-1/lua-cjson
 sudo luarocks make
 
 echo "------------------------- BASEXX ---------------------------"
-luarocks install basexx
+cd && luarocks install basexx
 
 echo "------------------------ LUACRYPTO -------------------------"
 sudo luarocks install luacrypto

@@ -1000,17 +1000,24 @@ http {
 
 # ------------------------------------------------------------------------------
 mkdir -p ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/conf/conf.d
+mkdir -p ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/conf/modules-available
 mkdir -p ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/conf/modules-enabled
 mkdir -p ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/conf/sites-available
 mkdir -p ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/conf/sites-enabled
 
 
 # ------------------------------------------------------------------------------
-echo "load_module modules/ngx_http_geoip_module.so;"        > ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/conf/modules-enabled/50-mod-http-geoip.conf
-echo "load_module modules/ngx_http_image_filter_module.so;" > ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/conf/modules-enabled/50-mod-http-image-filter.conf
-echo "load_module modules/ngx_http_xslt_filter_module.so;"  > ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/conf/modules-enabled/50-mod-http-xslt-filter.conf
-echo "load_module modules/ngx_mail_module.so;"              > ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/conf/modules-enabled/50-mod-mail.conf
-echo "load_module modules/ngx_stream_module.so;"            > ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/conf/modules-enabled/50-mod-stream.conf
+echo "load_module modules/ngx_http_geoip_module.so;"        > ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-http-geoip.conf
+echo "load_module modules/ngx_http_image_filter_module.so;" > ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-http-image-filter.conf
+echo "load_module modules/ngx_http_xslt_filter_module.so;"  > ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-http-xslt-filter.conf
+echo "load_module modules/ngx_mail_module.so;"              > ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-mail.conf
+echo "load_module modules/ngx_stream_module.so;"            > ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-stream.conf
+
+ln -sf ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-http-geoip.conf          ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-enabled/50-mod-http-geoip.conf
+ln -sf ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-http-image-filter.conf   ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-enabled/50-mod-http-image-filter.conf
+ln -sf ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-http-xslt-filter.conf    ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-enabled/50-mod-http-xslt-filter.conf
+ln -sf ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-mail.conf                ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-enabled/50-mod-mail.conf
+ln -sf ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-stream.conf              ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-enabled/50-mod-stream.conf
 
 
 # ------------------------------------------------------------------------------
@@ -1020,7 +1027,7 @@ echo "server {
 
     # charset koi8-r;
 
-    # access_log logs/host.access.log  main;
+    # access_log logs/host.access.log main;
 
     location / {
         root html;

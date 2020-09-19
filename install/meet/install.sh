@@ -7,7 +7,18 @@
 # (ex : 127.0.0.1       grouput.kthcorp.com v-kgmeetctl01)
 # /etc/ssl 에 인증서 복사
 
-# kernel parameter 변경
+# Could not get lock / Unable to acquire the dpkg 에러 발생
+sudo killall apt apt-get
+sudo rm /var/lib/apt/lists/lock
+sudo rm /var/cache/apt/archives/lock
+sudo rm /var/lib/dpkg/lock*
+sudo dpkg --configure -a
+
+sudo apt upgrade -y
+sudo apt update
+
+echo "---------------- Setting Kernel Parameter ------------------"
+# Kernel Parameter 변경
 if [[ ! -n $(awk "/net.core.rmem_max/" /etc/sysctl.conf) ]]; then
     sudo sh -c "echo 'net.core.rmem_max = 33554432' >> /etc/sysctl.conf"
 fi
@@ -52,29 +63,27 @@ done
 
 sudo sysctl -p
 
-
+echo "---------------------- Setting Alias -----------------------"
 # alias 설정 추가
 if [[ ! -n $(awk "/alias jicofo-log/" $HOME/.bash_aliases) ]]; then
     echo "alias jicofo-log='sudo tail -100f /var/log/jitsi/jicofo.log'" >> $HOME/.bash_aliases
 fi
 if [[ ! -n $(awk "/alias prosody-err/" $HOME/.bash_aliases) ]]; then
-    echo "alias prosody-err='sudo   tail -100f /var/log/prosody/prosody.err'" >> $HOME/.bash_aliases
+    echo "alias prosody-err='sudo tail -100f /var/log/prosody/prosody.err'" >> $HOME/.bash_aliases
 fi
 if [[ ! -n $(awk "/alias prosody-log/" $HOME/.bash_aliases) ]]; then
-    echo "alias prosody-log='sudo   tail -100f /var/log/prosody/prosody.log'" >> $HOME/.bash_aliases
+    echo "alias prosody-log='sudo tail -100f /var/log/prosody/prosody.log'" >> $HOME/.bash_aliases
 fi
 if [[ ! -n $(awk "/alias allstart/" $HOME/.bash_aliases) ]]; then
-    echo "alias allstart='sudo service prosody start && sudo service jicofo start && sudo service jitsi-videobridge2 start && sudo service nginx start'" >> $HOME/.bash_aliases
+    echo "alias start-all='sudo service prosody start && sudo service jicofo start && sudo service jitsi-videobridge2 start && sudo service nginx start'" >> $HOME/.bash_aliases
 fi
 if [[ ! -n $(awk "/alias allstop/" $HOME/.bash_aliases) ]]; then
-    echo "alias allstop='sudo service prosody stop && sudo service jicofo stop && sudo service jitsi-videobridge2 stop && sudo service nginx stop'" >> $HOME/.bash_aliases
+    echo "alias stop-all='sudo service prosody stop && sudo service jicofo stop && sudo service jitsi-videobridge2 stop && sudo service nginx stop'" >> $HOME/.bash_aliases
 fi
 if [[ ! -n $(awk "/alias allrestart/" $HOME/.bash_aliases) ]]; then
-    echo "alias allrestart='sudo service prosody restart && sudo service jicofo restart && sudo service jitsi-videobridge2 restart && sudo service nginx restart'" >> $HOME/.bash_aliases
+    echo "alias restart-all='sudo service prosody restart && sudo service jicofo restart && sudo service jitsi-videobridge2 restart && sudo service nginx restart'" >> $HOME/.bash_aliases
 fi
 source $HOME/.bashrc
-
-# ------------------------------------------------------------
 cat $HOME/.bash_aliases
 
 # 기존 설치 된 lua5.1 제거 (모든 cjson, luajwtjitsi 등 luarocks 로 설치 된 모든 패키지에 영향을 미침)
@@ -103,6 +112,12 @@ sudo apt install -y luarocks
 echo "---------------------- LIBSSL1.0-DEV -----------------------"
 sudo apt install -y libssl1.0-dev
 
+echo "------------------------- BASEXX ---------------------------"
+cd && luarocks install basexx
+
+echo "------------------------ LUACRYPTO -------------------------"
+sudo luarocks install luacrypto
+
 # luarocks 를 통한 패키지 설치
 echo "-------------------------- CJSON ---------------------------"
 mkdir src && cd src
@@ -116,11 +131,7 @@ sudo sed -i 's|$(PREFIX)/include|/usr/include/lua5.2|g' $HOME/src/lua-cjson-2.1.
 cd $HOME/src/lua-cjson-2.1.0.6-1/lua-cjson
 sudo luarocks make
 
-echo "------------------------- BASEXX ---------------------------"
-cd && luarocks install basexx
-
-echo "------------------------ LUACRYPTO -------------------------"
-sudo luarocks install luacrypto
+echo "----------------------- LUAJWTJITSI ------------------------"
 sudo luarocks install luajwtjitsi
 
 # ------------------------------------------------------------
@@ -134,7 +145,7 @@ sudo apt install -y prosody
 # Prosody 버전 확인
 dpkg -l prosody
 
-# ------------------------------------------------------------
+echo "--------------------- Install Prosody ----------------------"
 # Prosody 설치
 wget https://prosody.im/files/prosody-debian-packages.key -O- | sudo apt-key add -
 echo deb http://packages.prosody.im/debian $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list
@@ -146,7 +157,7 @@ sudo chown root:prosody /etc/prosody/certs/localhost.key
 sudo chmod 644 /etc/prosody/certs/localhost.key
 cp /etc/prosody/certs/localhost.key /etc/ssl
 
-# ------------------------------------------------------------
+echo "------------------- Install Jitsi Meet ---------------------"
 # Jitsi Meet 설치
 curl https://download.jitsi.org/jitsi-key.gpg.key | sudo sh -c 'gpg --dearmor > /usr/share/keyrings/jitsi-keyring.gpg'
 echo 'deb [signed-by=/usr/share/keyrings/jitsi-keyring.gpg] https://download.jitsi.org stable/' | sudo tee /etc/apt/sources.list.d/jitsi-stable.list > /dev/null
@@ -155,3 +166,5 @@ sudo apt update -y
 sudo apt install -y jitsi-meet
 #sudo apt install -y jitsi-meet-turnserver
 sudo apt install -y jitsi-meet-tokens
+
+dpkg -l | grep jitsi

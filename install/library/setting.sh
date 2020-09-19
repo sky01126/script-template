@@ -98,7 +98,7 @@ export JAVA_DOWNLOAD_URL='http://shell.pe.kr/document/java/jdk-7u79/jdk-7u79-lin
 # ----------------------------------------------------------------------------------------------------------------------
 # Open Java 설정.
 #export OPENJAVA_ALIAS='java'
-#export OPENJAVA_HOME='openjdk-11.0.2'
+#export OPENJAVA_HOME='openjdk-11.0.8'
 #export OPENJAVA_DOWNLOAD_URL='https://github.com/AdoptOpenJDK/openjdk11-upstream-binaries/releases/download/jdk-11.0.8%2B10/OpenJDK11U-jdk_x64_linux_11.0.8_10.tar.gz'
 export OPENJAVA_ALIAS='java'
 export OPENJAVA_HOME='openjdk-8u265-b01'

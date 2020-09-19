@@ -1,5 +1,5 @@
 #!/bin/bash
-# ---------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 #     __ __
 #    / //_/__  __  ______  __  ______ _____  ____ _
 #   / ,< / _ \/ / / / __ \/ / / / __ `/ __ \/ __ `/
@@ -7,7 +7,7 @@
 # /_/ |_\___/\__,_/_/ /_/\__, /\__,_/_/ /_/\__, /
 #                       /____/            /____/
 #
-# 멀티 쉘 실행 : bash <(curl -fsSL https://raw.githubusercontent.com/sky01126/develop-document/master/Template/install-script/nginx_install.sh)
+# 멀티 쉘 실행 : bash <(curl -fsSL https://raw.githubusercontent.com/sky01126/script-template/master/install/nginx_install.sh)
 #
 # 중요 - 아래 패키지 설치, Apache와 Nginx에서 사용되는 OpenSSL은 소스를 가지고 설치를 진행한다.
 #
@@ -38,7 +38,7 @@
 # " >> $HOME/.bash_aliases && source $HOME/.bashrc
 
 
-# ---------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Exit on error
 set -e
 
@@ -57,7 +57,7 @@ fi
 unset TMOUT
 
 
-# ---------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 PRG="$0"
 while [ -h "$PRG" ]; do
     ls=`ls -ld "$PRG"`
@@ -73,17 +73,17 @@ done
 PRGDIR=`dirname "$PRG"`
 
 
-# ---------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # 멀티의 setting.sh 읽기
 # if [ ! -f "${PRGDIR}/library/setting.sh" ]; then
-#     source <(curl -fsSL https://raw.githubusercontent.com/sky01126/develop-document/master/Template/install-script/library/setting.sh)
+#     source <(curl -fsSL https://raw.githubusercontent.com/sky01126/script-template/master/install/library/setting.sh)
 # else
 #     source ${PRGDIR}/library/setting.sh
 #     bash   ${PRGDIR}/library/setting.sh
 # fi
-source <(curl -fsSL https://raw.githubusercontent.com/sky01126/develop-document/master/Template/install-script/library/setting.sh)
+source <(curl -fsSL https://raw.githubusercontent.com/sky01126/script-template/master/install/library/setting.sh)
 
-# ---------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # NginX 설치 버전 선택.
 printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
 printf "\e[00;32m| NginX 설치를 진행하려면 아래 옵션 중 하나를 선택하십시오.\e[00m\n"
@@ -108,22 +108,21 @@ elif [ "${CHECK_NGINX_VERSION}" == "1.16" ]; then
 fi
 
 
-# ---------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # NginX
-#NGINX_VERSION='1.13.7'
 export NGINX_DOWNLOAD_URL="https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz"
 export NGINX_RTMP_MODULE_DOWNLOAD_URL="https://github.com/arut/nginx-rtmp-module.git"
 export NGINX_HEADERS_MORE_MODULE_DOWNLOAD_URL="https://github.com/openresty/headers-more-nginx-module.git"
 
 
-# ---------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Nginx Install
 export NGINX_NAME=${NGINX_DOWNLOAD_URL##+(*/)}
 export NGINX_HOME=${NGINX_NAME%$EXTENSION}
 export NGINX_ALIAS='nginx'
 
 
-# ---------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 printf "\e[00;32m+-------------------------------------------------------------------------\e[00m\n"
 printf "\e[00;32m|     _   _____________   ___  __   \n"
 printf "\e[00;32m|    / | / / ____/  _/ | / / |/ /   \n"
@@ -132,7 +131,7 @@ printf "\e[00;32m|  / /|  / /_/ // // /|  //   |     \n"
 printf "\e[00;32m| /_/ |_/\____/___/_/ |_//_/|_|     \n"
 printf "\e[00;32m|  :: Nginx ::        (v${NGINX_VERSION})    \n"
 
-# ---------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 printf "\e[00;32m+-------------------------------------------------------------------------\e[00m\n"
 printf "\e[00;32m| SRC_HOME     :\e[00m ${SRC_HOME}\n"
 printf "\e[00;32m| SERVER_HOME  :\e[00m ${SERVER_HOME}\n"
@@ -140,7 +139,7 @@ printf "\e[00;32m| NGINX_HOME   :\e[00m ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_
 printf "\e[00;32m| NGINX_ALIAS  :\e[00m ${SERVER_HOME}/${NGINX_ALIAS}\n"
 
 
-# ---------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # 설치 여부 확인
 if [ -d "${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}" ]; then
     printf "\e[00;32m+-------------------------------------------------------------------------\e[00m\n"
@@ -161,7 +160,7 @@ if [ -d "${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}" ]; then
 fi
 
 
-# ---------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # OpenSSL 다운로드 확인
 #
 # verify that the source exists download
@@ -181,7 +180,7 @@ if [ ! -d "${SRC_HOME}/${OPENSSL_HOME}" ]; then
 fi
 
 
-# ---------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # PCRE  다운로드 확인
 #
 # verify that the source exists download
@@ -201,7 +200,7 @@ if [ ! -d "${SRC_HOME}/${PCRE_HOME}" ]; then
 fi
 
 
-# ---------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Nginx RTMP Module
 NGINX_RTMP_MODULE_NAME=${NGINX_RTMP_MODULE_DOWNLOAD_URL##+(*/)}
 NGINX_RTMP_MODULE_HOME=${NGINX_RTMP_MODULE_NAME%$GIT_EXTENSION}
@@ -226,7 +225,7 @@ NGINX_RTMP_MODULE_HOME=${NGINX_RTMP_MODULE_NAME%$GIT_EXTENSION}
 # fi
 
 
-# ---------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Nginx Headers Modre Module
 NGINX_HEADERS_MORE_MODULE_NAME=${NGINX_HEADERS_MORE_MODULE_DOWNLOAD_URL##+(*/)}
 NGINX_HEADERS_MORE_MODULE_HOME=${NGINX_HEADERS_MORE_MODULE_NAME%$GIT_EXTENSION}
@@ -245,7 +244,7 @@ if [ ! -d "${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HEADERS_MORE_MODULE_HOME}" ];
 fi
 
 
-# ---------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # delete the previous home
 if [ -d "${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}" ]; then
     printf "\e[00;32m| \"${NGINX_HOME}\" delete...\e[00m\n"
@@ -891,7 +890,7 @@ http {
     # 버전 숨기기 활성화
     server_tokens off;
 
-    #----------------------------------------------------
+    # ----------------------------------------------------
     # Proxy를 사용할 경우 버퍼의 크기가 너무 작으면 nginx는 임시 파일을 만들어 proxy에서 전달되는 내용을 저장하게 된다.
     # 장비의 메모리 상황등을 참조하여 적당한 수준으로 늘려줘야 한다.
     client_body_buffer_size 8K;
@@ -908,7 +907,7 @@ http {
     client_header_timeout 10;
     send_timeout 10;
 
-    #----------------------------------------------------
+    # ----------------------------------------------------
     # 보통은 할 필요 없다.
     # 하면 성능 향상이 있을 수 있지만, 때로는 오히려 저하가 발생할 수도 있다.
     # 따라서 꼭 테스트가 필요하다.
@@ -916,18 +915,18 @@ http {
     # tcp_nopush on;
     # tcp_nodelay off;
 
-    #----------------------------------------------------
+    # ----------------------------------------------------
     # keepalive를 무작정 선택하지 말고 성능 테스트를 해가며 조정해 볼 것.
     keepalive_timeout 30;
 
-    #----------------------------------------------------
+    # ----------------------------------------------------
     # Disk IO 병목 - 확인필요
     # open_file_cache max=1000 inactive=20s;
     # open_file_cache_valid 30s;
     # open_file_cache_min_uses 2;
     # open_file_cache_errors on;
 
-    #----------------------------------------------------
+    # ----------------------------------------------------
     # Enable Gzip compressed.
     gzip on;
     gzip_disable \"msie6\";
@@ -974,7 +973,7 @@ http {
                text/plain
                text/x-component;
 
-    #----------------------------------------------------
+    # ----------------------------------------------------
     proxy_buffering on;
     proxy_buffer_size 4k;
     proxy_buffers 100 8k;
@@ -982,16 +981,16 @@ http {
     proxy_send_timeout 60;
     proxy_read_timeout 60;
 
-    #----------------------------------------------------
+    # ----------------------------------------------------
     # HTTP/2
     http2_chunk_size 8k;
     http2_body_preread_size 64k;
 
-    #----------------------------------------------------
+    # ----------------------------------------------------
     # Headers More Module
     more_clear_headers Server;
 
-    #----------------------------------------------------
+    # ----------------------------------------------------
     # Virtual Host Configs
     include conf.d/*.conf;
     include sites-enabled/*;
@@ -999,20 +998,22 @@ http {
 " > ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/conf/nginx.conf
 
 
-# ---------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 mkdir -p ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/conf/conf.d
 mkdir -p ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/conf/modules-enabled
+mkdir -p ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/conf/sites-available
 mkdir -p ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/conf/sites-enabled
 
 
-# ---------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 echo "load_module modules/ngx_http_geoip_module.so;"        > ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/conf/modules-enabled/50-mod-http-geoip.conf
 echo "load_module modules/ngx_http_image_filter_module.so;" > ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/conf/modules-enabled/50-mod-http-image-filter.conf
 echo "load_module modules/ngx_http_xslt_filter_module.so;"  > ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/conf/modules-enabled/50-mod-http-xslt-filter.conf
 echo "load_module modules/ngx_mail_module.so;"              > ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/conf/modules-enabled/50-mod-mail.conf
 echo "load_module modules/ngx_stream_module.so;"            > ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/conf/modules-enabled/50-mod-stream.conf
 
-# ---------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 echo "server {
     listen 80;
     server_name localhost;
@@ -1081,7 +1082,7 @@ echo "server {
 }
 
 
-#----------------------------------------------------
+# ----------------------------------------------------
 # another virtual host using mix of IP-, name-, and port-based configuration
 #
 #server {
@@ -1096,7 +1097,7 @@ echo "server {
 #}
 
 
-#----------------------------------------------------
+# ----------------------------------------------------
 # HTTPS server
 #server {
 #    listen 443 ssl http2;
@@ -1116,9 +1117,12 @@ echo "server {
 #        index index.html index.htm;
 #    }
 #}
-" > ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/conf/sites-enabled/default
+" > ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/conf/sites-available/default
 
-# ---------------------------------------------------------------------------------
+ln -sf ${SERVER_HOME}/${NGINX_ALIAS}/conf/sites-available/default ${SERVER_HOME}/${NGINX_ALIAS}/conf/sites-enabled/default
+
+
+# ------------------------------------------------------------------------------
 printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
 printf "\e[00;32m| 사설 인증키를 생성하려면 도메인을 입력주세요.\e[00m\n"
 printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
@@ -1211,7 +1215,7 @@ x509_extensions                 = v3_extensions
 fi
 
 
-# ---------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 printf "\e[00;32m+-------------------------------------------------------------------------\e[00m\n"
 printf "\e[00;32m| \"${NGINX_ALIAS}\" install success...\e[00m\n"
 printf "\e[00;32m+-------------------------------------------------------------------------\e[00m\n"

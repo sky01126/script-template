@@ -6,8 +6,8 @@
 # 테스트
 VHOST="meetlocal.kthcorp.com"
 JVBNAME="meetdev01"
-TOKEN_APP_ID="kthmeet"
-TOKEN_APP_SECRET="kthmeet"
+TOKEN_APP_ID="433D3BF7B0A185DA47330C810934FBFF"
+TOKEN_APP_SECRET="qwer1234"
 
 
 echo "----- Setting Meet Config"
@@ -32,19 +32,19 @@ if [[ -z ${JVBNAME} ]]; then
 fi
 
 if [[ -z ${TOKEN_APP_ID} ]]; then
-    printf "Enter the token app id (eg. kthmeet)"
+    printf "Enter the token app id (eg. 433D3BF7)"
     read -e -p " > " TOKEN_APP_ID
     while [[ -z ${TOKEN_APP_ID} ]]; do
-        printf "Enter the token app id (eg. kthmeet)"
+        printf "Enter the token app id (eg. 433D3BF7)"
         read -e -p " > " TOKEN_APP_ID
     done
 fi
 
 if [[ -z ${TOKEN_APP_SECRET} ]]; then
-    printf "Enter the token app secret (eg. kthmeet)"
+    printf "Enter the token app secret (eg. qwer1234)"
     read -e -p " > " TOKEN_APP_SECRET
     while [[ -z ${TOKEN_APP_SECRET} ]]; do
-        printf "Enter the token app secret (eg. kthmeet)"
+        printf "Enter the token app secret (eg. qwer1234)"
         read -e -p " > " TOKEN_APP_SECRET
     done
 fi

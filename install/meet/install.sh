@@ -198,7 +198,8 @@ sudo sed -i 's/VirtualHost \"localhost\"/-- VirtualHost \"localhost\"/g' /etc/pr
 sudo sed -i 's/c2s_require_encryption = true/c2s_require_encryption = false/g' /etc/prosody/prosody.cfg.lua
 
 if [[ ! -n $(sudo awk "/component_interface/" /etc/prosody/prosody.cfg.lua) ]]; then
-    echo "component_interface = { "*" }" | sudo tee -a /etc/prosody/prosody.cfg.lua > /dev/null
+    echo "component_interface = { \"*\" }" | sudo tee -a /etc/prosody/prosody.cfg.lua > /dev/null
+    echo "" | sudo tee -a /etc/prosody/prosody.cfg.lua > /dev/null
 fi
 
 sudo sed -i '/Include/d' /etc/prosody/prosody.cfg.lua
@@ -253,6 +254,11 @@ sudo luarocks make
 echo "----------------------- LUAJWTJITSI ------------------------"
 cd
 sudo luarocks install luajwtjitsi
+
+
+echo "------------------ Modify Prosody Config -------------------"
+sudo sed -i 's/--plugin_paths = { "\/usr\/share\/jitsi-meet\/prosody-plugins\/" }/plugin_paths = { "\/usr\/share\/jitsi-meet\/prosody-plugins\/" }/g' /etc/prosody/conf.avail/$VHOST.cfg.lua
+sudo sed -i 's/          "token_verification";/        "token_verification";/g' /etc/prosody/conf.avail/$VHOST.cfg.lua
 
 
 echo "-------------- Setting Prosody Domain Config ---------------"

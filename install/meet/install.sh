@@ -22,7 +22,6 @@ sudo apt update
 
 
 echo "------------------------ TEST START ------------------------"
-# 테스트
 VHOST="meetlocal.kthcorp.com"
 JVBNAME="meetdev01"
 TOKEN_APP_ID="433D3BF7B0A185DA47330C810934FBFF"
@@ -119,26 +118,26 @@ sudo sysctl -p
 
 echo "---------------------- Setting Alias -----------------------"
 # alias 설정 추가
-if [[ ! -n $(awk "/alias jicofo-log/" $HOME/.bash_aliases) ]]; then
-    echo "alias jicofo-log='sudo tail -100f /var/log/jitsi/jicofo.log'" >> $HOME/.bash_aliases
+if [[ ! -n $(awk "/alias jicofo-log/" ${HOME}/.bash_aliases) ]]; then
+    echo "alias jicofo-log='sudo tail -100f /var/log/jitsi/jicofo.log'" >> ${HOME}/.bash_aliases
 fi
-if [[ ! -n $(awk "/alias prosody-err/" $HOME/.bash_aliases) ]]; then
-    echo "alias prosody-err='sudo tail -100f /var/log/prosody/prosody.err'" >> $HOME/.bash_aliases
+if [[ ! -n $(awk "/alias prosody-err/" ${HOME}/.bash_aliases) ]]; then
+    echo "alias prosody-err='sudo tail -100f /var/log/prosody/prosody.err'" >> ${HOME}/.bash_aliases
 fi
-if [[ ! -n $(awk "/alias prosody-log/" $HOME/.bash_aliases) ]]; then
-    echo "alias prosody-log='sudo tail -100f /var/log/prosody/prosody.log'" >> $HOME/.bash_aliases
+if [[ ! -n $(awk "/alias prosody-log/" ${HOME}/.bash_aliases) ]]; then
+    echo "alias prosody-log='sudo tail -100f /var/log/prosody/prosody.log'" >> ${HOME}/.bash_aliases
 fi
-if [[ ! -n $(awk "/alias allstart/" $HOME/.bash_aliases) ]]; then
-    echo "alias start-all='sudo service prosody start && sudo service jicofo start && sudo service jitsi-videobridge2 start && sudo service nginx start'" >> $HOME/.bash_aliases
+if [[ ! -n $(awk "/alias allstart/" ${HOME}/.bash_aliases) ]]; then
+    echo "alias start-all='sudo service prosody start && sudo service jicofo start && sudo service jitsi-videobridge2 start && sudo service nginx start'" >> ${HOME}/.bash_aliases
 fi
-if [[ ! -n $(awk "/alias allstop/" $HOME/.bash_aliases) ]]; then
-    echo "alias stop-all='sudo service prosody stop && sudo service jicofo stop && sudo service jitsi-videobridge2 stop && sudo service nginx stop'" >> $HOME/.bash_aliases
+if [[ ! -n $(awk "/alias allstop/" ${HOME}/.bash_aliases) ]]; then
+    echo "alias stop-all='sudo service prosody stop && sudo service jicofo stop && sudo service jitsi-videobridge2 stop && sudo service nginx stop'" >> ${HOME}/.bash_aliases
 fi
-if [[ ! -n $(awk "/alias allrestart/" $HOME/.bash_aliases) ]]; then
-    echo "alias restart-all='sudo service prosody restart && sudo service jicofo restart && sudo service jitsi-videobridge2 restart && sudo service nginx restart'" >> $HOME/.bash_aliases
+if [[ ! -n $(awk "/alias allrestart/" ${HOME}/.bash_aliases) ]]; then
+    echo "alias restart-all='sudo service prosody restart && sudo service jicofo restart && sudo service jitsi-videobridge2 restart && sudo service nginx restart'" >> ${HOME}/.bash_aliases
 fi
-source $HOME/.bashrc
-cat $HOME/.bash_aliases
+source ${HOME}/.bashrc
+cat ${HOME}/.bash_aliases
 
 # 기존 설치 된 lua5.1 제거 (모든 cjson, luajwtjitsi 등 luarocks 로 설치 된 모든 패키지에 영향을 미침)
 sudo apt remove -y lua5.1
@@ -243,11 +242,11 @@ mkdir src && cd src
 sudo luarocks download lua-cjson
 sudo luarocks unpack lua-cjson-2.1.0.6-1.src.rock
 
-sudo sed -i 's/lua_objlen/lua_rawlen/g' $HOME/src/lua-cjson-2.1.0.6-1/lua-cjson/lua_cjson.c
-sudo sed -i 's/5.1/5.2/g' $HOME/src/lua-cjson-2.1.0.6-1/lua-cjson/Makefile
-sudo sed -i 's|$(PREFIX)/include|/usr/include/lua5.2|g' $HOME/src/lua-cjson-2.1.0.6-1/lua-cjson/Makefile
+sudo sed -i 's/lua_objlen/lua_rawlen/g' ${HOME}/src/lua-cjson-2.1.0.6-1/lua-cjson/lua_cjson.c
+sudo sed -i 's/5.1/5.2/g' ${HOME}/src/lua-cjson-2.1.0.6-1/lua-cjson/Makefile
+sudo sed -i 's|$(PREFIX)/include|/usr/include/lua5.2|g' ${HOME}/src/lua-cjson-2.1.0.6-1/lua-cjson/Makefile
 
-cd $HOME/src/lua-cjson-2.1.0.6-1/lua-cjson
+cd ${HOME}/src/lua-cjson-2.1.0.6-1/lua-cjson
 sudo luarocks make
 
 
@@ -257,44 +256,49 @@ sudo luarocks install luajwtjitsi
 
 
 echo "------------------ Modify Prosody Config -------------------"
-sudo sed -i 's/--plugin_paths = { "\/usr\/share\/jitsi-meet\/prosody-plugins\/" }/plugin_paths = { "\/usr\/share\/jitsi-meet\/prosody-plugins\/" }/g' /etc/prosody/conf.avail/$VHOST.cfg.lua
-sudo sed -i 's/          "token_verification";/        "token_verification";/g' /etc/prosody/conf.avail/$VHOST.cfg.lua
 
 
 echo "-------------- Setting Prosody Domain Config ---------------"
 # domain prosody configuration (/etc/prosody/conf.avail)
-sudo sed -i 's/cross_domain_bosh = false;/cross_domain_bosh = true;/g' /etc/prosody/conf.avail/$VHOST.cfg.lua
-sudo sed -i 's/consider_bosh_secure = true;/consider_bosh_secure = false;\n-- asap_accepted_audiences = { "jitsi" }/g' /etc/prosody/conf.avail/$VHOST.cfg.lua
-sudo sed -i 's/authentication = "anonymous"/authentication = "token"/g' /etc/prosody/conf.avail/$VHOST.cfg.lua
-sudo sed -i "s/--app_id=\"example_app_id\"/app_id = \"$TOKEN_APP_ID\"/g" /etc/prosody/conf.avail/$VHOST.cfg.lua
-sudo sed -i "s/--app_secret=\"example_app_secret\"/app_secret = \"$TOKEN_APP_SECRET\"/g" /etc/prosody/conf.avail/$VHOST.cfg.lua
-sudo sed -i 's/"bosh";/"bosh";\n            "presence_identity";/g' /etc/prosody/conf.avail/$VHOST.cfg.lua
-# sudo sed -i 's/-- "token_verification";/"token_verification\";\n        \"token_moderation\";\n        \"kthmeet_logging\";/g' /etc/prosody/conf.avail/$VHOST.cfg.lua
-sudo sed -i 's/-- "token_verification";/"token_verification\";/g' /etc/prosody/conf.avail/$VHOST.cfg.lua
+sudo sed -i 's/--plugin_paths = { "\/usr\/share\/jitsi-meet\/prosody-plugins\/" }/plugin_paths = { "\/usr\/share\/jitsi-meet\/prosody-plugins\/" }/g' /etc/prosody/conf.avail/${VHOST}.cfg.lua
+sudo sed -i 's/cross_domain_bosh = false;/cross_domain_bosh = true;/g' /etc/prosody/conf.avail/${VHOST}.cfg.lua
+sudo sed -i 's/consider_bosh_secure = true;/consider_bosh_secure = false;\n-- asap_accepted_audiences = { "jitsi" }/g' /etc/prosody/conf.avail/${VHOST}.cfg.lua
+sudo sed -i 's/authentication = "anonymous"/authentication = "token"/g' /etc/prosody/conf.avail/${VHOST}.cfg.lua
+sudo sed -i "s/--app_id=\"example_app_id\"/app_id = \"${TOKEN_APP_ID}\"/g" /etc/prosody/conf.avail/${VHOST}.cfg.lua
+sudo sed -i "s/--app_secret=\"example_app_secret\"/app_secret = \"${TOKEN_APP_SECRET}\"/g" /etc/prosody/conf.avail/${VHOST}.cfg.lua
+sudo sed -i 's/"bosh";/"bosh";\n            "presence_identity";/g' /etc/prosody/conf.avail/${VHOST}.cfg.lua
+# sudo sed -i 's/-- "token_verification";/"token_verification\";\n        \"token_moderation\";\n        \"kthmeet_logging\";/g' /etc/prosody/conf.avail/${VHOST}.cfg.lua
+sudo sed -i 's/-- "token_verification";/"token_verification\";/g' /etc/prosody/conf.avail/${VHOST}.cfg.lua
+sudo sed -i 's/          "token_verification";/        "token_verification";/g' /etc/prosody/conf.avail/${VHOST}.cfg.lua
 
-if [[ ! -n $(sudo awk "/VirtualHost \"guest.$VHOST\"/" /etc/prosody/conf.avail/$VHOST.cfg.lua) ]]; then
-    echo "" | sudo tee -a /etc/prosody/conf.avail/$VHOST.cfg.lua > /dev/null
-    echo "VirtualHost \"guest.$VHOST\"" | sudo tee -a /etc/prosody/conf.avail/$VHOST.cfg.lua > /dev/null
-    echo "    authentication = \"token\"" | sudo tee -a /etc/prosody/conf.avail/$VHOST.cfg.lua > /dev/null
-    echo "    app_id = \"$TOKEN_APP_ID\"" | sudo tee -a /etc/prosody/conf.avail/$VHOST.cfg.lua > /dev/null
-    echo "    app_secret = \"$TOKEN_APP_SECRET\"" | sudo tee -a /etc/prosody/conf.avail/$VHOST.cfg.lua > /dev/null
-    echo "    c2s_require_encryption = false" | sudo tee -a /etc/prosody/conf.avail/$VHOST.cfg.lua > /dev/null
-    echo "    allow_empty_token = false" | sudo tee -a /etc/prosody/conf.avail/$VHOST.cfg.lua > /dev/null
+if [[ ! -n $(sudo awk "/VirtualHost \"guest.${VHOST}\"/" /etc/prosody/conf.avail/${VHOST}.cfg.lua) ]]; then
+    echo "" | sudo tee -a /etc/prosody/conf.avail/${VHOST}.cfg.lua > /dev/null
+    echo "VirtualHost \"guest.${VHOST}\"" | sudo tee -a /etc/prosody/conf.avail/${VHOST}.cfg.lua > /dev/null
+    echo "    authentication = \"token\"" | sudo tee -a /etc/prosody/conf.avail/${VHOST}.cfg.lua > /dev/null
+    echo "    app_id = \"${TOKEN_APP_ID}\"" | sudo tee -a /etc/prosody/conf.avail/${VHOST}.cfg.lua > /dev/null
+    echo "    app_secret = \"${TOKEN_APP_SECRET}\"" | sudo tee -a /etc/prosody/conf.avail/${VHOST}.cfg.lua > /dev/null
+    echo "    c2s_require_encryption = false" | sudo tee -a /etc/prosody/conf.avail/${VHOST}.cfg.lua > /dev/null
+    echo "    allow_empty_token = false" | sudo tee -a /etc/prosody/conf.avail/${VHOST}.cfg.lua > /dev/null
 fi
+
+# Guest 인증서 추가
+sudo prosodyctl cert generate ${VHOST}
+sudo ln -sf /var/lib/prosody/${VHOST}.crt /etc/prosody/certs/${VHOST}.crt
+sudo ln -sf /var/lib/prosody/${VHOST}.key /etc/prosody/certs/${VHOST}.key
 
 
 echo "---------------- Setting Domain Config JS ------------------"
 # domain config.js configuration (/etc/jitsi/meet)
-sudo sed -i 's/p2pTestMode: false/p2pTestMode: false,\n        octo: {\n          probability: 1\n        },\n/g' /etc/jitsi/meet/$VHOST-config.js
-sudo sed -i 's/\/\/ resolution: 720,/resolution: 720,\n    constraints: {\n        video: {\n            aspectRatio: 16 \/ 9,\n            height: {\n                ideal: 720,\n                max: 720,\n                min: 240\n            }\n        }\n    },/g' /etc/jitsi/meet/$VHOST-config.js
-sudo sed -i 's/enableUserRolesBasedOnToken: false/enableUserRolesBasedOnToken: true/g' /etc/jitsi/meet/$VHOST-config.js
-sudo sed -i 's/deploymentInfo: {/deploymentInfo: {\n        shard: \"shard\",\n        region: \"region1\",\n        userRegion: \"region1\"/g' /etc/jitsi/meet/$VHOST-config.js
-sudo sed -i 's/\/\/ disableDeepLinking: false,/disableDeepLinking: true,/g' /etc/jitsi/meet/$VHOST-config.js
+sudo sed -i 's/p2pTestMode: false/p2pTestMode: false,\n        octo: {\n          probability: 1\n        },\n/g' /etc/jitsi/meet/${VHOST}-config.js
+sudo sed -i 's/\/\/ resolution: 720,/resolution: 720,\n    constraints: {\n        video: {\n            aspectRatio: 16 \/ 9,\n            height: {\n                ideal: 720,\n                max: 720,\n                min: 240\n            }\n        }\n    },/g' /etc/jitsi/meet/${VHOST}-config.js
+sudo sed -i 's/enableUserRolesBasedOnToken: false/enableUserRolesBasedOnToken: true/g' /etc/jitsi/meet/${VHOST}-config.js
+sudo sed -i 's/deploymentInfo: {/deploymentInfo: {\n        shard: \"shard\",\n        region: \"region1\",\n        userRegion: \"region1\"/g' /etc/jitsi/meet/${VHOST}-config.js
+sudo sed -i 's/\/\/ disableDeepLinking: false,/disableDeepLinking: true,/g' /etc/jitsi/meet/${VHOST}-config.js
 
 
 echo "------------------ Setting Jicofo Config -------------------"
 #jicofo configuration (/etc/jisti/jicofo)
-sudo sed -i "s/JICOFO_HOST=localhost/JICOFO_HOST=$VHOST/g" /etc/jitsi/jicofo/config
+sudo sed -i "s/JICOFO_HOST=localhost/JICOFO_HOST=${VHOST}/g" /etc/jitsi/jicofo/config
 
 if [[ ! -n $(sudo awk "/org.jitsi.jicofo.ALWAYS_TRUST_MODE_ENABLED/" /etc/jitsi/jicofo/sip-communicator.properties) ]]; then
     echo "org.jitsi.jicofo.ALWAYS_TRUST_MODE_ENABLED=true" | sudo tee -a /etc/jitsi/jicofo/sip-communicator.properties > /dev/null
@@ -306,7 +310,7 @@ fi
 
 echo "--------------- Setting Video Bridge Config ----------------"
 # jvb configuration (/etc/jitsi/videobridge)
-sudo sed -i "s/localhost/$VHOST/g" /etc/jitsi/videobridge/sip-communicator.properties
+sudo sed -i "s/localhost/${VHOST}/g" /etc/jitsi/videobridge/sip-communicator.properties
 sudo sed -i "s/org.jitsi.videobridge.xmpp.user.shard.MUC_NICKNAME=.*/org.jitsi.videobridge.xmpp.user.shard.MUC_NICKNAME=$JVBNAME/g" /etc/jitsi/videobridge/sip-communicator.properties
 
 if [[ ! -n $(sudo awk "/org.jitsi.videobridge.xmpp.user.shard.DISABLE_CERTIFICATE_VERIFICATION/" /etc/jitsi/videobridge/sip-communicator.properties) ]]; then
@@ -319,10 +323,10 @@ if [[ ! -n $(sudo awk "/org.jitsi.videobridge.DISABLE_TCP_HARVESTER/" /etc/jitsi
     echo "org.jitsi.videobridge.DISABLE_TCP_HARVESTER=true" | sudo tee -a /etc/jitsi/videobridge/sip-communicator.properties > /dev/null
 fi
 if [[ ! -n $(sudo awk "/org.jitsi.videobridge.octo.BIND_ADDRESS/" /etc/jitsi/videobridge/sip-communicator.properties) ]]; then
-    echo "org.jitsi.videobridge.octo.BIND_ADDRESS=$IPADDR" | sudo tee -a /etc/jitsi/videobridge/sip-communicator.properties > /dev/null
+    echo "org.jitsi.videobridge.octo.BIND_ADDRESS=${IPADDR}" | sudo tee -a /etc/jitsi/videobridge/sip-communicator.properties > /dev/null
 fi
 if [[ ! -n $(sudo awk "/org.jitsi.videobridge.octo.PUBLIC_ADDRESS/" /etc/jitsi/videobridge/sip-communicator.properties) ]]; then
-    echo "org.jitsi.videobridge.octo.PUBLIC_ADDRESS=$IPADDR" | sudo tee -a /etc/jitsi/videobridge/sip-communicator.properties > /dev/null
+    echo "org.jitsi.videobridge.octo.PUBLIC_ADDRESS=${IPADDR}" | sudo tee -a /etc/jitsi/videobridge/sip-communicator.properties > /dev/null
 fi
 if [[ ! -n $(sudo awk "/org.jitsi.videobridge.octo.BIND_PORT/" /etc/jitsi/videobridge/sip-communicator.properties) ]]; then
     echo "org.jitsi.videobridge.octo.BIND_PORT=4096" | sudo tee -a /etc/jitsi/videobridge/sip-communicator.properties > /dev/null
@@ -348,3 +352,7 @@ dpkg -l prosody
 
 echo "---------------------- Check Jitsi -------------------------"
 dpkg -l | grep jitsi
+
+
+echo "------------------------------------------------------------"
+source ${HOME}/.bashrc

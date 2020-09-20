@@ -10,7 +10,7 @@ TOKEN_APP_ID="433D3BF7B0A185DA47330C810934FBFF"
 TOKEN_APP_SECRET="qwer1234"
 
 
-echo "----- Setting Meet Config"
+echo "-------------------- Setting Meet Config -------------------"
 IPADDR=$(hostname -I | awk '{print $1}')
 
 if [[ -z ${VHOST} ]]; then
@@ -49,19 +49,15 @@ if [[ -z ${TOKEN_APP_SECRET} ]]; then
     done
 fi
 
-DATE=$(date '+%Y-%m-%d %H:%M:%S')
 
-echo VHOME=${VHOST}, IP=${IPADDR}, JVB=${JVBNAME}, APP_ID=${TOKEN_APP_ID}, APP_SECRET=${TOKEN_APP_SECRET}, ${DATE}
-
-
-echo "-----Setting Virtual Host"
+echo "------------------- Setting Virtual Host -------------------"
 # Host 등록
 if [[ ! -n $(sudo awk "/${IPADDR} ${VHOST}/" /etc/hosts) ]]; then
     echo "${IPADDR} ${VHOST}" | sudo tee -a /etc/hosts > /dev/null
 fi
 
 
-echo "----- Setting Turn Server Config"
+echo "---------------- Setting Turn Server Config ----------------"
 # turn server configuration 변경 (/usr/share/jitsi-meet-turnserver , /etc/nginx/modules-enabled)
 # /usr/share/jitsi-meet-turnserver/jitsi-meet.conf
 # default         turn; --> default web; 으로 변경
@@ -69,14 +65,20 @@ sudo sed -i 's/turn;/web;/g' /usr/share/jitsi-meet-turnserver/jitsi-meet.conf
 sudo ln -sf /usr/share/jitsi-meet-turnserver/jitsi-meet.conf /etc/nginx/modules-enabled/60-jitsi-meet.conf
 
 
-echo "----- Setting Prosody Config"
+echo "------------------ Setting Prosody Config ------------------"
 # prosody configuration (/etc/prosody)
 sudo sed -i 's/VirtualHost \"localhost\"/-- VirtualHost \"localhost\"/g' /etc/prosody/prosody.cfg.lua
 sudo sed -i 's/c2s_require_encryption = true/c2s_require_encryption = false/g' /etc/prosody/prosody.cfg.lua
-# echo "Include \"conf.d/*.cfg.lua\"" >> /etc/prosody/prosody.cfg.lua
+
+if [[ ! -n $(sudo awk "/component_interface/" /etc/prosody/prosody.cfg.lua) ]]; then
+    echo "component_interface = { "*" }" | sudo tee -a /etc/prosody/prosody.cfg.lua > /dev/null
+fi
+
+sudo sed -i '/Include/d' /etc/prosody/prosody.cfg.lua
+echo "Include \"conf.d/*.cfg.lua\"" | sudo tee -a /etc/prosody/prosody.cfg.lua > /dev/null
 
 
-echo "----- Setting Prosody Domain Config"
+echo "-------------- Setting Prosody Domain Config ---------------"
 # domain prosody configuration (/etc/prosody/conf.avail)
 sudo sed -i 's/cross_domain_bosh = false;/cross_domain_bosh = true;/g' /etc/prosody/conf.avail/$VHOST.cfg.lua
 sudo sed -i 's/consider_bosh_secure = true;/consider_bosh_secure = false;\n-- asap_accepted_audiences = { "jitsi" }/g' /etc/prosody/conf.avail/$VHOST.cfg.lua
@@ -84,9 +86,11 @@ sudo sed -i 's/authentication = "anonymous"/authentication = "token"/g' /etc/pro
 sudo sed -i "s/--app_id=\"example_app_id\"/app_id = \"$TOKEN_APP_ID\"/g" /etc/prosody/conf.avail/$VHOST.cfg.lua
 sudo sed -i "s/--app_secret=\"example_app_secret\"/app_secret = \"$TOKEN_APP_SECRET\"/g" /etc/prosody/conf.avail/$VHOST.cfg.lua
 sudo sed -i 's/"bosh";/"bosh";\n            "presence_identity";/g' /etc/prosody/conf.avail/$VHOST.cfg.lua
-sudo sed -i 's/-- "token_verification";/"token_verification\";\n        \"token_moderation\";\n        \"kthmeet_logging\";/g' /etc/prosody/conf.avail/$VHOST.cfg.lua
+# sudo sed -i 's/-- "token_verification";/"token_verification\";\n        \"token_moderation\";\n        \"kthmeet_logging\";/g' /etc/prosody/conf.avail/$VHOST.cfg.lua
+sudo sed -i 's/-- "token_verification";/"token_verification\";/g' /etc/prosody/conf.avail/$VHOST.cfg.lua
 
 if [[ ! -n $(sudo awk "/VirtualHost \"guest.$VHOST\"/" /etc/prosody/conf.avail/$VHOST.cfg.lua) ]]; then
+    echo "" | sudo tee -a /etc/prosody/conf.avail/$VHOST.cfg.lua > /dev/null
     echo "VirtualHost \"guest.$VHOST\"" | sudo tee -a /etc/prosody/conf.avail/$VHOST.cfg.lua > /dev/null
     echo "    authentication = \"token\"" | sudo tee -a /etc/prosody/conf.avail/$VHOST.cfg.lua > /dev/null
     echo "    app_id = \"$TOKEN_APP_ID\"" | sudo tee -a /etc/prosody/conf.avail/$VHOST.cfg.lua > /dev/null
@@ -95,7 +99,8 @@ if [[ ! -n $(sudo awk "/VirtualHost \"guest.$VHOST\"/" /etc/prosody/conf.avail/$
     echo "    allow_empty_token = false" | sudo tee -a /etc/prosody/conf.avail/$VHOST.cfg.lua > /dev/null
 fi
 
-echo "----- Setting Domain Config JS"
+
+echo "---------------- Setting Domain Config JS ------------------"
 # domain config.js configuration (/etc/jitsi/meet)
 sudo sed -i 's/p2pTestMode: false/p2pTestMode: false,\n        octo: {\n          probability: 1\n        },\n/g' /etc/jitsi/meet/$VHOST-config.js
 sudo sed -i 's/\/\/ resolution: 720,/resolution: 720,\n    constraints: {\n        video: {\n            aspectRatio: 16 \/ 9,\n            height: {\n                ideal: 720,\n                max: 720,\n                min: 240\n            }\n        }\n    },/g' /etc/jitsi/meet/$VHOST-config.js
@@ -104,7 +109,7 @@ sudo sed -i 's/deploymentInfo: {/deploymentInfo: {\n        shard: \"shard\",\n 
 sudo sed -i 's/\/\/ disableDeepLinking: false,/disableDeepLinking: true,/g' /etc/jitsi/meet/$VHOST-config.js
 
 
-echo "----- Setting Jicofo Config"
+echo "------------------ Setting Jicofo Config -------------------"
 #jicofo configuration (/etc/jisti/jicofo)
 sudo sed -i "s/JICOFO_HOST=localhost/JICOFO_HOST=$VHOST/g" /etc/jitsi/jicofo/config
 
@@ -115,7 +120,8 @@ if [[ ! -n $(sudo awk "/org.jitsi.jicofo.BridgeSelector.BRIDGE_SELECTION_STRATEG
     echo "org.jitsi.jicofo.BridgeSelector.BRIDGE_SELECTION_STRATEGY=SplitBridgeSelectionStrategy" | sudo tee -a /etc/jitsi/jicofo/sip-communicator.properties > /dev/null
 fi
 
-echo "----- Setting Video Bridge Config"
+
+echo "--------------- Setting Video Bridge Config ----------------"
 # jvb configuration (/etc/jitsi/videobridge)
 sudo sed -i "s/localhost/$VHOST/g" /etc/jitsi/videobridge/sip-communicator.properties
 sudo sed -i "s/org.jitsi.videobridge.xmpp.user.shard.MUC_NICKNAME=.*/org.jitsi.videobridge.xmpp.user.shard.MUC_NICKNAME=$JVBNAME/g" /etc/jitsi/videobridge/sip-communicator.properties

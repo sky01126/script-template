@@ -204,39 +204,43 @@ sudo sed -i '/Include/d' /etc/prosody/prosody.cfg.lua
 echo "Include \"conf.d/*.cfg.lua\"" | sudo tee -a /etc/prosody/prosody.cfg.lua > /dev/null
 
 
-echo "--------------------------- GCC ----------------------------"
+echo "---------------------- Remove Lua5.1 -----------------------"
+sudo apt remove lua5.1
+
+
+echo "----------------------- Install GCC ------------------------"
 sudo apt install -y gcc
 
 
-echo "-------------------------- UNZIP ---------------------------"
+echo "---------------------- Install UNZIP -----------------------"
 sudo apt install -y unzip
 
 
-echo "-------------------------- LUA5.2 --------------------------"
+echo "---------------------- Install LUA5.2 ----------------------"
 sudo apt install -y lua5.2
 
 
-echo "---------------------- LIBLUA5.2-DEV -----------------------"
+echo "------------------ Install LIBLUA5.2-DEV -------------------"
 sudo apt install -y liblua5.2-dev
 
 
-echo "------------------------- LUAROCKS -------------------------"
+echo "--------------------- Install LUAROCKS ---------------------"
 sudo apt install -y luarocks
 
 
-echo "------------------------- BASEXX ---------------------------"
+echo "--------------------- Install BASEXX -----------------------"
 sudo luarocks install basexx
 
 
-echo "---------------------- LIBSSL1.0-DEV -----------------------"
+echo "------------------ Install LIBSSL1.0-DEV -------------------"
 sudo apt install -y libssl1.0-dev
 
 
-echo "------------------------ LUACRYPTO -------------------------"
+echo "-------------------- Install LUACRYPTO ---------------------"
 sudo luarocks install luacrypto
 
 
-echo "-------------------------- CJSON ---------------------------"
+echo "---------------------- Install CJSON -----------------------"
 mkdir src && cd src
 sudo luarocks download lua-cjson
 sudo luarocks unpack lua-cjson-2.1.0.6-1.src.rock
@@ -249,7 +253,7 @@ cd ${HOME}/src/lua-cjson-2.1.0.6-1/lua-cjson
 sudo luarocks make
 
 
-echo "----------------------- LUAJWTJITSI ------------------------"
+echo "------------------- Install LUAJWTJITSI --------------------"
 cd
 sudo luarocks install luajwtjitsi
 

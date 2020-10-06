@@ -139,14 +139,9 @@ fi
 # cat ${HOME}/.bash_aliases
 
 
-echo "-------------------- Remove and Install --------------------"
-# 기존 설치 된 lua5.1 제거 (모든 cjson, luajwtjitsi 등 luarocks 로 설치 된 모든 패키지에 영향을 미침)
-sudo apt remove -y lua5.1
-sudo apt install -y gcc unzip lua5.2 liblua5.2-dev luarocks
-
-
 echo "-------------------------- Update --------------------------"
 sudo apt update
+
 
 echo "--------------------- Install Prosody ----------------------"
 # Prosody 설치
@@ -206,6 +201,10 @@ fi
 
 sudo sed -i '/Include/d' /etc/prosody/prosody.cfg.lua
 echo "Include \"conf.d/*.cfg.lua\"" | sudo tee -a /etc/prosody/prosody.cfg.lua > /dev/null
+
+
+echo "-------------------- Remove and Install --------------------"
+sudo apt install -y gcc unzip lua5.2 liblua5.2-dev luarocks
 
 
 echo "--------------------- Install BASEXX -----------------------"

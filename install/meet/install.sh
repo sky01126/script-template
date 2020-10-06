@@ -177,33 +177,7 @@ if [[ ! -n $(sudo awk "/${IPADDR} ${VHOST}/" /etc/hosts) ]]; then
 fi
 
 
-echo "---------------- Install Jitsi Meet Tokens -----------------"
-sudo apt install -y jitsi-meet-tokens
-
-
-echo "---------------- Setting Turn Server Config ----------------"
-# turn server configuration 변경 (/usr/share/jitsi-meet-turnserver , /etc/nginx/modules-enabled)
-# /usr/share/jitsi-meet-turnserver/jitsi-meet.conf
-# default         turn; --> default web; 으로 변경
-sudo sed -i 's/turn;/web;/g' /usr/share/jitsi-meet-turnserver/jitsi-meet.conf
-sudo ln -sf /usr/share/jitsi-meet-turnserver/jitsi-meet.conf /etc/nginx/modules-enabled/60-jitsi-meet.conf
-
-
-echo "------------------ Setting Prosody Config ------------------"
-# prosody configuration (/etc/prosody)
-sudo sed -i 's/VirtualHost \"localhost\"/-- VirtualHost \"localhost\"/g' /etc/prosody/prosody.cfg.lua
-sudo sed -i 's/c2s_require_encryption = true/c2s_require_encryption = false/g' /etc/prosody/prosody.cfg.lua
-
-if [[ ! -n $(sudo awk "/component_interface/" /etc/prosody/prosody.cfg.lua) ]]; then
-    echo "component_interface = { \"*\" }" | sudo tee -a /etc/prosody/prosody.cfg.lua > /dev/null
-    echo "" | sudo tee -a /etc/prosody/prosody.cfg.lua > /dev/null
-fi
-
-sudo sed -i '/Include/d' /etc/prosody/prosody.cfg.lua
-echo "Include \"conf.d/*.cfg.lua\"" | sudo tee -a /etc/prosody/prosody.cfg.lua > /dev/null
-
-
-echo "-------------------- Remove and Install --------------------"
+echo "------------------------- Install --------------------------"
 sudo apt install -y gcc unzip lua5.2 liblua5.2-dev luarocks
 
 
@@ -232,12 +206,36 @@ cd ${HOME}/src/lua-cjson-2.1.0.6-1/lua-cjson
 sudo luarocks make
 
 
-echo "------------------- Install LUAJWTJITSI --------------------"
-cd
-sudo luarocks install luajwtjitsi
+# echo "------------------- Install LUAJWTJITSI --------------------"
+# cd
+# sudo luarocks list
+# sudo luarocks install luajwtjitsi
 
 
-echo "------------------ Modify Prosody Config -------------------"
+echo "---------------- Install Jitsi Meet Tokens -----------------"
+sudo apt install -y jitsi-meet-tokens
+
+
+echo "---------------- Setting Turn Server Config ----------------"
+# turn server configuration 변경 (/usr/share/jitsi-meet-turnserver , /etc/nginx/modules-enabled)
+# /usr/share/jitsi-meet-turnserver/jitsi-meet.conf
+# default         turn; --> default web; 으로 변경
+sudo sed -i 's/turn;/web;/g' /usr/share/jitsi-meet-turnserver/jitsi-meet.conf
+sudo ln -sf /usr/share/jitsi-meet-turnserver/jitsi-meet.conf /etc/nginx/modules-enabled/60-jitsi-meet.conf
+
+
+echo "------------------ Setting Prosody Config ------------------"
+# prosody configuration (/etc/prosody)
+sudo sed -i 's/VirtualHost \"localhost\"/-- VirtualHost \"localhost\"/g' /etc/prosody/prosody.cfg.lua
+sudo sed -i 's/c2s_require_encryption = true/c2s_require_encryption = false/g' /etc/prosody/prosody.cfg.lua
+
+if [[ ! -n $(sudo awk "/component_interface/" /etc/prosody/prosody.cfg.lua) ]]; then
+    echo "component_interface = { \"*\" }" | sudo tee -a /etc/prosody/prosody.cfg.lua > /dev/null
+    echo "" | sudo tee -a /etc/prosody/prosody.cfg.lua > /dev/null
+fi
+
+sudo sed -i '/Include/d' /etc/prosody/prosody.cfg.lua
+echo "Include \"conf.d/*.cfg.lua\"" | sudo tee -a /etc/prosody/prosody.cfg.lua > /dev/null
 
 
 echo "-------------- Setting Prosody Domain Config ---------------"

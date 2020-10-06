@@ -22,8 +22,8 @@ sudo apt update
 
 
 echo "------------------------ TEST START ------------------------"
-VHOST="meetlocal.kthcorp.com"
-JVBNAME="meetdev01"
+VHOST="sky01126.kthcorp.com"
+JVBNAME="kthmeet-jvb"
 TOKEN_APP_ID="433D3BF7B0A185DA47330C810934FBFF"
 TOKEN_APP_SECRET="qwer1234"
 echo "------------------------- TEST END -------------------------"

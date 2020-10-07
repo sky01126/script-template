@@ -184,13 +184,14 @@ sudo apt update
 
 # 버전 지정 설치
 # 패키지 디펜던시 확인 : sudo apt depends jitsi-meet=2.0.4627-1
-sudo apt install -y jicofo=${JICOFO_VERSION}
-sudo apt install -y jitsi-meet-web=${JITSI_MEET_WEB_VERSION}
-sudo apt install -y jitsi-meet-web-config=${JITSI_MEET_WEB_CONFIG_VERSION}
-sudo apt install -y jitsi-meet-prosody=${JITSI_MEET_PROSODY_VERSION}
-sudo apt install -y jitsi-meet-turnserver=${JITSI_MEET_TURNSERVER_VERSION}
-sudo apt install -y jitsi-videobridge2=${JITSI_VIDEOBRIDGE_VERSION}
-sudo apt install -f jitsi-meet=${JITSI_MEET_VERSION}
+sudo apt install -y jicofo=${JICOFO_VERSION}                                    \
+                    jitsi-meet-web=${JITSI_MEET_WEB_VERSION}                    \
+                    jitsi-meet-web-config=${JITSI_MEET_WEB_CONFIG_VERSION}      \
+                    jitsi-meet-prosody=${JITSI_MEET_PROSODY_VERSION}            \
+                    jitsi-meet-turnserver=${JITSI_MEET_TURNSERVER_VERSION}      \
+                    jitsi-videobridge2=${JITSI_VIDEOBRIDGE_VERSION}
+
+sudo apt install -y jitsi-meet=${JITSI_MEET_VERSION}
 
 ## TODO KTH에 설치된 버전을 설정한다.
 # sudo apt install -y jicofo=1.0-626-1

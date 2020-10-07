@@ -193,12 +193,12 @@ sudo apt install -y jitsi-videobridge2=${JITSI_VIDEOBRIDGE_VERSION}
 sudo apt install -f jitsi-meet=${JITSI_MEET_VERSION}
 
 ## TODO KTH에 설치된 버전을 설정한다.
-sudo apt install -y jicofo=1.0-626-1
-sudo apt install -y jitsi-meet-web=1.0.4370-1
-sudo apt install -y jitsi-meet-web-config=1.0.4370-1
-sudo apt install -y jitsi-meet-prosody=1.0.4370-1
-sudo apt install -y jitsi-meet-turnserver=1.0.4370-1
-sudo apt install -y jitsi-videobridge2=2.1-304-g8488f77d-1
+# sudo apt install -y jicofo=1.0-626-1
+# sudo apt install -y jitsi-meet-web=1.0.4370-1
+# sudo apt install -y jitsi-meet-web-config=1.0.4370-1
+# sudo apt install -y jitsi-meet-prosody=1.0.4370-1
+# sudo apt install -y jitsi-meet-turnserver=1.0.4370-1
+# sudo apt install -y jitsi-videobridge2=2.1-304-g8488f77d-1
 
 echo "------------------- Setting Virtual Host -------------------"
 # Host 등록

@@ -322,7 +322,7 @@ fi
 echo "--------------- Setting Video Bridge Config ----------------"
 # jvb configuration (/etc/jitsi/videobridge)
 sudo sed -i "s/localhost/${VHOST}/g" /etc/jitsi/videobridge/sip-communicator.properties
-sudo sed -i "s/org.jitsi.videobridge.xmpp.user.shard.MUC_NICKNAME=.*/org.jitsi.videobridge.xmpp.user.shard.MUC_NICKNAME=$JVBNAME/g" /etc/jitsi/videobridge/sip-communicator.properties
+sudo sed -i "s/org.jitsi.videobridge.xmpp.user.shard.MUC_NICKNAME=.*/org.jitsi.videobridge.xmpp.user.shard.MUC_NICKNAME=${JVBNAME}/g" /etc/jitsi/videobridge/sip-communicator.properties
 
 if [[ ! -n $(sudo awk "/org.jitsi.videobridge.xmpp.user.shard.DISABLE_CERTIFICATE_VERIFICATION/" /etc/jitsi/videobridge/sip-communicator.properties) ]]; then
     echo "org.jitsi.videobridge.xmpp.user.shard.DISABLE_CERTIFICATE_VERIFICATION=true" | sudo tee -a /etc/jitsi/videobridge/sip-communicator.properties > /dev/null

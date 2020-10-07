@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# 멀티 쉘 실행 : bash <(curl -f -L -sS https://raw.githubusercontent.com/sky01126/script-template/master/install/meet/install2.0.4627-1.sh)
+# 멀티 쉘 실행 : bash <(curl -f -L -sS https://raw.githubusercontent.com/sky01126/script-template/master/install/meet/install-2.0.4627-1.sh)
 #
 # 사전작업
 # FQDN 설정 /etc/hosts 파일 127.0.0.1 에 도메인 입력
@@ -29,6 +29,8 @@ export JITSI_MEET_WEB_CONFIG_VERSION=1.0.4127-1
 export JITSI_MEET_PROSODY_VERSION=1.0.4127-1
 export JITSI_MEET_TURNSERVER_VERSION=1.0.4127-1
 export JITSI_VIDEOBRIDGE_VERSION=2.1-202-g5f9377b9-1
+
+# KTH에 맞는 버전 설정.
 export JITSI_MEET_TOKENS_VERSION=1.0.4370-1
 
 export LUA_CJSON_VERSION=2.1.0.6-1
@@ -182,14 +184,21 @@ sudo apt update
 
 # 버전 지정 설치
 # 패키지 디펜던시 확인 : sudo apt depends jitsi-meet=2.0.4627-1
-sudo apt install -y jitsi-videobridge2=${JITSI_VIDEOBRIDGE_VERSION}
 sudo apt install -y jicofo=${JICOFO_VERSION}
 sudo apt install -y jitsi-meet-web=${JITSI_MEET_WEB_VERSION}
 sudo apt install -y jitsi-meet-web-config=${JITSI_MEET_WEB_CONFIG_VERSION}
 sudo apt install -y jitsi-meet-prosody=${JITSI_MEET_PROSODY_VERSION}
 sudo apt install -y jitsi-meet-turnserver=${JITSI_MEET_TURNSERVER_VERSION}
+sudo apt install -y jitsi-videobridge2=${JITSI_VIDEOBRIDGE_VERSION}
 sudo apt install -f jitsi-meet=${JITSI_MEET_VERSION}
 
+## TODO KTH에 설치된 버전을 설정한다.
+sudo apt install -y jicofo=1.0-626-1
+sudo apt install -y jitsi-meet-web=1.0.4370-1
+sudo apt install -y jitsi-meet-web-config=1.0.4370-1
+sudo apt install -y jitsi-meet-prosody=1.0.4370-1
+sudo apt install -y jitsi-meet-turnserver=1.0.4370-1
+sudo apt install -y jitsi-videobridge2=2.1-304-g8488f77d-1
 
 echo "------------------- Setting Virtual Host -------------------"
 # Host 등록
@@ -352,11 +361,11 @@ dpkg -l prosody
 
 
 echo "---------------------- Check Jitsi -------------------------"
-dpkg -l | grep jitsi
+dpkg -l | grep jicofo
 
 
 echo "---------------------- Check Jitsi -------------------------"
-dpkg -l | grep jicofo
+dpkg -l | grep jitsi
 
 
 echo "------------------------------------------------------------"

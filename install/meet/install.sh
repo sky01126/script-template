@@ -331,6 +331,10 @@ dpkg -l prosody
 
 
 echo "---------------------- Check Jitsi -------------------------"
+dpkg -l | grep jicofo
+
+
+echo "---------------------- Check Jitsi -------------------------"
 dpkg -l | grep jitsi
 
 

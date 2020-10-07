@@ -2,6 +2,13 @@
 #
 # 멀티 쉘 실행 : bash <(curl -f -L -sS https://raw.githubusercontent.com/sky01126/script-template/master/install/meet/setting.sh)
 
+# Could not get lock / Unable to acquire the dpkg 에러 발생
+sudo killall apt apt-get
+sudo rm /var/lib/apt/lists/lock
+sudo rm /var/cache/apt/archives/lock
+sudo rm /var/lib/dpkg/lock*
+sudo dpkg --configure -a
+
 # Exit on error
 set -e
 
@@ -105,6 +112,9 @@ sudo sysctl -p
 
 echo "---------------------- Setting Alias -----------------------"
 # alias 설정 추가
+if [[ ! -n $(awk "/alias jvb-log/" ${HOME}/.bash_aliases) ]]; then
+    echo "alias jvb-log='sudo tail -f /var/log/jitsi/jvb.log'" >> ${HOME}/.bash_aliases
+fi
 if [[ ! -n $(awk "/alias jicofo-log/" ${HOME}/.bash_aliases) ]]; then
     echo "alias jicofo-log='sudo tail -f /var/log/jitsi/jicofo.log'" >> ${HOME}/.bash_aliases
 fi

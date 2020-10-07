@@ -118,6 +118,9 @@ sudo sysctl -p
 
 echo "---------------------- Setting Alias -----------------------"
 # alias 설정 추가
+if [[ ! -n $(awk "/alias jvb-log/" ${HOME}/.bash_aliases) ]]; then
+    echo "alias jvb-log='sudo tail -f /var/log/jitsi/jvb.log'" >> ${HOME}/.bash_aliases
+fi
 if [[ ! -n $(awk "/alias jicofo-log/" ${HOME}/.bash_aliases) ]]; then
     echo "alias jicofo-log='sudo tail -f /var/log/jitsi/jicofo.log'" >> ${HOME}/.bash_aliases
 fi

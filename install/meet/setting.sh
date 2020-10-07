@@ -5,7 +5,6 @@
 # Exit on error
 set -e
 
-sudo apt upgrade -y
 sudo apt update
 
 

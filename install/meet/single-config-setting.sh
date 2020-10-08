@@ -10,6 +10,11 @@ sudo rm /var/cache/apt/archives/lock
 sudo rm /var/lib/dpkg/lock*
 sudo dpkg --configure -a
 
+# 대문자 변환
+uppercase() {
+    echo $* | tr "[a-z]" "[A-Z]"
+}
+
 # Exit on error
 set -e
 

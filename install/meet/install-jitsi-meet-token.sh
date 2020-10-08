@@ -9,22 +9,17 @@ set -e
 sudo apt upgrade -y
 sudo apt update
 
-
 echo "--------------------- Install Library ----------------------"
 sudo apt install -y gcc unzip lua5.2 liblua5.2-dev luarocks
-
 
 echo "--------------------- Install BASEXX -----------------------"
 sudo luarocks install basexx
 
-
 echo "------------------ Install LIBSSL1.0-DEV -------------------"
 sudo apt install -y libssl1.0-dev
 
-
 echo "-------------------- Install LUACRYPTO ---------------------"
 sudo luarocks install luacrypto
-
 
 echo "---------------------- Install CJSON -----------------------"
 mkdir src && cd src
@@ -37,7 +32,6 @@ sudo sed -i 's|$(PREFIX)/include|/usr/include/lua5.2|g' ${HOME}/src/lua-cjson-2.
 
 cd ${HOME}/src/lua-cjson-2.1.0.6-1/lua-cjson
 sudo luarocks make
-
 
 echo "---------------- Install Jitsi Meet Tokens -----------------"
 sudo apt install -y jitsi-meet-tokens

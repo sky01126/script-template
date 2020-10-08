@@ -1,18 +1,7 @@
 #!/bin/bash
 #
-# 멀티 쉘 실행 : bash <(curl -f -L -sS https://raw.githubusercontent.com/sky01126/script-template/master/install/meet/jitsi-meet-token.sh)
+# 멀티 쉘 실행 : bash <(curl -f -L -sS https://raw.githubusercontent.com/sky01126/script-template/master/install/meet/install-jitsi-meet-token.sh)
 #
-# 사전작업
-# FQDN 설정 /etc/hosts 파일 127.0.0.1 에 도메인 입력
-# (ex : 127.0.0.1       grouput.kthcorp.com v-kgmeetctl01)
-# /etc/ssl 에 인증서 복사
-
-# Could not get lock / Unable to acquire the dpkg 에러 발생
-sudo killall apt apt-get
-sudo rm /var/lib/apt/lists/lock
-sudo rm /var/cache/apt/archives/lock
-sudo rm /var/lib/dpkg/lock*
-sudo dpkg --configure -a
 
 # Exit on error
 set -e
@@ -21,7 +10,7 @@ sudo apt upgrade -y
 sudo apt update
 
 
-echo "------------------------- Install --------------------------"
+echo "--------------------- Install Library ----------------------"
 sudo apt install -y gcc unzip lua5.2 liblua5.2-dev luarocks
 
 

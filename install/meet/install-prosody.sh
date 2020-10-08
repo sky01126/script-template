@@ -2,10 +2,6 @@
 #
 # 멀티 쉘 실행 : bash <(curl -f -L -sS https://raw.githubusercontent.com/sky01126/script-template/master/install/meet/install-prosody.sh)
 #
-# 사전작업
-# FQDN 설정 /etc/hosts 파일 127.0.0.1 에 도메인 입력
-# (ex : 127.0.0.1       grouput.kthcorp.com v-kgmeetctl01)
-# /etc/ssl 에 인증서 복사
 
 # Exit on error
 set -e

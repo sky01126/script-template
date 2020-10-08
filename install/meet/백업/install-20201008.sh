@@ -70,11 +70,50 @@ fi
 
 
 echo "---------------- Setting Kernel Parameter ------------------"
-if [[ ! -f "/tmp/kernel-setting.sh" ]]; then
-    curl -f -L -sS  https://raw.githubusercontent.com/sky01126/script-template/master/install/meet/kernel-setting.sh -o /tmp/kernel-setting.sh
+# Kernel Parameter 변경
+if [[ ! -n $(awk "/net.core.rmem_max/" /etc/sysctl.conf) ]]; then
+    sudo sh -c "echo 'net.core.rmem_max = 33554432' >> /etc/sysctl.conf"
 fi
-source /tmp/kernel-setting.sh
-bash   /tmp/kernel-setting.sh
+if [[ ! -n $(awk "/net.core.wmem_max/" /etc/sysctl.conf) ]]; then
+    sudo sh -c "echo 'net.core.wmem_max = 33554432' >> /etc/sysctl.conf"
+fi
+if [[ ! -n $(awk "/net.core.rmem_default/" /etc/sysctl.conf) ]]; then
+    sudo sh -c "echo 'net.core.rmem_default = 1048576' >> /etc/sysctl.conf"
+fi
+if [[ ! -n $(awk "/net.core.netdev_max_backlog/" /etc/sysctl.conf) ]]; then
+    sudo sh -c "echo 'net.core.netdev_max_backlog = 100000' >> /etc/sysctl.conf"
+fi
+if [[ ! -n $(awk "/net.core.somaxconn/" /etc/sysctl.conf) ]]; then
+    sudo sh -c "echo 'net.core.somaxconn = 1024' >> /etc/sysctl.conf"
+fi
+if [[ ! -n $(awk "/net.core.wmem_default/" /etc/sysctl.conf) ]]; then
+    sudo sh -c "echo 'net.core.wmem_default = 1048576' >> /etc/sysctl.conf"
+fi
+if [[ ! -n $(awk "/net.ipv4.tcp_max_syn_backlog/" /etc/sysctl.conf) ]]; then
+    sudo sh -c "echo 'net.ipv4.tcp_max_syn_backlog = 8192' >> /etc/sysctl.conf"
+fi
+if [[ ! -n $(awk "/net.ipv4.udp_rmem_min/" /etc/sysctl.conf) ]]; then
+    sudo sh -c "echo 'net.ipv4.udp_rmem_min = 1048576' >> /etc/sysctl.conf"
+fi
+if [[ ! -n $(awk "/net.ipv4.udp_wmem_min/" /etc/sysctl.conf) ]]; then
+    sudo sh -c "echo 'net.ipv4.udp_wmem_min = 1048576' >> /etc/sysctl.conf"
+fi
+if [[ ! -n $(awk "/net.ipv6.conf.all.disable_ipv6/" /etc/sysctl.conf) ]]; then
+    sudo sh -c "echo 'net.ipv6.conf.all.disable_ipv6 = 1' >> /etc/sysctl.conf"
+fi
+if [[ ! -n $(awk "/net.ipv6.conf.default.disable_ipv6/" /etc/sysctl.conf) ]]; then
+    sudo sh -c "echo 'net.ipv6.conf.default.disable_ipv6 = 1' >> /etc/sysctl.conf"
+fi
+
+net_list=($(ls /sys/class/net))
+for i in `seq 0 $((${#net_list[*]}-1))`; do
+    name=${net_list[${i}]}
+    if [[ ! -n $(awk "/net.ipv6.conf.${name}.disable_ipv6/" /etc/sysctl.conf) ]]; then
+        sudo sh -c "echo 'net.ipv6.conf.${name}.disable_ipv6 = 1' >> /etc/sysctl.conf"
+    fi
+done
+
+sudo sysctl -p
 
 
 echo "---------------------- Setting Alias -----------------------"
@@ -108,11 +147,16 @@ sudo apt update
 
 
 echo "--------------------- Install Prosody ----------------------"
-if [[ ! -f "/tmp/install-prosody.sh" ]]; then
-    curl -f -L -sS  https://raw.githubusercontent.com/sky01126/script-template/master/install/meet/install-prosody.sh -o /tmp/install-prosody.sh
-fi
-source /tmp/install-prosody.sh
-bash   /tmp/install-prosody.sh
+# Prosody 설치
+echo deb http://packages.prosody.im/debian $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list
+wget https://prosody.im/files/prosody-debian-packages.key -O- | sudo apt-key add -
+
+sudo apt update
+sudo apt install -y prosody
+
+sudo chown root:prosody /etc/prosody/certs/localhost.key
+sudo chmod 644 /etc/prosody/certs/localhost.key
+# cp /etc/prosody/certs/localhost.key /etc/ssl
 
 
 echo "------------------- Install Jitsi Meet ---------------------"
@@ -136,17 +180,43 @@ if [[ ! -n $(sudo awk "/${IPADDR} ${VHOST}/" /etc/hosts) ]]; then
 fi
 
 
+echo "------------------------- Install --------------------------"
+sudo apt install -y gcc unzip lua5.2 liblua5.2-dev luarocks
+
+
+echo "--------------------- Install BASEXX -----------------------"
+sudo luarocks install basexx
+
+
+echo "------------------ Install LIBSSL1.0-DEV -------------------"
+sudo apt install -y libssl1.0-dev
+
+
+echo "-------------------- Install LUACRYPTO ---------------------"
+sudo luarocks install luacrypto
+
+
+echo "---------------------- Install CJSON -----------------------"
+mkdir src && cd src
+sudo luarocks download lua-cjson
+sudo luarocks unpack lua-cjson-2.1.0.6-1.src.rock
+
+sudo sed -i 's/lua_objlen/lua_rawlen/g' ${HOME}/src/lua-cjson-2.1.0.6-1/lua-cjson/lua_cjson.c
+sudo sed -i 's/5.1/5.2/g' ${HOME}/src/lua-cjson-2.1.0.6-1/lua-cjson/Makefile
+sudo sed -i 's|$(PREFIX)/include|/usr/include/lua5.2|g' ${HOME}/src/lua-cjson-2.1.0.6-1/lua-cjson/Makefile
+
+cd ${HOME}/src/lua-cjson-2.1.0.6-1/lua-cjson
+sudo luarocks make
+
+
+# echo "------------------- Install LUAJWTJITSI --------------------"
+# cd
+# sudo luarocks list
+# sudo luarocks install luajwtjitsi
+
+
 echo "---------------- Install Jitsi Meet Tokens -----------------"
-if [[ ! -f "/tmp/install-jitsi-meet-token.sh" ]]; then
-    curl -f -L -sS  https://raw.githubusercontent.com/sky01126/script-template/master/install/meet/install-jitsi-meet-token.sh -o /tmp/install-jitsi-meet-token.sh
-fi
-source /tmp/install-jitsi-meet-token.sh
-bash   /tmp/install-jitsi-meet-token.sh
-
-
-
-
-
+sudo apt install -y jitsi-meet-tokens
 
 
 echo "---------------- Setting Turn Server Config ----------------"

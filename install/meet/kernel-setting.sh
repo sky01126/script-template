@@ -1,6 +1,7 @@
 #!/bin/bash
 #
-# 멀티 쉘 실행 : bash <(curl -f -L -sS https://raw.githubusercontent.com/sky01126/script-template/master/install/meet/setting.sh)
+# 멀티 쉘 실행 : bash <(curl -f -L -sS https://raw.githubusercontent.com/sky01126/script-template/master/install/meet/kernel-setting.sh)
+#
 
 # Could not get lock / Unable to acquire the dpkg 에러 발생
 sudo killall apt apt-get

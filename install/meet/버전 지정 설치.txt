@@ -12,8 +12,8 @@ $ echo 'deb [signed-by=/usr/share/keyrings/jitsi-keyring.gpg] https://download.j
 $ sudo apt update
 
 $ sudo apt install -y jicofo=1.0-626-1                      \
-                      jitsi-meet-web=1.0.4370-1             \
                       jitsi-meet-web-config=1.0.4370-1      \
+                      jitsi-meet-web=1.0.4370-1             \
                       jitsi-meet-prosody=1.0.4370-1         \
                       jitsi-meet-turnserver=1.0.4370-1      \
                       jitsi-videobridge2=2.1-304-g8488f77d-1
@@ -27,14 +27,19 @@ $ sudo apt list --installed | grep lua
 dpkg -l | grep jicofo && dpkg -l | grep jitsi
 
 
+
 ## RESTART
 sudo service prosody            restart &&
 sudo service jicofo             restart &&
 sudo service jitsi-videobridge2 restart &&
 sudo service nginx              restart
 
+
+
 ## 패키지 디펜던시 확인
 sudo apt depends jitsi-meet=2.0.4966-1
+
+sudo apt depends jitsi-videobridge2=2.1-304-g8488f77d-1
 
 jitsi-meet=2.0.4966-1
 jitsi-meet=2.0.5076-1

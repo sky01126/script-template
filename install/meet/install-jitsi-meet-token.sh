@@ -31,6 +31,7 @@ printf "\e[00;32m-------------------- Install LUACRYPTO ---------------------\e[
 sudo luarocks install luacrypto
 
 printf "\e[00;32m---------------------- Install CJSON -----------------------\e[00m\n"
+mkdir $HOME/src
 cd $HOME/src
 
 sudo luarocks download lua-cjson

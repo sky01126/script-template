@@ -1,6 +1,8 @@
-$ sudo apt update                                           &&
-  sudo apt install apt-transport-https                      &&
+$ sudo apt install -y gcc unzip lua5.2 liblua5.2-dev luarocks
+
+$ sudo apt install apt-transport-https                      &&
   sudo apt-add-repository universe                          &&
+  sudo apt upgrade -y                                       &&
   sudo apt update
 
 $ curl https://download.jitsi.org/jitsi-key.gpg.key | sudo sh -c 'gpg --dearmor > /usr/share/keyrings/jitsi-keyring.gpg'
@@ -9,7 +11,7 @@ $ echo 'deb [signed-by=/usr/share/keyrings/jitsi-keyring.gpg] https://download.j
 
 $ sudo apt update
 
-# sudo apt install -y jicofo=1.0-626-1                      \
+$ sudo apt install -y jicofo=1.0-626-1                      \
                       jitsi-meet-web=1.0.4370-1             \
                       jitsi-meet-web-config=1.0.4370-1      \
                       jitsi-meet-prosody=1.0.4370-1         \

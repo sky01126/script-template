@@ -73,8 +73,8 @@ fi
 
 # ---------------- Setting Kernel Parameter ------------------
 curl -f -L -sS  https://raw.githubusercontent.com/sky01126/script-template/master/install/meet/kernel-setting.sh -o /tmp/kernel-setting.sh
-source /tmp/kernel-setting.sh
-bash   /tmp/kernel-setting.sh
+chmod +x /tmp/kernel-setting.sh
+/tmp/kernel-setting.sh
 
 printf "\e[00;32m---------------------- Setting Alias -----------------------\e[00m\n"
 # alias 설정 추가
@@ -101,13 +101,10 @@ if [[ ! -n $(awk "/alias allrestart/" ${HOME}/.bash_aliases) ]]; then
 fi
 # cat ${HOME}/.bash_aliases
 
-printf "\e[00;32m-------------------------- Update --------------------------\e[00m\n"
-sudo apt update
-
 # --------------------- Install Prosody ----------------------
 curl -f -L -sS  https://raw.githubusercontent.com/sky01126/script-template/master/install/meet/install-prosody.sh -o /tmp/install-prosody.sh
-source /tmp/install-prosody.sh
-bash   /tmp/install-prosody.sh
+chmod +x /tmp/install-prosody.sh
+/tmp/install-prosody.sh
 
 printf "\e[00;32m------------------- Install Jitsi Meet ---------------------\e[00m\n"
 # Jitsi Meet 설치
@@ -134,8 +131,8 @@ read -e -p ' [Y / n](enter)] (default. n) > ' INSTALL_JITSI_MEET_TOKEN
 if [[ ! -z ${INSTALL_JITSI_MEET_TOKEN}  ]] && [[ "$(uppercase ${INSTALL_JITSI_MEET_TOKEN})" == "Y" ]]; then
     # ---------------- Install Jitsi Meet Tokens -----------------
     curl -f -L -sS  https://raw.githubusercontent.com/sky01126/script-template/master/install/meet/install-jitsi-meet-token.sh -o /tmp/install-jitsi-meet-token.sh
-    source /tmp/install-jitsi-meet-token.sh
-    bash   /tmp/install-jitsi-meet-token.sh
+    chmod +x /tmp/install-jitsi-meet-token.sh
+    /tmp/install-jitsi-meet-token.sh
 
     # domain prosody configuration (/etc/prosody/conf.avail)
     sudo sed -i 's/--plugin_paths = { "\/usr\/share\/jitsi-meet\/prosody-plugins\/" }/plugin_paths = { "\/usr\/share\/jitsi-meet\/prosody-plugins\/" }/g' /etc/prosody/conf.avail/${VHOST}.cfg.lua
@@ -152,8 +149,8 @@ fi
 
 # ---------------------- Setting Config ----------------------"
 curl -f -L -sS  https://raw.githubusercontent.com/sky01126/script-template/master/install/meet/config-setting.sh -o /tmp/config-setting.sh
-source /tmp/config-setting.sh
-bash   /tmp/config-setting.sh
+chmod +x /tmp/config-setting.sh
+/tmp/config-setting.sh
 
 printf "\e[00;32m------------------------- Restart --------------------------\e[00m\n"
 sudo service prosody            restart

@@ -3,7 +3,7 @@
 # 멀티 쉘 실행 : bash <(curl -f -L -sS https://raw.githubusercontent.com/sky01126/script-template/master/install/meet/config-setting.sh)
 #
 
-echo "---------------- Setting Turn Server Config ----------------"
+printf "\e[00;32m---------------- Setting Turn Server Config ----------------\e[00m\n"
 # turn server configuration 변경 (/usr/share/jitsi-meet-turnserver , /etc/nginx/modules-enabled)
 # /usr/share/jitsi-meet-turnserver/jitsi-meet.conf
 # default         turn; --> default web; 으로 변경
@@ -11,7 +11,7 @@ sudo sed -i 's/turn;/web;/g' /usr/share/jitsi-meet-turnserver/jitsi-meet.conf
 sudo ln -sf /usr/share/jitsi-meet-turnserver/jitsi-meet.conf /etc/nginx/modules-enabled/60-jitsi-meet.conf
 
 
-echo "------------------ Setting Prosody Config ------------------"
+printf "\e[00;32m------------------ Setting Prosody Config ------------------\e[00m\n"
 # prosody configuration (/etc/prosody)
 sudo sed -i 's/VirtualHost \"localhost\"/-- VirtualHost \"localhost\"/g' /etc/prosody/prosody.cfg.lua
 sudo sed -i 's/c2s_require_encryption = true/c2s_require_encryption = false/g' /etc/prosody/prosody.cfg.lua
@@ -24,7 +24,7 @@ fi
 sudo sed -i '/Include/d' /etc/prosody/prosody.cfg.lua
 echo "Include \"conf.d/*.cfg.lua\"" | sudo tee -a /etc/prosody/prosody.cfg.lua > /dev/null
 
-# echo "----------- Setting Prosody Guest Domain Config ------------"
+# printf "\e[00;32m----------- Setting Prosody Guest Domain Config ------------\e[00m\n"
 # if [[ ! -n $(sudo awk "/VirtualHost \"guest.${VHOST}\"/" /etc/prosody/conf.avail/${VHOST}.cfg.lua) ]]; then
 #     echo "" | sudo tee -a /etc/prosody/conf.avail/${VHOST}.cfg.lua > /dev/null
 #     echo "VirtualHost \"guest.${VHOST}\"" | sudo tee -a /etc/prosody/conf.avail/${VHOST}.cfg.lua > /dev/null
@@ -41,7 +41,7 @@ echo "Include \"conf.d/*.cfg.lua\"" | sudo tee -a /etc/prosody/prosody.cfg.lua >
 
 # fi
 
-echo "---------------- Setting Domain Config JS ------------------"
+printf "\e[00;32m---------------- Setting Domain Config JS ------------------\e[00m\n"
 # domain config.js configuration (/etc/jitsi/meet)
 sudo sed -i 's/p2pTestMode: false/p2pTestMode: false,\n        octo: {\n          probability: 1\n        },\n/g' /etc/jitsi/meet/${VHOST}-config.js
 sudo sed -i 's/\/\/ resolution: 720,/resolution: 720,\n    constraints: {\n        video: {\n            aspectRatio: 16 \/ 9,\n            height: {\n                ideal: 720,\n                max: 720,\n                min: 240\n            }\n        }\n    },/g' /etc/jitsi/meet/${VHOST}-config.js
@@ -49,7 +49,7 @@ sudo sed -i 's/enableUserRolesBasedOnToken: false/enableUserRolesBasedOnToken: t
 sudo sed -i 's/deploymentInfo: {/deploymentInfo: {\n        shard: \"shard\",\n        region: \"region1\",\n        userRegion: \"region1\"/g' /etc/jitsi/meet/${VHOST}-config.js
 sudo sed -i 's/\/\/ disableDeepLinking: false,/disableDeepLinking: true,/g' /etc/jitsi/meet/${VHOST}-config.js
 
-echo "------------------ Setting Jicofo Config -------------------"
+printf "\e[00;32m------------------ Setting Jicofo Config -------------------\e[00m\n"
 #jicofo configuration (/etc/jisti/jicofo)
 sudo sed -i "s/JICOFO_HOST=localhost/JICOFO_HOST=${VHOST}/g" /etc/jitsi/jicofo/config
 
@@ -60,7 +60,7 @@ if [[ ! -n $(sudo awk "/org.jitsi.jicofo.BridgeSelector.BRIDGE_SELECTION_STRATEG
     echo "org.jitsi.jicofo.BridgeSelector.BRIDGE_SELECTION_STRATEGY=SplitBridgeSelectionStrategy" | sudo tee -a /etc/jitsi/jicofo/sip-communicator.properties > /dev/null
 fi
 
-echo "--------------- Setting Video Bridge Config ----------------"
+printf "\e[00;32m--------------- Setting Video Bridge Config ----------------\e[00m\n"
 # jvb configuration (/etc/jitsi/videobridge)
 sudo sed -i "s/localhost/${VHOST}/g" /etc/jitsi/videobridge/sip-communicator.properties
 sudo sed -i "s/org.jitsi.videobridge.xmpp.user.shard.MUC_NICKNAME=.*/org.jitsi.videobridge.xmpp.user.shard.MUC_NICKNAME=${JVBNAME}/g" /etc/jitsi/videobridge/sip-communicator.properties

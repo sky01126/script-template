@@ -6,8 +6,7 @@
 # Exit on error
 set -e
 
-
-echo "--------------------- Install Prosody ----------------------"
+printf "\e[00;32m--------------------- Install Prosody ----------------------\e[00m\n"
 # Prosody 설치
 echo deb http://packages.prosody.im/debian $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list
 wget https://prosody.im/files/prosody-debian-packages.key -O- | sudo apt-key add -
@@ -19,6 +18,6 @@ sudo chown root:prosody /etc/prosody/certs/localhost.key
 sudo chmod 644 /etc/prosody/certs/localhost.key
 # cp /etc/prosody/certs/localhost.key /etc/ssl
 
-echo "--------------------- Check Prosody ------------------------"
+printf "\e[00;32m--------------------- Check Prosody ------------------------\e[00m\n"
 dpkg -l prosody
 

@@ -25,14 +25,14 @@ set -e
 sudo apt upgrade -y
 sudo apt update
 
-echo "------------------------ TEST START ------------------------"
-VHOST="sky01126.kthcorp.com"
+printf "\e[00;32m------------------------ TEST START ------------------------\e[00m\n"
+VHOST="meetlocal.kthcorp.com"
 JVBNAME="kthmeet-jvb"
 TOKEN_APP_ID="433D3BF7B0A185DA47330C810934FBFF"
 TOKEN_APP_SECRET="qwer1234"
-echo "------------------------- TEST END -------------------------"
+printf "\e[00;32m------------------------- TEST END -------------------------\e[00m\n"
 
-echo "-------------------- Setting Meet Config -------------------"
+printf "\e[00;32m-------------------- Setting Meet Config -------------------\e[00m\n"
 IPADDR=$(hostname -I | awk '{print $1}')
 
 if [[ -z ${VHOST} ]]; then
@@ -76,7 +76,7 @@ curl -f -L -sS  https://raw.githubusercontent.com/sky01126/script-template/maste
 source /tmp/kernel-setting.sh
 bash   /tmp/kernel-setting.sh
 
-echo "---------------------- Setting Alias -----------------------"
+printf "\e[00;32m---------------------- Setting Alias -----------------------\e[00m\n"
 # alias 설정 추가
 if [[ ! -n $(awk "/alias jvb-log/" ${HOME}/.bash_aliases) ]]; then
     echo "alias jvb-log='sudo tail -f /var/log/jitsi/jvb.log'" >> ${HOME}/.bash_aliases
@@ -101,7 +101,7 @@ if [[ ! -n $(awk "/alias allrestart/" ${HOME}/.bash_aliases) ]]; then
 fi
 # cat ${HOME}/.bash_aliases
 
-echo "-------------------------- Update --------------------------"
+printf "\e[00;32m-------------------------- Update --------------------------\e[00m\n"
 sudo apt update
 
 # --------------------- Install Prosody ----------------------
@@ -109,7 +109,7 @@ curl -f -L -sS  https://raw.githubusercontent.com/sky01126/script-template/maste
 source /tmp/install-prosody.sh
 bash   /tmp/install-prosody.sh
 
-echo "------------------- Install Jitsi Meet ---------------------"
+printf "\e[00;32m------------------- Install Jitsi Meet ---------------------\e[00m\n"
 # Jitsi Meet 설치
 sudo apt update
 sudo apt install apt-transport-https
@@ -122,13 +122,13 @@ echo 'deb [signed-by=/usr/share/keyrings/jitsi-keyring.gpg] https://download.jit
 sudo apt update
 sudo apt install -y jitsi-meet
 
-echo "------------------- Setting Virtual Host -------------------"
+printf "\e[00;32m------------------- Setting Virtual Host -------------------\e[00m\n"
 # Host 등록
 if [[ ! -n $(sudo awk "/${IPADDR} ${VHOST}/" /etc/hosts) ]]; then
     echo "${IPADDR} ${VHOST}" | sudo tee -a /etc/hosts > /dev/null
 fi
 
-echo "----------------- Install Jitsi Meet Token -----------------"
+printf "\e[00;32m----------------- Install Jitsi Meet Token -----------------\e[00m\n"
 printf "\e[00;32mEnter whether to install jitsi meet tokens?\e[00m"
 read -e -p ' [Y / n](enter)] (default. n) > ' INSTALL_JITSI_MEET_TOKEN
 if [[ ! -z ${INSTALL_JITSI_MEET_TOKEN}  ]] && [[ "$(uppercase ${INSTALL_JITSI_MEET_TOKEN})" == "Y" ]]; then
@@ -155,23 +155,23 @@ curl -f -L -sS  https://raw.githubusercontent.com/sky01126/script-template/maste
 source /tmp/config-setting.sh
 bash   /tmp/config-setting.sh
 
-echo "------------------------- Restart --------------------------"
+printf "\e[00;32m------------------------- Restart --------------------------\e[00m\n"
 sudo service prosody            restart
 sudo service jicofo             restart
 sudo service jitsi-videobridge2 restart
 sudo service nginx              restart
 
-echo "--------------------- Check Prosody ------------------------"
+printf "\e[00;32m--------------------- Check Prosody ------------------------\e[00m\n"
 dpkg -l prosody
 
-echo "---------------------- Check Jitsi -------------------------"
+printf "\e[00;32m---------------------- Check Jitsi -------------------------\e[00m\n"
 dpkg -l | grep jicofo
 
-echo "---------------------- Check Jitsi -------------------------"
+printf "\e[00;32m---------------------- Check Jitsi -------------------------\e[00m\n"
 dpkg -l | grep jitsi
 
 
-echo "------------------- Delete Install File --------------------"
+printf "\e[00;32m------------------- Delete Install File --------------------\e[00m\n"
 rm -rf /tmp/kernel-setting.sh
 rm -rf /tmp/install-prosody.sh
 rm -rf /tmp/install-jitsi-meet-token.sh

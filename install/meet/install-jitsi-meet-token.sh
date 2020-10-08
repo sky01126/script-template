@@ -9,19 +9,19 @@ set -e
 sudo apt upgrade -y
 sudo apt update
 
-echo "--------------------- Install Library ----------------------"
+printf "\e[00;32m--------------------- Install Library ----------------------\e[00m\n"
 sudo apt install -y gcc unzip lua5.2 liblua5.2-dev luarocks
 
-echo "--------------------- Install BASEXX -----------------------"
+printf "\e[00;32m--------------------- Install BASEXX -----------------------\e[00m\n"
 sudo luarocks install basexx
 
-echo "------------------ Install LIBSSL1.0-DEV -------------------"
+printf "\e[00;32m------------------ Install LIBSSL1.0-DEV -------------------\e[00m\n"
 sudo apt install -y libssl1.0-dev
 
-echo "-------------------- Install LUACRYPTO ---------------------"
+printf "\e[00;32m-------------------- Install LUACRYPTO ---------------------\e[00m\n"
 sudo luarocks install luacrypto
 
-echo "---------------------- Install CJSON -----------------------"
+printf "\e[00;32m---------------------- Install CJSON -----------------------\e[00m\n"
 mkdir src && cd src
 sudo luarocks download lua-cjson
 sudo luarocks unpack lua-cjson-2.1.0.6-1.src.rock
@@ -33,8 +33,8 @@ sudo sed -i 's|$(PREFIX)/include|/usr/include/lua5.2|g' ${HOME}/src/lua-cjson-2.
 cd ${HOME}/src/lua-cjson-2.1.0.6-1/lua-cjson
 sudo luarocks make
 
-echo "---------------- Install Jitsi Meet Tokens -----------------"
+printf "\e[00;32m---------------- Install Jitsi Meet Tokens -----------------\e[00m\n"
 sudo apt install -y jitsi-meet-tokens
 
-echo "--------------------- Check Prosody ------------------------"
+printf "\e[00;32m--------------------- Check Prosody ------------------------\e[00m\n"
 dpkg -l jitsi-meet-tokens

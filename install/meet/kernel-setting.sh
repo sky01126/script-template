@@ -6,7 +6,7 @@
 # Exit on error
 set -e
 
-echo "---------------- Setting Kernel Parameter ------------------"
+printf "\e[00;32m---------------- Setting Kernel Parameter ------------------\e[00m\n"
 # Kernel Parameter 변경
 if [[ ! -n $(awk "/net.core.rmem_max/" /etc/sysctl.conf) ]]; then
     sudo sh -c "echo 'net.core.rmem_max = 33554432' >> /etc/sysctl.conf"

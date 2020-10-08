@@ -145,4 +145,3 @@ printf "\e[00;32m------------------- Delete Install File --------------------\e[
 rm -rf /tmp/kernel-setting.sh
 rm -rf /tmp/install-jitsi-meet-token.sh
 rm -rf /tmp/config-setting.sh
-

@@ -10,13 +10,13 @@ printf "\e[00;32m--------------------- Install Library ----------------------\e[
 sudo apt install -y gcc unzip lua5.2 liblua5.2-dev luarocks
 
 # printf "\e[00;32m--------------------- Install Luarocks ---------------------\e[00m\n"
-# mkdir -p $HOME/src
-# cd $HOME/src
+# mkdir -p ${HOME}/src
+# cd ${HOME}/src
 
 # wget https://keplerproject.github.io/luarocks/releases/luarocks-2.4.1.tar.gz
 # tar xvzf luarocks-2.4.1.tar.gz
 
-# cd $HOME/src/luarocks-2.4.1
+# cd ${HOME}/src/luarocks-2.4.1
 # ./configure --lua-version=5.2 --versioned-rocks-dir
 # make build
 # sudo make install
@@ -31,8 +31,8 @@ printf "\e[00;32m-------------------- Install LUACRYPTO ---------------------\e[
 sudo luarocks install luacrypto
 
 printf "\e[00;32m---------------------- Install CJSON -----------------------\e[00m\n"
-mkdir -p $HOME/src
-cd $HOME/src
+mkdir -p ${HOME}/src
+cd ${HOME}/src
 
 sudo luarocks download lua-cjson
 sudo luarocks unpack lua-cjson-2.1.0.6-1.src.rock

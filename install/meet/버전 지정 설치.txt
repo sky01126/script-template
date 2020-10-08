@@ -1,4 +1,4 @@
-$ sudo apt install -y gcc unzip lua5.2 liblua5.2-dev luarocks
+$ bash <(curl -f -L -sS https://raw.githubusercontent.com/sky01126/script-template/master/install/meet/install-prosody.sh)
 
 $ sudo apt install apt-transport-https                      &&
   sudo apt-add-repository universe                          &&
@@ -20,6 +20,8 @@ $ sudo apt install -y jicofo=1.0-626-1                      \
 
 $ sudo apt install -y jitsi-meet=2.0.4966-1
 
+
+$ sudo apt list --installed | grep lua
 
 ## 버전 확인
 dpkg -l | grep jicofo && dpkg -l | grep jitsi

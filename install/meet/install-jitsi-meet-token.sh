@@ -7,41 +7,41 @@
 set -e
 
 printf "\e[00;32m--------------------- Install Library ----------------------\e[00m\n"
-sudo apt install -y gcc unzip lua5.2 liblua5.2-dev # luarocks
+sudo apt install -y gcc unzip lua5.2 liblua5.2-dev luarocks
 
-printf "\e[00;32m--------------------- Install Luarocks ---------------------\e[00m\n"
-mkdir $HOME/src
-cd $HOME/src
+# printf "\e[00;32m--------------------- Install Luarocks ---------------------\e[00m\n"
+# mkdir $HOME/src
+# cd $HOME/src
 
-wget https://keplerproject.github.io/luarocks/releases/luarocks-2.4.1.tar.gz
-tar xvzf luarocks-2.4.1.tar.gz
+# wget https://keplerproject.github.io/luarocks/releases/luarocks-2.4.1.tar.gz
+# tar xvzf luarocks-2.4.1.tar.gz
 
-cd $HOME/src/luarocks-2.4.1
-./configure --lua-version=5.2 --versioned-rocks-dir
-make build
-sudo make install
+# cd $HOME/src/luarocks-2.4.1
+# ./configure --lua-version=5.2 --versioned-rocks-dir
+# make build
+# sudo make install
 
 printf "\e[00;32m---------------------- Install BASEXX ----------------------\e[00m\n"
-sudo luarocks-5.2 install basexx
+sudo luarocks install basexx
 
 printf "\e[00;32m------------------ Install LIBSSL1.0-DEV -------------------\e[00m\n"
 sudo apt install -y libssl1.0-dev
 
 printf "\e[00;32m-------------------- Install LUACRYPTO ---------------------\e[00m\n"
-sudo luarocks-5.2 install luacrypto
+sudo luarocks install luacrypto
 
 printf "\e[00;32m---------------------- Install CJSON -----------------------\e[00m\n"
 cd $HOME/src
 
-sudo luarocks-5.2 download lua-cjson
-sudo luarocks-5.2 unpack lua-cjson-2.1.0.6-1.src.rock
+sudo luarocks download lua-cjson
+sudo luarocks unpack lua-cjson-2.1.0.6-1.src.rock
 
 sudo sed -i 's/lua_objlen/lua_rawlen/g' ${HOME}/src/lua-cjson-2.1.0.6-1/lua-cjson/lua_cjson.c
 sudo sed -i 's/5.1/5.2/g' ${HOME}/src/lua-cjson-2.1.0.6-1/lua-cjson/Makefile
 sudo sed -i 's|$(PREFIX)/include|/usr/include/lua5.2|g' ${HOME}/src/lua-cjson-2.1.0.6-1/lua-cjson/Makefile
 
 cd ${HOME}/src/lua-cjson-2.1.0.6-1/lua-cjson
-sudo luarocks-5.2 make
+sudo luarocks make
 
 printf "\e[00;32m---------------- Install Jitsi Meet Tokens -----------------\e[00m\n"
 sudo apt install -y jitsi-meet-tokens

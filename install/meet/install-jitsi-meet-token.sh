@@ -10,7 +10,7 @@ printf "\e[00;32m--------------------- Install Library ----------------------\e[
 sudo apt install -y gcc unzip lua5.2 liblua5.2-dev luarocks
 
 # printf "\e[00;32m--------------------- Install Luarocks ---------------------\e[00m\n"
-# mkdir $HOME/src
+# mkdir -p $HOME/src
 # cd $HOME/src
 
 # wget https://keplerproject.github.io/luarocks/releases/luarocks-2.4.1.tar.gz

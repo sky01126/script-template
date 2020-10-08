@@ -20,7 +20,7 @@ TOKEN_APP_ID="433D3BF7B0A185DA47330C810934FBFF"
 TOKEN_APP_SECRET="qwer1234"
 printf "\e[00;32m------------------------- TEST END -------------------------\e[00m\n"
 
-printf "\e[00;32m-------------------- Setting Meet Config -------------------\e[00m\n"
+printf "\e[00;32m------------------- Setting Meet Config --------------------\e[00m\n"
 IPADDR=$(hostname -I | awk '{print $1}')
 
 if [[ -z ${VHOST} ]]; then
@@ -59,7 +59,7 @@ if [[ -z ${TOKEN_APP_SECRET} ]]; then
     done
 fi
 
-printf "\e[00;32m---------------- Setting Kernel Parameter ------------------\e[00m\n"
+printf "\e[00;32m----------------- Setting Kernel Parameter -----------------\e[00m\n"
 # Kernel Parameter 변경
 if [[ ! -n $(awk "/net.core.rmem_max/" /etc/sysctl.conf) ]]; then
     sudo sh -c "echo 'net.core.rmem_max = 33554432' >> /etc/sysctl.conf"
@@ -149,7 +149,6 @@ fi
 sudo sed -i '/Include/d' /etc/prosody/prosody.cfg.lua
 echo "Include \"conf.d/*.cfg.lua\"" | sudo tee -a /etc/prosody/prosody.cfg.lua > /dev/null
 
-
 # printf "\e[00;32m-------------- Setting Prosody Domain Config ---------------\e[00m\n"
 # # domain prosody configuration (/etc/prosody/conf.avail)
 # sudo sed -i 's/--plugin_paths = { "\/usr\/share\/jitsi-meet\/prosody-plugins\/" }/plugin_paths = { "\/usr\/share\/jitsi-meet\/prosody-plugins\/" }/g' /etc/prosody/conf.avail/${VHOST}.cfg.lua
@@ -178,7 +177,7 @@ echo "Include \"conf.d/*.cfg.lua\"" | sudo tee -a /etc/prosody/prosody.cfg.lua >
 # sudo ln -sf /var/lib/prosody/${VHOST}.crt /etc/prosody/certs/${VHOST}.crt
 # sudo ln -sf /var/lib/prosody/${VHOST}.key /etc/prosody/certs/${VHOST}.key
 
-printf "\e[00;32m---------------- Setting Domain Config JS ------------------\e[00m\n"
+printf "\e[00;32m----------------- Setting Domain Config JS -----------------\e[00m\n"
 # domain config.js configuration (/etc/jitsi/meet)
 sudo sed -i 's/p2pTestMode: false/p2pTestMode: false,\n        octo: {\n          probability: 1\n        },\n/g' /etc/jitsi/meet/${VHOST}-config.js
 sudo sed -i 's/\/\/ resolution: 720,/resolution: 720,\n    constraints: {\n        video: {\n            aspectRatio: 16 \/ 9,\n            height: {\n                ideal: 720,\n                max: 720,\n                min: 240\n            }\n        }\n    },/g' /etc/jitsi/meet/${VHOST}-config.js
@@ -227,18 +226,18 @@ if [[ ! -n $(sudo awk "/org.ice4j.ipv6.DISABLED/" /etc/jitsi/videobridge/sip-com
     echo "org.ice4j.ipv6.DISABLED=true" | sudo tee -a /etc/jitsi/videobridge/sip-communicator.properties > /dev/null
 fi
 
-printf "\e[00;32m------------------------- Restart --------------------------\e[00m\n"
+printf "\e[00;32m----------------------- All Restart ------------------------\e[00m\n"
 sudo service prosody            restart
 sudo service jicofo             restart
 sudo service jitsi-videobridge2 restart
 sudo service nginx              restart
 
-printf "\e[00;32m--------------------- Check Prosody ------------------------\e[00m\n"
+printf "\e[00;32m---------------------- Check Prosody -----------------------\e[00m\n"
 dpkg -l prosody
 
-printf "\e[00;32m---------------------- Check Jitsi -------------------------\e[00m\n"
+printf "\e[00;32m----------------------- Check Jitsi ------------------------\e[00m\n"
 dpkg -l | grep jicofo
 
-printf "\e[00;32m---------------------- Check Jitsi -------------------------\e[00m\n"
+printf "\e[00;32m----------------------- Check Jitsi ------------------------\e[00m\n"
 dpkg -l | grep jitsi
 

@@ -10,7 +10,6 @@ printf "\e[00;32m---------------- Setting Turn Server Config ----------------\e[
 sudo sed -i 's/turn;/web;/g' /usr/share/jitsi-meet-turnserver/jitsi-meet.conf
 sudo ln -sf /usr/share/jitsi-meet-turnserver/jitsi-meet.conf /etc/nginx/modules-enabled/60-jitsi-meet.conf
 
-
 printf "\e[00;32m------------------ Setting Prosody Config ------------------\e[00m\n"
 # prosody configuration (/etc/prosody)
 sudo sed -i 's/VirtualHost \"localhost\"/-- VirtualHost \"localhost\"/g' /etc/prosody/prosody.cfg.lua
@@ -41,7 +40,7 @@ echo "Include \"conf.d/*.cfg.lua\"" | sudo tee -a /etc/prosody/prosody.cfg.lua >
 
 # fi
 
-printf "\e[00;32m---------------- Setting Domain Config JS ------------------\e[00m\n"
+printf "\e[00;32m----------------- Setting Domain Config JS -----------------\e[00m\n"
 # domain config.js configuration (/etc/jitsi/meet)
 sudo sed -i 's/p2pTestMode: false/p2pTestMode: false,\n        octo: {\n          probability: 1\n        },\n/g' /etc/jitsi/meet/${VHOST}-config.js
 sudo sed -i 's/\/\/ resolution: 720,/resolution: 720,\n    constraints: {\n        video: {\n            aspectRatio: 16 \/ 9,\n            height: {\n                ideal: 720,\n                max: 720,\n                min: 240\n            }\n        }\n    },/g' /etc/jitsi/meet/${VHOST}-config.js

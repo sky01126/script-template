@@ -18,6 +18,6 @@ sudo chown root:prosody /etc/prosody/certs/localhost.key
 sudo chmod 644 /etc/prosody/certs/localhost.key
 # cp /etc/prosody/certs/localhost.key /etc/ssl
 
-printf "\e[00;32m--------------------- Check Prosody ------------------------\e[00m\n"
+printf "\e[00;32m---------------------- Check Prosody -----------------------\e[00m\n"
 dpkg -l prosody
 

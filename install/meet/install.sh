@@ -29,7 +29,7 @@ TOKEN_APP_ID="433D3BF7B0A185DA47330C810934FBFF"
 TOKEN_APP_SECRET="qwer1234"
 printf "\e[00;32m------------------------- TEST END -------------------------\e[00m\n"
 
-printf "\e[00;32m-------------------- Setting Meet Config -------------------\e[00m\n"
+printf "\e[00;32m------------------- Setting Meet Config --------------------\e[00m\n"
 IPADDR=$(hostname -I | awk '{print $1}')
 
 if [[ -z ${VHOST} ]]; then
@@ -103,7 +103,7 @@ curl -f -L -sS  https://raw.githubusercontent.com/sky01126/script-template/maste
 chmod +x /tmp/install-prosody.sh
 /tmp/install-prosody.sh
 
-printf "\e[00;32m------------------- Install Jitsi Meet ---------------------\e[00m\n"
+printf "\e[00;32m-------------------- Install Jitsi Meet --------------------\e[00m\n"
 # Jitsi Meet 설치
 sudo apt install apt-transport-https
 sudo apt-add-repository universe
@@ -148,21 +148,20 @@ curl -f -L -sS  https://raw.githubusercontent.com/sky01126/script-template/maste
 chmod +x /tmp/config-setting.sh
 /tmp/config-setting.sh
 
-printf "\e[00;32m------------------------- Restart --------------------------\e[00m\n"
+printf "\e[00;32m----------------------- All Restart -------------------------\e[00m\n"
 sudo service prosody            restart
 sudo service jicofo             restart
 sudo service jitsi-videobridge2 restart
 sudo service nginx              restart
 
-printf "\e[00;32m--------------------- Check Prosody ------------------------\e[00m\n"
+printf "\e[00;32m---------------------- Check Prosody -----------------------\e[00m\n"
 dpkg -l prosody
 
-printf "\e[00;32m---------------------- Check Jitsi -------------------------\e[00m\n"
+printf "\e[00;32m----------------------- Check Jicofo -----------------------\e[00m\n"
 dpkg -l | grep jicofo
 
-printf "\e[00;32m---------------------- Check Jitsi -------------------------\e[00m\n"
+printf "\e[00;32m----------------------- Check Jitsi ------------------------\e[00m\n"
 dpkg -l | grep jitsi
-
 
 printf "\e[00;32m------------------- Delete Install File --------------------\e[00m\n"
 rm -rf /tmp/kernel-setting.sh

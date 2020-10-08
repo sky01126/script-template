@@ -9,7 +9,7 @@ set -e
 printf "\e[00;32m--------------------- Install Library ----------------------\e[00m\n"
 sudo apt install -y gcc unzip lua5.2 liblua5.2-dev luarocks
 
-printf "\e[00;32m--------------------- Install BASEXX -----------------------\e[00m\n"
+printf "\e[00;32m---------------------- Install BASEXX ----------------------\e[00m\n"
 sudo luarocks install basexx
 
 printf "\e[00;32m------------------ Install LIBSSL1.0-DEV -------------------\e[00m\n"
@@ -33,5 +33,5 @@ sudo luarocks make
 printf "\e[00;32m---------------- Install Jitsi Meet Tokens -----------------\e[00m\n"
 sudo apt install -y jitsi-meet-tokens
 
-printf "\e[00;32m--------------------- Check Prosody ------------------------\e[00m\n"
+printf "\e[00;32m---------------------- Check Prosody -----------------------\e[00m\n"
 dpkg -l jitsi-meet-tokens

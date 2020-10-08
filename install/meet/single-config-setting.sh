@@ -14,10 +14,10 @@ sudo dpkg --configure -a
 set -e
 
 printf "\e[00;32m------------------------ TEST START ------------------------\e[00m\n"
-VHOST="meetlocal.kthcorp.com"
-JVBNAME="kthmeet-jvb"
-TOKEN_APP_ID="433D3BF7B0A185DA47330C810934FBFF"
-TOKEN_APP_SECRET="qwer1234"
+export VHOST="meetlocal.kthcorp.com"
+export JVBNAME="kthmeet-jvb"
+export TOKEN_APP_ID="433D3BF7B0A185DA47330C810934FBFF"
+export TOKEN_APP_SECRET="qwer1234"
 printf "\e[00;32m------------------------- TEST END -------------------------\e[00m\n"
 
 printf "\e[00;32m------------------- Setting Meet Config --------------------\e[00m\n"
@@ -86,6 +86,12 @@ if [[ ! -n $(awk "/alias allstop/" ${HOME}/.bash_aliases) ]]; then
 fi
 if [[ ! -n $(awk "/alias allrestart/" ${HOME}/.bash_aliases) ]]; then
     echo "alias restart-all='sudo service prosody restart && sudo service jicofo restart && sudo service jitsi-videobridge2 restart && sudo service nginx restart'" >> ${HOME}/.bash_aliases
+fi
+
+printf "\e[00;32m------------------- Setting Virtual Host -------------------\e[00m\n"
+# Host 등록
+if [[ ! -n $(sudo awk "/${IPADDR} ${VHOST}/" /etc/hosts) ]]; then
+    echo "${IPADDR} ${VHOST}" | sudo tee -a /etc/hosts > /dev/null
 fi
 
 printf "\e[00;32m----------------- Install Jitsi Meet Token -----------------\e[00m\n"

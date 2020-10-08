@@ -23,10 +23,10 @@ uppercase() {
 set -e
 
 printf "\e[00;32m------------------------ TEST START ------------------------\e[00m\n"
-VHOST="meetlocal.kthcorp.com"
-JVBNAME="kthmeet-jvb"
-TOKEN_APP_ID="433D3BF7B0A185DA47330C810934FBFF"
-TOKEN_APP_SECRET="qwer1234"
+export VHOST="meetlocal.kthcorp.com"
+export JVBNAME="kthmeet-jvb"
+export TOKEN_APP_ID="433D3BF7B0A185DA47330C810934FBFF"
+export TOKEN_APP_SECRET="qwer1234"
 printf "\e[00;32m------------------------- TEST END -------------------------\e[00m\n"
 
 printf "\e[00;32m------------------- Setting Meet Config --------------------\e[00m\n"

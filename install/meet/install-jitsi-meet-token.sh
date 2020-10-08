@@ -46,6 +46,3 @@ sudo luarocks make
 
 printf "\e[00;32m---------------- Install Jitsi Meet Tokens -----------------\e[00m\n"
 sudo apt install -y jitsi-meet-tokens
-
-printf "\e[00;32m---------------------- Check Prosody -----------------------\e[00m\n"
-dpkg -l jitsi-meet-tokens

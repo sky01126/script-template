@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# 멀티 쉘 실행 : bash <(curl -f -L -sS https://raw.githubusercontent.com/sky01126/script-template/master/install/meet/prosody.sh)
+# 멀티 쉘 실행 : bash <(curl -f -L -sS https://raw.githubusercontent.com/sky01126/script-template/master/install/meet/install-prosody.sh)
 #
 # 사전작업
 # FQDN 설정 /etc/hosts 파일 127.0.0.1 에 도메인 입력

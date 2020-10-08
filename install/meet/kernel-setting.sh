@@ -108,28 +108,3 @@ for i in `seq 0 $((${#net_list[*]}-1))`; do
 done
 
 sudo sysctl -p
-
-
-echo "---------------------- Setting Alias -----------------------"
-# alias 설정 추가
-if [[ ! -n $(awk "/alias jvb-log/" ${HOME}/.bash_aliases) ]]; then
-    echo "alias jvb-log='sudo tail -f /var/log/jitsi/jvb.log'" >> ${HOME}/.bash_aliases
-fi
-if [[ ! -n $(awk "/alias jicofo-log/" ${HOME}/.bash_aliases) ]]; then
-    echo "alias jicofo-log='sudo tail -f /var/log/jitsi/jicofo.log'" >> ${HOME}/.bash_aliases
-fi
-if [[ ! -n $(awk "/alias prosody-err/" ${HOME}/.bash_aliases) ]]; then
-    echo "alias prosody-err='sudo tail -f /var/log/prosody/prosody.err'" >> ${HOME}/.bash_aliases
-fi
-if [[ ! -n $(awk "/alias prosody-log/" ${HOME}/.bash_aliases) ]]; then
-    echo "alias prosody-log='sudo tail -f /var/log/prosody/prosody.log'" >> ${HOME}/.bash_aliases
-fi
-if [[ ! -n $(awk "/alias allstart/" ${HOME}/.bash_aliases) ]]; then
-    echo "alias start-all='sudo service prosody start && sudo service jicofo start && sudo service jitsi-videobridge2 start && sudo service nginx start'" >> ${HOME}/.bash_aliases
-fi
-if [[ ! -n $(awk "/alias allstop/" ${HOME}/.bash_aliases) ]]; then
-    echo "alias stop-all='sudo service prosody stop && sudo service jicofo stop && sudo service jitsi-videobridge2 stop && sudo service nginx stop'" >> ${HOME}/.bash_aliases
-fi
-if [[ ! -n $(awk "/alias allrestart/" ${HOME}/.bash_aliases) ]]; then
-    echo "alias restart-all='sudo service prosody restart && sudo service jicofo restart && sudo service jitsi-videobridge2 restart && sudo service nginx restart'" >> ${HOME}/.bash_aliases
-fi

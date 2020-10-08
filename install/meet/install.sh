@@ -22,9 +22,6 @@ uppercase() {
 # Exit on error
 set -e
 
-sudo apt upgrade -y
-sudo apt update
-
 printf "\e[00;32m------------------------ TEST START ------------------------\e[00m\n"
 VHOST="meetlocal.kthcorp.com"
 JVBNAME="kthmeet-jvb"
@@ -108,7 +105,6 @@ chmod +x /tmp/install-prosody.sh
 
 printf "\e[00;32m------------------- Install Jitsi Meet ---------------------\e[00m\n"
 # Jitsi Meet 설치
-sudo apt update
 sudo apt install apt-transport-https
 sudo apt-add-repository universe
 sudo apt update

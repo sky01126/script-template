@@ -13,16 +13,12 @@ sudo dpkg --configure -a
 # Exit on error
 set -e
 
-sudo apt update
-
-
 printf "\e[00;32m------------------------ TEST START ------------------------\e[00m\n"
 VHOST="meetlocal.kthcorp.com"
 JVBNAME="kthmeet-jvb"
 TOKEN_APP_ID="433D3BF7B0A185DA47330C810934FBFF"
 TOKEN_APP_SECRET="qwer1234"
 printf "\e[00;32m------------------------- TEST END -------------------------\e[00m\n"
-
 
 printf "\e[00;32m-------------------- Setting Meet Config -------------------\e[00m\n"
 IPADDR=$(hostname -I | awk '{print $1}')
@@ -62,7 +58,6 @@ if [[ -z ${TOKEN_APP_SECRET} ]]; then
         read -e -p " > " TOKEN_APP_SECRET
     done
 fi
-
 
 printf "\e[00;32m---------------- Setting Kernel Parameter ------------------\e[00m\n"
 # Kernel Parameter 변경
@@ -110,7 +105,6 @@ done
 
 sudo sysctl -p
 
-
 printf "\e[00;32m---------------------- Setting Alias -----------------------\e[00m\n"
 # alias 설정 추가
 if [[ ! -n $(awk "/alias jvb-log/" ${HOME}/.bash_aliases) ]]; then
@@ -135,14 +129,12 @@ if [[ ! -n $(awk "/alias allrestart/" ${HOME}/.bash_aliases) ]]; then
     echo "alias restart-all='sudo service prosody restart && sudo service jicofo restart && sudo service jitsi-videobridge2 restart && sudo service nginx restart'" >> ${HOME}/.bash_aliases
 fi
 
-
 printf "\e[00;32m---------------- Setting Turn Server Config ----------------\e[00m\n"
 # turn server configuration 변경 (/usr/share/jitsi-meet-turnserver , /etc/nginx/modules-enabled)
 # /usr/share/jitsi-meet-turnserver/jitsi-meet.conf
 # default         turn; --> default web; 으로 변경
 sudo sed -i 's/turn;/web;/g' /usr/share/jitsi-meet-turnserver/jitsi-meet.conf
 sudo ln -sf /usr/share/jitsi-meet-turnserver/jitsi-meet.conf /etc/nginx/modules-enabled/60-jitsi-meet.conf
-
 
 printf "\e[00;32m------------------ Setting Prosody Config ------------------\e[00m\n"
 # prosody configuration (/etc/prosody)
@@ -186,7 +178,6 @@ echo "Include \"conf.d/*.cfg.lua\"" | sudo tee -a /etc/prosody/prosody.cfg.lua >
 # sudo ln -sf /var/lib/prosody/${VHOST}.crt /etc/prosody/certs/${VHOST}.crt
 # sudo ln -sf /var/lib/prosody/${VHOST}.key /etc/prosody/certs/${VHOST}.key
 
-
 printf "\e[00;32m---------------- Setting Domain Config JS ------------------\e[00m\n"
 # domain config.js configuration (/etc/jitsi/meet)
 sudo sed -i 's/p2pTestMode: false/p2pTestMode: false,\n        octo: {\n          probability: 1\n        },\n/g' /etc/jitsi/meet/${VHOST}-config.js
@@ -194,7 +185,6 @@ sudo sed -i 's/\/\/ resolution: 720,/resolution: 720,\n    constraints: {\n     
 sudo sed -i 's/enableUserRolesBasedOnToken: false/enableUserRolesBasedOnToken: true/g' /etc/jitsi/meet/${VHOST}-config.js
 sudo sed -i 's/deploymentInfo: {/deploymentInfo: {\n        shard: \"shard\",\n        region: \"region1\",\n        userRegion: \"region1\"/g' /etc/jitsi/meet/${VHOST}-config.js
 sudo sed -i 's/\/\/ disableDeepLinking: false,/disableDeepLinking: true,/g' /etc/jitsi/meet/${VHOST}-config.js
-
 
 printf "\e[00;32m------------------ Setting Jicofo Config -------------------\e[00m\n"
 #jicofo configuration (/etc/jisti/jicofo)
@@ -206,7 +196,6 @@ fi
 if [[ ! -n $(sudo awk "/org.jitsi.jicofo.BridgeSelector.BRIDGE_SELECTION_STRATEGY/" /etc/jitsi/jicofo/sip-communicator.properties) ]]; then
     echo "org.jitsi.jicofo.BridgeSelector.BRIDGE_SELECTION_STRATEGY=SplitBridgeSelectionStrategy" | sudo tee -a /etc/jitsi/jicofo/sip-communicator.properties > /dev/null
 fi
-
 
 printf "\e[00;32m--------------- Setting Video Bridge Config ----------------\e[00m\n"
 # jvb configuration (/etc/jitsi/videobridge)
@@ -238,21 +227,17 @@ if [[ ! -n $(sudo awk "/org.ice4j.ipv6.DISABLED/" /etc/jitsi/videobridge/sip-com
     echo "org.ice4j.ipv6.DISABLED=true" | sudo tee -a /etc/jitsi/videobridge/sip-communicator.properties > /dev/null
 fi
 
-
 printf "\e[00;32m------------------------- Restart --------------------------\e[00m\n"
 sudo service prosody            restart
 sudo service jicofo             restart
 sudo service jitsi-videobridge2 restart
 sudo service nginx              restart
 
-
 printf "\e[00;32m--------------------- Check Prosody ------------------------\e[00m\n"
 dpkg -l prosody
 
-
 printf "\e[00;32m---------------------- Check Jitsi -------------------------\e[00m\n"
 dpkg -l | grep jicofo
-
 
 printf "\e[00;32m---------------------- Check Jitsi -------------------------\e[00m\n"
 dpkg -l | grep jitsi

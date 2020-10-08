@@ -6,9 +6,6 @@
 # Exit on error
 set -e
 
-sudo apt upgrade -y
-sudo apt update
-
 printf "\e[00;32m--------------------- Install Library ----------------------\e[00m\n"
 sudo apt install -y gcc unzip lua5.2 liblua5.2-dev luarocks
 

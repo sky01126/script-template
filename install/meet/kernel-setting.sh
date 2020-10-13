@@ -56,3 +56,5 @@ printf "\e[00;32m------------------ Setting System Config -------------------\e[
 sudo sed -i 's/#DefaultLimitNOFILE=/DefaultLimitNOFILE=65000/g' /etc/systemd/system.conf
 sudo sed -i 's/#DefaultLimitNPROC=/DefaultLimitNPROC=65000/g' /etc/systemd/system.conf
 sudo sed -i 's/#DefaultTasksMax=/DefaultTasksMax=65000/g' /etc/systemd/system.conf
+
+sudo systemctl daemon-reload

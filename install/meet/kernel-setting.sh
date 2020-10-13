@@ -51,3 +51,8 @@ for i in `seq 0 $((${#net_list[*]}-1))`; do
 done
 
 sudo sysctl -p
+
+printf "\e[00;32m------------------ Setting System Config -------------------\e[00m\n"
+sudo sed -i 's/#DefaultLimitNOFILE=/DefaultLimitNOFILE=65000/g' /etc/systemd/system.conf
+sudo sed -i 's/#DefaultLimitNPROC=/DefaultLimitNPROC=65000/g' /etc/systemd/system.conf
+sudo sed -i 's/#DefaultTasksMax=/DefaultTasksMax=65000/g' /etc/systemd/system.conf

@@ -17,22 +17,28 @@ sudo sed -i 's/c2s_require_encryption = true/c2s_require_encryption = false/g' /
 
 if [[ ! -n $(sudo awk "/network_backend/" /etc/prosody/prosody.cfg.lua) ]]; then
     echo "-- Enable use of native prosody 0.11 support for epoll over select" | sudo tee -a /etc/prosody/prosody.cfg.lua > /dev/null
-    echo "network_backend = \"epoll\";\n" | sudo tee -a /etc/prosody/prosody.cfg.lua > /dev/null
+    echo "network_backend = \"epoll\";" | sudo tee -a /etc/prosody/prosody.cfg.lua > /dev/null
+    echo "" | sudo tee -a /etc/prosody/prosody.cfg.lua > /dev/null
 fi
 
 if [[ ! -n $(sudo awk "/network_settings/" /etc/prosody/prosody.cfg.lua) ]]; then
     echo "-- Set the TCP backlog to 511 since the kernel rounds it up to the next power of 2: 512." | sudo tee -a /etc/prosody/prosody.cfg.lua > /dev/null
     echo "network_settings = {" | sudo tee -a /etc/prosody/prosody.cfg.lua > /dev/null
-    echo "  tcp_backlog = 511;" | sudo tee -a /etc/prosody/prosody.cfg.lua > /dev/null
-    echo "}\n" | sudo tee -a /etc/prosody/prosody.cfg.lua > /dev/null
+    echo "    tcp_backlog = 511;" | sudo tee -a /etc/prosody/prosody.cfg.lua > /dev/null
+    echo "}" | sudo tee -a /etc/prosody/prosody.cfg.lua > /dev/null
+    echo "" | sudo tee -a /etc/prosody/prosody.cfg.lua > /dev/null
 fi
 
 if [[ ! -n $(sudo awk "/component_interface/" /etc/prosody/prosody.cfg.lua) ]]; then
-    echo "component_interface = { \"*\" }\n" | sudo tee -a /etc/prosody/prosody.cfg.lua > /dev/null
+    echo "component_interface = { \"*\" }" | sudo tee -a /etc/prosody/prosody.cfg.lua > /dev/null
+    echo "    \"*\"" | sudo tee -a /etc/prosody/prosody.cfg.lua > /dev/null
+    echo "}" | sudo tee -a /etc/prosody/prosody.cfg.lua > /dev/null
+    echo "" | sudo tee -a /etc/prosody/prosody.cfg.lua > /dev/null
 fi
 
 sudo sed -i '/Include/d' /etc/prosody/prosody.cfg.lua
-echo "Include \"conf.d/*.cfg.lua\"\n" | sudo tee -a /etc/prosody/prosody.cfg.lua > /dev/null
+echo "Include \"conf.d/*.cfg.lua\"" | sudo tee -a /etc/prosody/prosody.cfg.lua > /dev/null
+echo "" | sudo tee -a /etc/prosody/prosody.cfg.lua > /dev/null
 
 # printf "\e[00;32m----------- Setting Prosody Guest Domain Config ------------\e[00m\n"
 # if [[ ! -n $(sudo awk "/VirtualHost \"guest.${VHOST}\"/" /etc/prosody/conf.avail/${VHOST}.cfg.lua) ]]; then

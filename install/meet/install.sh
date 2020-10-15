@@ -136,16 +136,15 @@ if [[ ! -z ${INSTALL_JITSI_MEET_TOKEN}  ]] && [[ "$(uppercase ${INSTALL_JITSI_ME
 
     # domain prosody configuration (/etc/prosody/conf.avail)
     sudo sed -i 's/--plugin_paths = { "\/usr\/share\/jitsi-meet\/prosody-plugins\/" }/plugin_paths = { "\/usr\/share\/jitsi-meet\/prosody-plugins\/" }/g' /etc/prosody/conf.avail/${VHOST}.cfg.lua
-    sudo sed -i 's/cross_domain_bosh = false;/cross_domain_bosh = true;/g' /etc/prosody/conf.avail/${VHOST}.cfg.lua
-    sudo sed -i 's/consider_bosh_secure = true;/-- bosh_max_inactivity = 30\nconsider_bosh_secure = false;\n-- asap_accepted_audiences = { "jitsi" }/g' /etc/prosody/conf.avail/${VHOST}.cfg.lua
+    sudo sed -i 's/cross_domain_bosh = false;/-- bosh_max_inactivity = 30\ncross_domain_bosh = true;/g' /etc/prosody/conf.avail/${VHOST}.cfg.lua
+    sudo sed -i 's/consider_bosh_secure = true;/consider_bosh_secure = false;\n-- asap_accepted_audiences = { "jitsi" }/g' /etc/prosody/conf.avail/${VHOST}.cfg.lua
     sudo sed -i 's/authentication = "anonymous"/authentication = "token"/g' /etc/prosody/conf.avail/${VHOST}.cfg.lua
     sudo sed -i "s/--app_id=\"example_app_id\"/app_id = \"${TOKEN_APP_ID}\"/g" /etc/prosody/conf.avail/${VHOST}.cfg.lua
     sudo sed -i "s/--app_secret=\"example_app_secret\"/app_secret = \"${TOKEN_APP_SECRET}\"/g" /etc/prosody/conf.avail/${VHOST}.cfg.lua
-    sudo sed -i 's/"bosh";/"bosh";\n            "presence_identity";/g' /etc/prosody/conf.avail/${VHOST}.cfg.lua
-    # sudo sed -i 's/-- "token_verification";/"token_verification\";\n        \"token_moderation\";\n        \"kthmeet_logging\";/g' /etc/prosody/conf.avail/${VHOST}.cfg.lua
     sudo sed -i 's/-- "token_verification";/"token_verification\";/g' /etc/prosody/conf.avail/${VHOST}.cfg.lua
     sudo sed -i 's/          "token_verification";/        "token_verification";/g' /etc/prosody/conf.avail/${VHOST}.cfg.lua
 fi
+sudo sed -i 's/"bosh";/"bosh";\n            -- "websocket";\n            "presence_identity";/g' /etc/prosody/conf.avail/${VHOST}.cfg.lua
 
 # ---------------------- Setting Config ----------------------"
 curl -f -L -sS  https://raw.githubusercontent.com/sky01126/script-template/master/install/meet/config-setting.sh -o /tmp/config-setting.sh

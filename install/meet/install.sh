@@ -22,6 +22,10 @@ uppercase() {
 # Exit on error
 set -e
 
+printf "\e[00;32m------------------------- Upgrade --------------------------\e[00m\n"
+sudo apt upgrade -y
+sudo apt update
+
 printf "\e[00;32m------------------------ TEST START ------------------------\e[00m\n"
 export VHOST="meetlocal.kthcorp.com"
 export JVBNAME="kthmeet-jvb"

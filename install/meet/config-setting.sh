@@ -21,10 +21,10 @@ if [[ ! -n $(sudo awk "/network_backend/" /etc/prosody/prosody.cfg.lua) ]]; then
 fi
 
 if [[ ! -n $(sudo awk "/network_settings/" /etc/prosody/prosody.cfg.lua) ]]; then
-    echo "-- Set the TCP backlog to 511 since the kernel rounds it up to the next power of 2: 512." | sudo tee -a /etc/prosody/prosody.cfg.lua > /dev/null\
-    echo "network_settings = {" | sudo tee -a /etc/prosody/prosody.cfg.lua > /dev/null\
-    echo "  tcp_backlog = 511;" | sudo tee -a /etc/prosody/prosody.cfg.lua > /dev/null\
-    echo "}\n" | sudo tee -a /etc/prosody/prosody.cfg.lua > /dev/null\
+    echo "-- Set the TCP backlog to 511 since the kernel rounds it up to the next power of 2: 512." | sudo tee -a /etc/prosody/prosody.cfg.lua > /dev/null
+    echo "network_settings = {" | sudo tee -a /etc/prosody/prosody.cfg.lua > /dev/null
+    echo "  tcp_backlog = 511;" | sudo tee -a /etc/prosody/prosody.cfg.lua > /dev/null
+    echo "}\n" | sudo tee -a /etc/prosody/prosody.cfg.lua > /dev/null
 fi
 
 if [[ ! -n $(sudo awk "/component_interface/" /etc/prosody/prosody.cfg.lua) ]]; then

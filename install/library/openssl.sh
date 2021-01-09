@@ -18,7 +18,7 @@ set -e
 shopt -s extglob
 
 rm -rf ${SERVER_HOME}/${OPENSSL_ALIAS}
-rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${OPENSSL_HOME}
+rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${OPENSSL_HOME}
 
 echo ${SRC_HOME}
 cd ${SRC_HOME}
@@ -46,8 +46,7 @@ cd ${SRC_HOME}/${OPENSSL_HOME}
 # sudo cp libssl.so.1.1 /usr/lib64/
 # sudo cp libcrypto.so.1.1 /usr/lib64/
 
-#./config --prefix=${SERVER_HOME}/${PROGRAME_HOME}/${OPENSSL_HOME} -fPIC shared
-./config --prefix=${SERVER_HOME}/${PROGRAME_HOME}/${OPENSSL_HOME} -fPIC shared
+./config --prefix=${SERVER_HOME}${PROGRAME_HOME}/${OPENSSL_HOME} -fPIC shared
 make
 make install
 

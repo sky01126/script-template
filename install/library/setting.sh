@@ -76,10 +76,11 @@ export SRC_HOME=/var/tmp
 # ----------------------------------------------------------------------------------------------------------------------
 # Programe Home 경로 설정.
 # opt : 애드온(Add-on) 소프트웨어 패키지 디렉토리
-export PROGRAME_HOME='opt/local'
-if [[ ! -d "${SERVER_HOME}/${PROGRAME_HOME}" ]]; then
-    printf "Create program install directory : \e[00;32m${SERVER_HOME}/${PROGRAME_HOME}\e[00m\n"
-    mkdir -p ${SERVER_HOME}/${PROGRAME_HOME}
+#export PROGRAME_HOME='/opt/local'
+export PROGRAME_HOME=''
+if [[ ! -d "${SERVER_HOME}${PROGRAME_HOME}" ]]; then
+    printf "Create program install directory : \e[00;32m${SERVER_HOME}${PROGRAME_HOME}\e[00m\n"
+    mkdir -p ${SERVER_HOME}${PROGRAME_HOME}
 fi
 
 
@@ -90,8 +91,8 @@ export JAVA_ALIAS='java'
 #export JAVA_HOME='jdk1.8.0_191'
 #export JAVA_DOWNLOAD_URL='http://download.oracle.com/otn-pub/java/jdk/8u191-b12/2787e4a523244c269598db4e85c51e0c/server-jre-8u191-linux-x64.tar.gz'
 
-export JAVA_HOME='jdk1.7.0_79'
-export JAVA_DOWNLOAD_URL='http://shell.pe.kr/document/java/jdk-7u79/jdk-7u79-linux-x64.tar.gz'
+# export JAVA_HOME='jdk1.7.0_79'
+# export JAVA_DOWNLOAD_URL='http://shell.pe.kr/document/java/jdk-7u79/jdk-7u79-linux-x64.tar.gz'
 #export JAVA_DOWNLOAD_URL='http://shell.pe.kr/document/java/jdk-7u79/server-jre-7u79-linux-x64.tar.gz'
 
 
@@ -101,8 +102,8 @@ export JAVA_DOWNLOAD_URL='http://shell.pe.kr/document/java/jdk-7u79/jdk-7u79-lin
 #export OPENJAVA_HOME='openjdk-11.0.8'
 #export OPENJAVA_DOWNLOAD_URL='https://github.com/AdoptOpenJDK/openjdk11-upstream-binaries/releases/download/jdk-11.0.8%2B10/OpenJDK11U-jdk_x64_linux_11.0.8_10.tar.gz'
 export OPENJAVA_ALIAS='java'
-export OPENJAVA_HOME='openjdk-8u265-b01'
-export OPENJAVA_DOWNLOAD_URL='https://github.com/AdoptOpenJDK/openjdk8-upstream-binaries/releases/download/jdk8u265-b01/OpenJDK8U-jdk_x64_linux_8u265b01.tar.gz'
+export OPENJAVA_HOME='openjdk-8u275-b01'
+export OPENJAVA_DOWNLOAD_URL='https://github.com/AdoptOpenJDK/openjdk8-upstream-binaries/releases/download/jdk8u275-b01/OpenJDK8U-jdk_x64_linux_8u275b01.tar.gz'
 
 # ----------------------------------------------------------------------------------------------------------------------
 # PCRE
@@ -118,7 +119,7 @@ export PCRE_HOME=${PCRE_NAME%$EXTENSION}
 # OpenSSL 설정.
 export OPENSSL_ALIAS='openssl'
 
-export OPENSSL_VERSION="1.1.1g"
+export OPENSSL_VERSION="1.1.1i"
 export OPENSSL_DOWNLOAD_URL="https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz"
 export OPENSSL_NAME=${OPENSSL_DOWNLOAD_URL##+(*/)}
 export OPENSSL_HOME=${OPENSSL_NAME%$EXTENSION}

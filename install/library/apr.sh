@@ -18,7 +18,7 @@ set -e
 shopt -s extglob
 
 rm -rf ${SERVER_HOME}/${APR_ALIAS}
-rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${APR_HOME}
+rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${APR_HOME}
 
 printf "\e[00;32m| ${APR_HOME} / ${APR_ICONV_NAME} / ${APR_UTIL_HOME} install start...\e[00m\n"
 
@@ -49,7 +49,7 @@ fi
 tar xvzf ${APR_NAME}
 cd ${SRC_HOME}/${APR_HOME}
 
-./configure --prefix=${SERVER_HOME}/${PROGRAME_HOME}/${APR_HOME}
+./configure --prefix=${SERVER_HOME}${PROGRAME_HOME}/${APR_HOME}
 make
 make install
 sleep 0.5
@@ -67,8 +67,8 @@ fi
 tar xvzf ${APR_UTIL_NAME}
 cd ${SRC_HOME}/${APR_UTIL_HOME}
 
-./configure --prefix=${SERVER_HOME}/${PROGRAME_HOME}/${APR_HOME}                \
-            --with-apr=${SERVER_HOME}/${PROGRAME_HOME}/${APR_HOME}
+./configure --prefix=${SERVER_HOME}${PROGRAME_HOME}/${APR_HOME}                 \
+            --with-apr=${SERVER_HOME}${PROGRAME_HOME}/${APR_HOME}
 make
 make install
 
@@ -85,8 +85,8 @@ fi
 tar xvzf ${APR_ICONV_NAME}
 cd ${SRC_HOME}/${APR_ICONV_HOME}
 
-./configure --prefix=${SERVER_HOME}/${PROGRAME_HOME}/${APR_HOME}                \
-            --with-apr=${SERVER_HOME}/${PROGRAME_HOME}/${APR_HOME}
+./configure --prefix=${SERVER_HOME}${PROGRAME_HOME}/${APR_HOME}                 \
+            --with-apr=${SERVER_HOME}${PROGRAME_HOME}/${APR_HOME}
 make
 make install
 sleep 0.5

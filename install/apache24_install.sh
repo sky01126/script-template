@@ -27,6 +27,8 @@
 #   cp /home/server/openssl/lib/libssl.so.1.1 /usr/lib64/
 #   cp /home/server/openssl/lib/libcrypto.so.1.1 /usr/lib64/
 
+export SERVER_HOME=/apache
+
 # ----------------------------------------------------------------------------------------------------------------------
 # Exit on error
 set -e
@@ -81,7 +83,8 @@ HTTPD_ALIAS='httpd'
 HTTPD_VERSION="2.4.46"
 HTTPD_DOWNLOAD_URL="http://archive.apache.org/dist/httpd/httpd-${HTTPD_VERSION}.tar.gz"
 HTTPD_NAME=${HTTPD_DOWNLOAD_URL##+(*/)}
-HTTPD_HOME=${HTTPD_NAME%$EXTENSION}
+#HTTPD_HOME=${HTTPD_NAME%$EXTENSION}
+HTTPD_HOME=apache24
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -94,14 +97,14 @@ MOD_JK_DOWNLOAD_URL="http://archive.apache.org/dist/tomcat/tomcat-connectors/jk/
 printf "\e[00;32m+--------------+----------------------------------------------------------\e[00m\n"
 printf "\e[00;32m| SRC_HOME     |\e[00m ${SRC_HOME}\n"
 printf "\e[00;32m| SERVER_HOME  |\e[00m ${SERVER_HOME}\n"
-printf "\e[00;32m| HTTPD_HOME   |\e[00m ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}\n"
+printf "\e[00;32m| HTTPD_HOME   |\e[00m ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}\n"
 printf "\e[00;32m| HTTPD_ALIAS  |\e[00m ${SERVER_HOME}/${HTTPD_ALIAS}\n"
 printf "\e[00;32m+--------------+------------------------------------------------------------------\e[00m\n"
 
 
 # ----------------------------------------------------------------------------------------------------------------------
 # PCRE 설치 여부 확인
-if [[ ! -d "${SERVER_HOME}/${PROGRAME_HOME}/${PCRE_HOME}" ]]; then
+if [[ ! -d "${SERVER_HOME}${PROGRAME_HOME}/${PCRE_HOME}" ]]; then
     cd ${SRC_HOME}
 
     printf "\e[00;32m| ${PCRE_HOME} install start...\e[00m\n"
@@ -121,7 +124,7 @@ if [[ ! -d "${SERVER_HOME}/${PROGRAME_HOME}/${PCRE_HOME}" ]]; then
     tar xvzf ${PCRE_NAME}
     cd ${SRC_HOME}/${PCRE_HOME}
 
-    ./configure --prefix=${SERVER_HOME}/${PROGRAME_HOME}/${PCRE_HOME} --enable-pcre16 --enable-pcre32 --enable-utf
+    ./configure --prefix=${SERVER_HOME}${PROGRAME_HOME}/${PCRE_HOME} --enable-pcre16 --enable-pcre32 --enable-utf
     make
     make install
 
@@ -160,7 +163,7 @@ fi
 
 # ----------------------------------------------------------------------------------------------------------------------
 # OpenSSL 설치 여부 확인
-if [[ ! -d "${SERVER_HOME}/${PROGRAME_HOME}/${OPENSSL_HOME}" ]]; then
+if [[ ! -d "${SERVER_HOME}${PROGRAME_HOME}/${OPENSSL_HOME}" ]]; then
     if [[ ! -f "${PRGDIR}/library/openssl.sh" ]]; then
         curl -f -L -sS  http://shell.pe.kr/document/install/library/openssl.sh -o /tmp/openssl.sh
         bash   /tmp/openssl.sh
@@ -175,7 +178,7 @@ fi
 
 # ----------------------------------------------------------------------------------------------------------------------
 # APR / APR Util 설치 여부 확인
-if [[ ! -d "${SERVER_HOME}/${PROGRAME_HOME}/${APR_HOME}" ]]; then
+if [[ ! -d "${SERVER_HOME}${PROGRAME_HOME}/${APR_HOME}" ]]; then
     if [[ ! -f "${PRGDIR}/library/apr.sh" ]]; then
         curl -f -L -sS  http://shell.pe.kr/document/install/library/apr.sh -o /tmp/apr.sh
         bash   /tmp/apr.sh
@@ -190,7 +193,7 @@ fi
 
 # ----------------------------------------------------------------------------------------------------------------------
 # 설치 여부 확인
-if [[ -d "${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}" ]]; then
+if [[ -d "${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}" ]]; then
     printf "\e[00;32m|\e[00m \e[00;31m기존에 설치된 Apache가 있습니다. 삭제하고 다시 설치하려면 \"Y\"를 입력하세요.\e[00m\n"
     printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
     printf "\e[00;32m| Enter whether to install \"${HTTPD_HOME}\" service\e[00m\n"
@@ -233,9 +236,9 @@ fi
 printf "\e[00;32m| \"${HTTPD_HOME}\" install start...\e[00m\n"
 
 # delete the previous home
-if [[ -d "${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}" ]]; then
+if [[ -d "${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}" ]]; then
     printf "\e[00;32m| \"${HTTPD_HOME}\" delete...\e[00m\n"
-    rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}
+    rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}
 fi
 if [[ -d "${SERVER_HOME}/${HTTPD_ALIAS}" || -L "${SERVER_HOME}/${HTTPD_ALIAS}" ]]; then
     printf "\e[00;32m| \"${HTTPD_ALIAS}\" delete...\e[00m\n"
@@ -265,7 +268,7 @@ if [ "$OS" == "linux" ]; then
 fi
 
 
-INSTALL_CONFIG="--prefix=${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}"
+INSTALL_CONFIG="--prefix=${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}"
 INSTALL_CONFIG="${INSTALL_CONFIG} --enable-cache"
 INSTALL_CONFIG="${INSTALL_CONFIG} --enable-cache-disk"
 INSTALL_CONFIG="${INSTALL_CONFIG} --enable-deflate"
@@ -321,11 +324,11 @@ fi
 tar xvzf ${MOD_JK_NAME}
 cd ${SRC_HOME}/${MOD_JK_HOME}/native
 
-./configure --with-apxs=${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/bin/apxs
+./configure --with-apxs=${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/bin/apxs
 make
 make install
 
-cp -rf apache-2.0/mod_jk.so ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/modules/
+cp -rf apache-2.0/mod_jk.so ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/modules/
 
 # Install source delete
 if [[ -d "${SRC_HOME}/${MOD_JK_HOME}" ]]; then
@@ -340,19 +343,19 @@ if [[ -d "${SRC_HOME}/${HTTPD_HOME}" ]]; then
 fi
 
 # HTTPD 서버에서 필요없는 디렉토리 삭제.
-rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/build
-rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/cgi-bin
-rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/error
-rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/htdocs
-rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/icons
-rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/man
-rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/manual
+rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/build
+rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/cgi-bin
+rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/error
+rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/htdocs
+rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/icons
+rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/man
+rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/manual
 
 # 필요 디렉토리 생성.
-mkdir -p ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/conf/extra/uriworkermaps
-mkdir -p ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/conf/extra/vhosts
-mkdir -p ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/logs/archive
-mkdir -p ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/work
+mkdir -p ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/conf/extra/uriworkermaps
+mkdir -p ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/conf/extra/vhosts
+mkdir -p ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/logs/archive
+mkdir -p ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/work
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -1864,7 +1867,7 @@ printf "\e[00;32m| Enter whether to ssl setting?\e[00m"
 read -e -p ' [Y / n](enter)] (default. n) > ' CHECK_SSL
 if [[ ! -z ${CHECK_SSL}  ]] && [[ "$(uppercase ${CHECK_SSL})" == "Y" ]]; then
     # 사설 인증키 생성
-    mkdir ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/conf/ssl
+    mkdir ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/conf/ssl
 
     echo "[v3_extensions]
 # Extensions to add to a certificate request
@@ -1911,7 +1914,7 @@ distinguished_name              = distinguished_name
 x509_extensions                 = v3_extensions
 # 인증서 요청시에도 extension 이 들어가면 authorityKeyIdentifier 를 찾지 못해 에러가 나므로 막아둔다.
 #req_extensions                  = v3_extensions
-    " > ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/conf/ssl/${DOMAIN_NAME}.conf
+    " > ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/conf/ssl/${DOMAIN_NAME}.conf
 
     ${SERVER_HOME}/${OPENSSL_ALIAS}/bin/openssl genpkey                         \
         -algorithm RSA                                                          \
@@ -1935,7 +1938,7 @@ x509_extensions                 = v3_extensions
         -out     ${SERVER_HOME}/${HTTPD_ALIAS}/conf/ssl/${DOMAIN_NAME}.crt      \
         -extfile ${SERVER_HOME}/${HTTPD_ALIAS}/conf/ssl/${DOMAIN_NAME}.conf
 
-    rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/conf/ssl/${DOMAIN_NAME}.conf
+    rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/conf/ssl/${DOMAIN_NAME}.conf
 fi
 
 

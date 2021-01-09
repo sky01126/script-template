@@ -21,7 +21,7 @@ set -e
 shopt -s extglob
 
 rm -rf ${SERVER_HOME}/${OPENJAVA_ALIAS}
-rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${OPENJAVA_HOME}
+rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${OPENJAVA_HOME}
 
 printf "\e[00;32m| ${OPENJAVA_HOME} install start...\e[00m\n"
 
@@ -33,7 +33,7 @@ if [ ! -f "${SRC_HOME}/${OPENJAVA_DOWNLOAD_URL##+(*/)}" ]; then
     curl -L -O ${OPENJAVA_DOWNLOAD_URL}
 fi
 
-tar xvzf ${OPENJAVA_DOWNLOAD_URL##+(*/)} -C ${SERVER_HOME}/${PROGRAME_HOME}
+tar xvzf ${OPENJAVA_DOWNLOAD_URL##+(*/)} -C ${SERVER_HOME}${PROGRAME_HOME}
 
 cd ${SERVER_HOME}
 ln -s ./${PROGRAME_HOME}/${OPENJAVA_HOME} ${OPENJAVA_ALIAS}

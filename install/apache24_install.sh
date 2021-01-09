@@ -323,7 +323,7 @@ if [[ -d "${SRC_HOME}/${HTTPD_HOME}" ]]; then
 fi
 
 # HTTPD 서버에서 필요없는 디렉토리 삭제.
-rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/build
+# rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/build
 rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/cgi-bin
 rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/error
 rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/htdocs
@@ -334,7 +334,8 @@ rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/manual
 # 필요 디렉토리 생성.
 mkdir -p ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/conf/extra/uriworkermaps
 mkdir -p ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/conf/extra/sites-enabled
-mkdir -p ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/logs/archive
+##mkdir -p ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/logs/archive
+#mkdir -p ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/logs/archive
 mkdir -p ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/work
 
 
@@ -733,7 +734,8 @@ GROUP=${GROUPNAME}
 
 # 파일 경로와 파일명 분리.
 MAX_HISTORYS='30'
-FILE_PATH='${SERVER_HOME}/${HTTPD_ALIAS}/logs/archive'
+# FILE_PATH='${SERVER_HOME}/${HTTPD_ALIAS}/logs/archive'
+FILE_PATH='${SERVER_HOME}/${HTTPD_ALIAS}/logs'
 FILE_NAME=\`basename \"\${FILE_PATH}\"\`
 EXTENSION='${EXTENSION}'
 

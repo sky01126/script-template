@@ -17,7 +17,7 @@ set -e
 # 사용 하는 extglob 쉘 옵션 shopt 내장 명령을 사용 하 여 같은 확장된 패턴 일치 연산자를 사용
 shopt -s extglob
 
-if [[ ! -z ${PCRE_HOME} ]]; then
+if [[ ! -z ${PCRE_ALIAS} ]]; then
     rm -rf ${SERVER_HOME}/${PCRE_ALIAS}
 fi
 rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${PCRE_HOME}
@@ -46,7 +46,7 @@ make
 make install
 
 
-if [[ ! -z ${PCRE_HOME} ]]; then
+if [[ ! -z ${PCRE_ALIAS} ]]; then
     cd ${SERVER_HOME}
     ln -s ./${PROGRAME_HOME}/${PCRE_HOME} ${PCRE_ALIAS}
 fi

@@ -7,7 +7,7 @@
 # /_/ |_\___/\__,_/_/ /_/\__, /\__,_/_/ /_/\__, /
 #                       /____/            /____/
 #
-# 멀티 쉘 실행 : bash <(curl -f -L -sS https://raw.githubusercontent.com/sky01126/script-template/master/install/apache24_install.sh)
+# 멀티 쉘 실행 : bash <(curl -f -L -sS https://raw.githubusercontent.com/sky01126/script-template/master/install/apache24_noalias_install.sh)
 #
 # - 상용 리눅스
 #   yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
@@ -80,12 +80,9 @@ fi
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Apache 2.4
-HTTPD_ALIAS='httpd'
-
 HTTPD_VERSION="2.4.46"
 HTTPD_DOWNLOAD_URL="http://archive.apache.org/dist/httpd/httpd-${HTTPD_VERSION}.tar.gz"
 HTTPD_NAME=${HTTPD_DOWNLOAD_URL##+(*/)}
-#HTTPD_HOME=${HTTPD_NAME%$EXTENSION}
 HTTPD_HOME=apache24
 
 
@@ -100,7 +97,7 @@ printf "\e[00;32m+--------------+-----------------------------------------------
 printf "\e[00;32m| SRC_HOME     |\e[00m ${SRC_HOME}\n"
 printf "\e[00;32m| SERVER_HOME  |\e[00m ${SERVER_HOME}\n"
 printf "\e[00;32m| HTTPD_HOME   |\e[00m ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}\n"
-printf "\e[00;32m| HTTPD_ALIAS  |\e[00m ${SERVER_HOME}/${HTTPD_ALIAS}\n"
+printf "\e[00;32m| HTTPD_ALIAS  |\e[00m ${SERVER_HOME}\n"
 printf "\e[00;32m+--------------+------------------------------------------------------------------\e[00m\n"
 
 
@@ -204,9 +201,9 @@ if [[ -d "${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}" ]]; then
     printf "\e[00;32m| \"${HTTPD_HOME}\" delete...\e[00m\n"
     rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}
 fi
-if [[ -d "${SERVER_HOME}/${HTTPD_ALIAS}" || -L "${SERVER_HOME}/${HTTPD_ALIAS}" ]]; then
+if [[ -d "${SERVER_HOME}" || -L "${SERVER_HOME}" ]]; then
     printf "\e[00;32m| \"${HTTPD_ALIAS}\" delete...\e[00m\n"
-    rm -rf ${SERVER_HOME}/${HTTPD_ALIAS}
+    rm -rf ${SERVER_HOME}
 fi
 
 # verify that the source exists download
@@ -397,7 +394,7 @@ export HTTPD_HOME=\`cd \"\$PRGDIR/..\" >/dev/null; pwd\`
 
 \$HTTPD_HOME/bin/apachectl start
 
-if [[ ! -f \"${SERVER_HOME}/${HTTPD_ALIAS}/work/httpd.pid\" ]]; then
+if [[ ! -f \"${SERVER_HOME}/work/httpd.pid\" ]]; then
     printf \"httpd 시작 중:\"
 
     sleep 0.5
@@ -409,7 +406,7 @@ if [[ ! -f \"${SERVER_HOME}/${HTTPD_ALIAS}/work/httpd.pid\" ]]; then
     fi
 fi
 
-" > ${SERVER_HOME}/${HTTPD_ALIAS}/bin/start.sh
+" > ${SERVER_HOME}/bin/start.sh
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -451,7 +448,7 @@ PRGDIR=\`dirname \"\$PRG\"\`
 export HTTPD_HOME=\`cd \"\$PRGDIR/..\" >/dev/null; pwd\`
 
 STOPD=
-if [[ -f \"${SERVER_HOME}/${HTTPD_ALIAS}/work/httpd.pid\" ]]; then
+if [[ -f \"${SERVER_HOME}/work/httpd.pid\" ]]; then
     STOPD='true'
 fi
 
@@ -468,7 +465,7 @@ if [[ -n \"\$STOPD\" ]]; then
         printf \"                                           [\e[00;32mFAILED\e[00m]\\\\n\"
     fi
 fi
-" > ${SERVER_HOME}/${HTTPD_ALIAS}/bin/stop.sh
+" > ${SERVER_HOME}/bin/stop.sh
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -510,7 +507,7 @@ PRGDIR=\`dirname \"\$PRG\"\`
 export HTTPD_HOME=\`cd \"\$PRGDIR/..\" >/dev/null; pwd\`
 
 STOPD=
-if [[ -f \"${SERVER_HOME}/${HTTPD_ALIAS}/work/httpd.pid\" ]]; then
+if [[ -f \"${SERVER_HOME}/work/httpd.pid\" ]]; then
     STOPD='true'
 fi
 
@@ -537,7 +534,7 @@ else
         printf \"                                           [\e[00;32mFAILED\e[00m]\\\\n\"
     fi
 fi
-" > ${SERVER_HOME}/${HTTPD_ALIAS}/bin/restart.sh
+" > ${SERVER_HOME}/bin/restart.sh
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -565,14 +562,14 @@ server_pid() {
 }
 
 if [[ -n \"\$(server_pid)\" ]]; then
-    pid=\`cat ${SERVER_HOME}/${HTTPD_ALIAS}/work/httpd.pid\`
+    pid=\`cat ${SERVER_HOME}/work/httpd.pid\`
     echo \"httpd (pid \$pid) is running.\"
     exit 0
 else
     echo \"httpd (no pid file) not running.\"
     exit 1
 fi
-" > ${SERVER_HOME}/${HTTPD_ALIAS}/bin/status.sh
+" > ${SERVER_HOME}/bin/status.sh
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -614,7 +611,7 @@ PRGDIR=\`dirname \"\$PRG\"\`
 export HTTPD_HOME=\`cd \"\$PRGDIR/..\" >/dev/null; pwd\`
 
 \$HTTPD_HOME/bin/apachectl configtest
-" > ${SERVER_HOME}/${HTTPD_ALIAS}/bin/configtest.sh
+" > ${SERVER_HOME}/bin/configtest.sh
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -656,7 +653,7 @@ else
     echo \"httpd (no pid file) not running.\"
     exit 1
 fi
-" > ${SERVER_HOME}/${HTTPD_ALIAS}/bin/check-run-thread.sh
+" > ${SERVER_HOME}/bin/check-run-thread.sh
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -709,7 +706,7 @@ sed -i \"s/GROUP=.*/GROUP=\${GROUPNAME}/g\"    \${PRGDIR}/bin/*.sh
 # Apache Config 수정.
 sed -i \"s/User.*/User \${USERNAME}/g\"        \${PRGDIR}/conf/httpd.conf
 sed -i \"s/Group.*/Group \${GROUPNAME}/g\"     \${PRGDIR}/conf/httpd.conf
-" > ${SERVER_HOME}/${HTTPD_ALIAS}/bin/change-user.sh
+" > ${SERVER_HOME}/bin/change-user.sh
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -730,11 +727,11 @@ USER=${USERNAME}
 GROUP=${GROUPNAME}
 
 # crontab 에 등록
-# 10 0 * * * ${SERVER_HOME}/${HTTPD_ALIAS}/bin/delete-log.sh
+# 10 0 * * * ${SERVER_HOME}/bin/delete-log.sh
 
 # 파일 경로와 파일명 분리.
 MAX_HISTORYS='30'
-FILE_PATH='${SERVER_HOME}/${HTTPD_ALIAS}/logs/archive'
+FILE_PATH='${SERVER_HOME}/logs/archive'
 FILE_NAME=\`basename \"\${FILE_PATH}\"\`
 EXTENSION='${EXTENSION}'
 
@@ -762,11 +759,11 @@ else
 fi
 
 chown \${USER}:\${GROUP} \${FILE_PATH}/\${DELETE_LOG_NAME}
-" > ${SERVER_HOME}/${HTTPD_ALIAS}/bin/delete-log.sh
+" > ${SERVER_HOME}/bin/delete-log.sh
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-chmod +x ${SERVER_HOME}/${HTTPD_ALIAS}/bin/*.sh
+chmod +x ${SERVER_HOME}/bin/*.sh
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -801,7 +798,7 @@ echo "#
 # same ServerRoot for multiple httpd daemons, you will need to change at
 # least PidFile.
 #
-ServerRoot \"${SERVER_HOME}/${HTTPD_ALIAS}\"
+ServerRoot \"${SERVER_HOME}\"
 
 #
 # Mutex: Allows you to set the mutex mechanism and mutex file directory
@@ -998,8 +995,8 @@ ServerName ${DOMAIN_NAME}:80
 # documents. By default, all requests are taken from this directory, but
 # symbolic links and aliases may be used to point to other locations.
 #
-#DocumentRoot \"${SERVER_HOME}/${HTTPD_ALIAS}/htdocs\"
-#<Directory \"${SERVER_HOME}/${HTTPD_ALIAS}/htdocs\">
+#DocumentRoot \"${SERVER_HOME}/htdocs\"
+#<Directory \"${SERVER_HOME}/htdocs\">
 #    #
 #    # Possible values for the Options directive are \"None\", \"All\",
 #    # or any combination of:
@@ -1050,7 +1047,7 @@ ServerName ${DOMAIN_NAME}:80
 # logged here.  If you *do* define an error logfile for a <VirtualHost>
 # container, that host's errors will be logged there and not here.
 #
-ErrorLog \"|${SERVER_HOME}/${HTTPD_ALIAS}/bin/rotatelogs -L logs/error.log logs/archive/error.%Y-%m-%d.log 86400 +540
+ErrorLog \"|${SERVER_HOME}/bin/rotatelogs -L logs/error.log logs/archive/error.%Y-%m-%d.log 86400 +540
 
 #
 # LogLevel: Control the number of messages logged to the error_log.
@@ -1081,7 +1078,7 @@ LogLevel warn
     # logged therein and *not* in this file.
     #
     #CustomLog \"logs/access_log\" common
-    CustomLog \"|${SERVER_HOME}/${HTTPD_ALIAS}/bin/rotatelogs -L logs/access.log logs/archive/access.%Y-%m-%d.log 86400 +540\" combined env=!do_not_log
+    CustomLog \"|${SERVER_HOME}/bin/rotatelogs -L logs/access.log logs/archive/access.%Y-%m-%d.log 86400 +540\" combined env=!do_not_log
 
     #
     # If you prefer a logfile with access, agent, and referer information
@@ -1117,7 +1114,7 @@ LogLevel warn
     # client.  The same rules about trailing \"/\" apply to ScriptAlias
     # directives as to Alias.
     #
-    #ScriptAlias /cgi-bin/ \"${SERVER_HOME}/${HTTPD_ALIAS}/cgi-bin/\"
+    #ScriptAlias /cgi-bin/ \"${SERVER_HOME}/cgi-bin/\"
 </IfModule>
 
 <IfModule cgid_module>
@@ -1129,10 +1126,10 @@ LogLevel warn
 </IfModule>
 
 #
-# \"${SERVER_HOME}/${HTTPD_ALIAS}/cgi-bin\" should be changed to whatever your ScriptAliased
+# \"${SERVER_HOME}/cgi-bin\" should be changed to whatever your ScriptAliased
 # CGI directory exists, if you have that configured.
 #
-#<Directory \"${SERVER_HOME}/${HTTPD_ALIAS}/cgi-bin\">
+#<Directory \"${SERVER_HOME}/cgi-bin\">
 #    AllowOverride None
 #    Options None
 #    Require all granted
@@ -1363,12 +1360,12 @@ Include conf/extra/httpd-jk.conf
         Deny from all
     </LimitExcept>
 </Location>
-" > ${SERVER_HOME}/${HTTPD_ALIAS}/conf/httpd.conf
+" > ${SERVER_HOME}/conf/httpd.conf
 
 
 # ----------------------------------------------------------------------------------------------------------------------
 # httpd-default.conf에서 ServerTokens 설정 변경
-sed -i "55s/.*/ServerTokens Prod/g" ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-default.conf
+sed -i "55s/.*/ServerTokens Prod/g" ${SERVER_HOME}/conf/extra/httpd-default.conf
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -1395,7 +1392,7 @@ LoadModule jk_module modules/mod_jk.so
 
     # Our JK error log
     # You can (and should) use rotatelogs here
-    JkLogFile \"|${SERVER_HOME}/${HTTPD_ALIAS}/bin/rotatelogs -L logs/mod_jk.log logs/archive/mod_jk.%Y-%m-%d.log 86400 +540\"
+    JkLogFile \"|${SERVER_HOME}/bin/rotatelogs -L logs/mod_jk.log logs/archive/mod_jk.%Y-%m-%d.log 86400 +540\"
 
     # Our JK log level (trace,debug,info,warn,error)
     JkLogLevel info
@@ -1422,7 +1419,7 @@ LoadModule jk_module modules/mod_jk.so
     # Example for UnMounting requests using regexps
     #SetEnvIf REQUEST_URI \"\\.(htm|html|php|php3|phps|inc|phtml|css|gif|jpg|png|bmp|js)\$\" no-jk
 </IfModule>
-" > ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-jk.conf
+" > ${SERVER_HOME}/conf/extra/httpd-jk.conf
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -1455,7 +1452,7 @@ echo "<Location /jkmanager>
 <LocationMatch \"/META-INF\">
     deny from all
 </LocationMatch>
-" > ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/security.conf
+" > ${SERVER_HOME}/conf/extra/security.conf
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -1474,24 +1471,24 @@ echo "<Location /jkmanager>
 # |---------------------|-----------------------------------------------------
 # | MaxRequestWorkers   | 요청을 동시에 처리할 수 있는 쓰레드 개수
 # +---------------------+-----------------------------------------------------
-#sed -i "61s/.*/<IfModule mpm_event_module>/g"       ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
-#sed -i "62s/.*/    StartServers             16/g"   ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
-#sed -i "63s/.*/    ServerLimit              32/g"   ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
-#sed -i "64s/.*/    MinSpareThreads          75/g"   ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
-#sed -i "65s/.*/    MaxSpareThreads         400/g"   ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
-#sed -i "66s/.*/    ThreadsPerChild          25/g"   ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
-#sed -i "67s/.*/    MaxRequestWorkers       800/g"   ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
-#sed -i "68s/.*/    MaxConnectionsPerChild    0/g"   ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
-#sed -i "69s/.*/<\/IfModule>\\n/g"                   ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
-sed -i "61s/.*/<IfModule mpm_event_module>/g"       ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
-sed -i "62s/.*/    StartServers              8/g"   ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
-sed -i "63s/.*/    ServerLimit              16/g"   ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
-sed -i "64s/.*/    MinSpareThreads          75/g"   ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
-sed -i "65s/.*/    MaxSpareThreads         200/g"   ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
-sed -i "66s/.*/    ThreadsPerChild          25/g"   ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
-sed -i "67s/.*/    MaxRequestWorkers       400/g"   ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
-sed -i "68s/.*/    MaxConnectionsPerChild    0/g"   ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
-sed -i "69s/.*/<\/IfModule>\\n/g"                   ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
+#sed -i "61s/.*/<IfModule mpm_event_module>/g"       ${SERVER_HOME}/conf/extra/httpd-mpm.conf
+#sed -i "62s/.*/    StartServers             16/g"   ${SERVER_HOME}/conf/extra/httpd-mpm.conf
+#sed -i "63s/.*/    ServerLimit              32/g"   ${SERVER_HOME}/conf/extra/httpd-mpm.conf
+#sed -i "64s/.*/    MinSpareThreads          75/g"   ${SERVER_HOME}/conf/extra/httpd-mpm.conf
+#sed -i "65s/.*/    MaxSpareThreads         400/g"   ${SERVER_HOME}/conf/extra/httpd-mpm.conf
+#sed -i "66s/.*/    ThreadsPerChild          25/g"   ${SERVER_HOME}/conf/extra/httpd-mpm.conf
+#sed -i "67s/.*/    MaxRequestWorkers       800/g"   ${SERVER_HOME}/conf/extra/httpd-mpm.conf
+#sed -i "68s/.*/    MaxConnectionsPerChild    0/g"   ${SERVER_HOME}/conf/extra/httpd-mpm.conf
+#sed -i "69s/.*/<\/IfModule>\\n/g"                   ${SERVER_HOME}/conf/extra/httpd-mpm.conf
+sed -i "61s/.*/<IfModule mpm_event_module>/g"       ${SERVER_HOME}/conf/extra/httpd-mpm.conf
+sed -i "62s/.*/    StartServers              8/g"   ${SERVER_HOME}/conf/extra/httpd-mpm.conf
+sed -i "63s/.*/    ServerLimit              16/g"   ${SERVER_HOME}/conf/extra/httpd-mpm.conf
+sed -i "64s/.*/    MinSpareThreads          75/g"   ${SERVER_HOME}/conf/extra/httpd-mpm.conf
+sed -i "65s/.*/    MaxSpareThreads         200/g"   ${SERVER_HOME}/conf/extra/httpd-mpm.conf
+sed -i "66s/.*/    ThreadsPerChild          25/g"   ${SERVER_HOME}/conf/extra/httpd-mpm.conf
+sed -i "67s/.*/    MaxRequestWorkers       400/g"   ${SERVER_HOME}/conf/extra/httpd-mpm.conf
+sed -i "68s/.*/    MaxConnectionsPerChild    0/g"   ${SERVER_HOME}/conf/extra/httpd-mpm.conf
+sed -i "69s/.*/<\/IfModule>\\n/g"                   ${SERVER_HOME}/conf/extra/httpd-mpm.conf
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -1559,7 +1556,7 @@ worker.${INSTALL_WORKER_NAME}Wlb.balance_workers=${INSTALL_WORKER_NAME}01
 # Define status worker
 #
 worker.jkstatus.type=status
-" > ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/workers.properties
+" > ${SERVER_HOME}/conf/extra/workers.properties
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -1587,7 +1584,7 @@ echo "# This file provides sample mappings for example wlb
 # ------------------------------------------------------------------------------
 # ROOT Settings
 /*=${INSTALL_WORKER_NAME}Wlb
-" > ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/uriworkermaps/${INSTALL_WORKER_NAME}.properties
+" > ${SERVER_HOME}/conf/extra/uriworkermaps/${INSTALL_WORKER_NAME}.properties
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -1615,7 +1612,7 @@ echo "# Virtual Hosts
 # match a ServerName or ServerAlias in any <VirtualHost> block.
 #
 Include conf/extra/vhosts/${INSTALL_WORKER_NAME}.conf
-" > ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-vhosts.conf
+" > ${SERVER_HOME}/conf/extra/httpd-vhosts.conf
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -1650,7 +1647,7 @@ echo "<VirtualHost *:80>
     </Location>
 
     # AccessLog.
-    # CustomLog \"|${SERVER_HOME}/${HTTPD_ALIAS}/bin/rotatelogs -L logs/${INSTALL_WORKER_NAME}.access.log logs/archive/${INSTALL_WORKER_NAME}.access.%Y-%m-%d.log 86400 +540\" combined env=!do_not_log
+    # CustomLog \"|${SERVER_HOME}/bin/rotatelogs -L logs/${INSTALL_WORKER_NAME}.access.log logs/archive/${INSTALL_WORKER_NAME}.access.%Y-%m-%d.log 86400 +540\" combined env=!do_not_log
 
     RewriteEngine On
     RewriteRule ^/?dummy\.html\$ - [R=404]
@@ -1659,7 +1656,7 @@ echo "<VirtualHost *:80>
     # Mount JK File
     JkMountFile conf/extra/uriworkermaps/${INSTALL_WORKER_NAME}.properties
 </VirtualHost>
-" > ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/vhosts/${INSTALL_WORKER_NAME}.conf
+" > ${SERVER_HOME}/conf/extra/vhosts/${INSTALL_WORKER_NAME}.conf
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -1785,7 +1782,7 @@ SSLSessionCacheTimeout  300
 ## SSL Virtual Host Context
 ##
 Include conf/extra/vhosts/${INSTALL_WORKER_NAME}-ssl.conf
-" > ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-ssl.conf
+" > ${SERVER_HOME}/conf/extra/httpd-ssl.conf
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -1828,7 +1825,7 @@ echo "<VirtualHost _default_:443>
     </Location>
 
     # AccessLog.
-    # CustomLog \"|${SERVER_HOME}/${HTTPD_ALIAS}/bin/rotatelogs -L logs/${INSTALL_WORKER_NAME}.access.log logs/archive/${INSTALL_WORKER_NAME}.access.%Y-%m-%d.log 86400 +540\" combined env=!do_not_log
+    # CustomLog \"|${SERVER_HOME}/bin/rotatelogs -L logs/${INSTALL_WORKER_NAME}.access.log logs/archive/${INSTALL_WORKER_NAME}.access.%Y-%m-%d.log 86400 +540\" combined env=!do_not_log
 
     RewriteEngine On
     RewriteRule ^/?dummy\.html\$ - [R=404]
@@ -1837,7 +1834,7 @@ echo "<VirtualHost _default_:443>
     # Mount JK File
     JkMountFile conf/extra/uriworkermaps/${INSTALL_WORKER_NAME}.properties
 </VirtualHost>
-" > ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/vhosts/${INSTALL_WORKER_NAME}-ssl.conf
+" > ${SERVER_HOME}/conf/extra/vhosts/${INSTALL_WORKER_NAME}-ssl.conf
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -1900,24 +1897,24 @@ x509_extensions                 = v3_extensions
     ${SERVER_HOME}/${OPENSSL_ALIAS}/bin/openssl genpkey                         \
         -algorithm RSA                                                          \
         -pkeyopt rsa_keygen_bits:4096                                           \
-        -out ${SERVER_HOME}/${HTTPD_ALIAS}/conf/ssl/${DOMAIN_NAME}.key
+        -out ${SERVER_HOME}/conf/ssl/${DOMAIN_NAME}.key
 
-    chmod 400 ${SERVER_HOME}/${HTTPD_ALIAS}/conf/ssl/${DOMAIN_NAME}.key
+    chmod 400 ${SERVER_HOME}/conf/ssl/${DOMAIN_NAME}.key
 
     ${SERVER_HOME}/${OPENSSL_ALIAS}/bin/openssl req                             \
         -new                                                                    \
         -sha256                                                                 \
-        -key ${SERVER_HOME}/${HTTPD_ALIAS}/conf/ssl/${DOMAIN_NAME}.key          \
-        -out ${SERVER_HOME}/${HTTPD_ALIAS}/conf/ssl/${DOMAIN_NAME}.csr          \
-        -config ${SERVER_HOME}/${HTTPD_ALIAS}/conf/ssl/${DOMAIN_NAME}.conf
+        -key ${SERVER_HOME}/conf/ssl/${DOMAIN_NAME}.key                         \
+        -out ${SERVER_HOME}/conf/ssl/${DOMAIN_NAME}.csr                         \
+        -config ${SERVER_HOME}/conf/ssl/${DOMAIN_NAME}.conf
 
     ${SERVER_HOME}/${OPENSSL_ALIAS}/bin/openssl x509 -req                       \
         -days 3650                                                              \
         -extensions v3_user                                                     \
-        -in      ${SERVER_HOME}/${HTTPD_ALIAS}/conf/ssl/${DOMAIN_NAME}.csr      \
-        -signkey ${SERVER_HOME}/${HTTPD_ALIAS}/conf/ssl/${DOMAIN_NAME}.key      \
-        -out     ${SERVER_HOME}/${HTTPD_ALIAS}/conf/ssl/${DOMAIN_NAME}.crt      \
-        -extfile ${SERVER_HOME}/${HTTPD_ALIAS}/conf/ssl/${DOMAIN_NAME}.conf
+        -in      ${SERVER_HOME}/conf/ssl/${DOMAIN_NAME}.csr                     \
+        -signkey ${SERVER_HOME}/conf/ssl/${DOMAIN_NAME}.key                     \
+        -out     ${SERVER_HOME}/conf/ssl/${DOMAIN_NAME}.crt                     \
+        -extfile ${SERVER_HOME}/conf/ssl/${DOMAIN_NAME}.conf
 
     rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/conf/ssl/${DOMAIN_NAME}.conf
 fi
@@ -1929,10 +1926,10 @@ if [[ -f ${BASH_FILE} ]]; then
     if [[ ! -n ${SET_HTTPD_HOME} ]]; then
         echo "# Apache Start / Restart / Stop script
 # Apache Start / Stop Aliases
-alias httpd-start='sudo   ${SERVER_HOME}/${HTTPD_ALIAS}/bin/start.sh'
-alias httpd-stop='sudo    ${SERVER_HOME}/${HTTPD_ALIAS}/bin/stop.sh'
-alias httpd-restart='sudo ${SERVER_HOME}/${HTTPD_ALIAS}/bin/restart.sh'
-alias httpd-status='sudo  ${SERVER_HOME}/${HTTPD_ALIAS}/bin/status.sh'
+alias httpd-start='sudo   ${SERVER_HOME}/bin/start.sh'
+alias httpd-stop='sudo    ${SERVER_HOME}/bin/stop.sh'
+alias httpd-restart='sudo ${SERVER_HOME}/bin/restart.sh'
+alias httpd-status='sudo  ${SERVER_HOME}/bin/status.sh'
 " >> ${BASH_FILE}
     fi
 fi

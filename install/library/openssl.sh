@@ -54,7 +54,7 @@ make install
 
 if [[ ! -z ${OPENSSL_ALIAS} ]]; then
     cd ${SERVER_HOME}
-    ln -s ./${PROGRAME_HOME}/${OPENSSL_HOME} ${OPENSSL_ALIAS}
+    ln -s .${PROGRAME_HOME}/${OPENSSL_HOME} ${OPENSSL_ALIAS}
 
     if [[ -f ${BASH_FILE} ]]; then
         SET_OPENSSL_HOME=`awk "/# OpenSSL Home/" ${BASH_FILE}`
@@ -70,15 +70,18 @@ if [[ ! -z ${OPENSSL_ALIAS} ]]; then
             source ${BASH_FILE}
         fi
     fi
+
+    sudo cp ${SERVER_HOME}/${OPENSSL_ALIAS}/lib/libssl.so.1.1 /usr/lib64/
+    sudo cp ${SERVER_HOME}/${OPENSSL_ALIAS}/lib/libcrypto.so.1.1 /usr/lib64/
+else
+    sudo cp ${SERVER_HOME}${PROGRAME_HOME}/${OPENSSL_HOME}/lib/libssl.so.1.1 /usr/lib64/
+    sudo cp ${SERVER_HOME}${PROGRAME_HOME}/${OPENSSL_HOME}/lib/libcrypto.so.1.1 /usr/lib64/
 fi
 
 # Install source delete
 if [[ -d "${SRC_HOME}/${OPENSSL_HOME}" ]]; then
     rm -rf ${SRC_HOME}/${OPENSSL_HOME}
 fi
-
-sudo cp ${SERVER_HOME}/${OPENSSL_ALIAS}/lib/libssl.so.1.1 /usr/lib64/
-sudo cp ${SERVER_HOME}/${OPENSSL_ALIAS}/lib/libcrypto.so.1.1 /usr/lib64/
 
 
 printf "\e[00;32m|---------------------------------------------------------------------------------\e[00m\n"

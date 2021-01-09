@@ -117,7 +117,7 @@ if [[ ! -d "${SERVER_HOME}${PROGRAME_HOME}/${PCRE_HOME}" ]]; then
     fi
 elif [[ ! -z ${PCRE_ALIAS}  ]] && [[ ! -d "${SERVER_HOME}/${PCRE_ALIAS}" ]]; then
     cd ${SERVER_HOME}
-    ln -s ./${PROGRAME_HOME}/${PCRE_HOME} ${PCRE_ALIAS}
+    ln -s .${PROGRAME_HOME}/${PCRE_HOME} ${PCRE_ALIAS}
 fi
 
 
@@ -134,7 +134,7 @@ if [[ ! -d "${SERVER_HOME}${PROGRAME_HOME}/${OPENSSL_HOME}" ]]; then
     fi
 elif [[ ! -z ${OPENSSL_ALIAS}  ]] && [[ ! -d "${SERVER_HOME}/${OPENSSL_ALIAS}" || ! -L "${SERVER_HOME}/${OPENSSL_ALIAS}" ]]; then
     cd ${SERVER_HOME}
-    ln -s ./${PROGRAME_HOME}/${OPENSSL_HOME} ${OPENSSL_ALIAS}
+    ln -s .${PROGRAME_HOME}/${OPENSSL_HOME} ${OPENSSL_ALIAS}
 fi
 
 
@@ -151,7 +151,7 @@ if [[ ! -d "${SERVER_HOME}${PROGRAME_HOME}/${APR_HOME}" ]]; then
     fi
 elif [[ ! -z ${APR_ALIAS}  ]] && [[ ! -d "${SERVER_HOME}/${APR_ALIAS}" || ! -L "${SERVER_HOME}/${APR_ALIAS}" ]]; then
     cd ${SERVER_HOME}
-    ln -s ./${PROGRAME_HOME}/${APR_HOME} ${APR_ALIAS}
+    ln -s .${PROGRAME_HOME}/${APR_HOME} ${APR_ALIAS}
 fi
 
 

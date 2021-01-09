@@ -48,7 +48,7 @@ make install
 
 if [[ ! -z ${PCRE_ALIAS} ]]; then
     cd ${SERVER_HOME}
-    ln -s ./${PROGRAME_HOME}/${PCRE_HOME} ${PCRE_ALIAS}
+    ln -s .${PROGRAME_HOME}/${PCRE_HOME} ${PCRE_ALIAS}
 fi
 
 

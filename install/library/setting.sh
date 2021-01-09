@@ -130,7 +130,7 @@ export PCRE_HOME=${PCRE_NAME%$EXTENSION}
 # OpenSSL 설정.
 # export OPENSSL_ALIAS='openssl'
 if [[ -z ${OPENSSL_ALIAS} ]]; then
-    printf "Enter the pcre alias (ex. openssl)"
+    printf "Enter the openssl alias (ex. openssl)"
     read -e -p " > " OPENSSL_ALIAS
     echo
 fi
@@ -145,7 +145,7 @@ export OPENSSL_HOME=${OPENSSL_NAME%$EXTENSION}
 # APR
 # export APR_ALIAS='apr'
 if [[ -z ${APR_ALIAS} ]]; then
-    printf "Enter the pcre alias (ex. apr)"
+    printf "Enter the apr alias (ex. apr)"
     read -e -p " > " APR_ALIAS
     echo
 fi

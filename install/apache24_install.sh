@@ -333,7 +333,7 @@ rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/manual
 
 # 필요 디렉토리 생성.
 mkdir -p ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/conf/extra/uriworkermaps
-mkdir -p ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/conf/extra/vhosts
+mkdir -p ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/conf/extra/sites-enabled
 mkdir -p ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/logs/archive
 mkdir -p ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/work
 
@@ -1049,7 +1049,8 @@ ServerName ${DOMAIN_NAME}:80
 # logged here.  If you *do* define an error logfile for a <VirtualHost>
 # container, that host's errors will be logged there and not here.
 #
-ErrorLog \"|${SERVER_HOME}/${HTTPD_ALIAS}/bin/rotatelogs -L logs/error.log logs/archive/error.%Y-%m-%d.log 86400 +540
+ErrorLog \"|${SERVER_HOME}/${HTTPD_ALIAS}/bin/rotatelogs logs/error.%Y-%m-%d.log 86400 +540
+# ErrorLog \"|${SERVER_HOME}/${HTTPD_ALIAS}/bin/rotatelogs -L logs/error.log logs/archive/error.%Y-%m-%d.log 86400 +540
 
 #
 # LogLevel: Control the number of messages logged to the error_log.
@@ -1064,8 +1065,8 @@ LogLevel warn
     # a CustomLog directive (see below).
     #
     SetEnvIf REQUEST_URI \"favicon.ico\" do_not_log
-    #LogFormat \"%h %l %u %t \\\"%{Host}i\\\" \\\"%r\\\" %>s %b \\\"%{Referer}i\\\" \\\"%{User-Agent}i\\\" TIME:%T\" combined
-    LogFormat \"%h %{NS-CLIENT-IP}i %l %u %t \\\"%{Host}i\\\" \\\"%r\\\" %>s %b \\\"%{Referer}i\\\" \\\"%{User-Agent}i\\\" TIME:%T\" combined
+    LogFormat \"%h %l %u %t \\\"%{Host}i\\\" \\\"%r\\\" %>s %b \\\"%{Referer}i\\\" \\\"%{User-Agent}i\\\" TIME:%T\" combined
+    # LogFormat \"%h %{NS-CLIENT-IP}i %l %u %t \\\"%{Host}i\\\" \\\"%r\\\" %>s %b \\\"%{Referer}i\\\" \\\"%{User-Agent}i\\\" TIME:%T\" combined
 
     #<IfModule logio_module>
     #  # You need to enable mod_logio.c to use %I and %O
@@ -1079,8 +1080,9 @@ LogLevel warn
     # define per-<VirtualHost> access logfiles, transactions will be
     # logged therein and *not* in this file.
     #
-    #CustomLog \"logs/access_log\" common
-    CustomLog \"|${SERVER_HOME}/${HTTPD_ALIAS}/bin/rotatelogs -L logs/access.log logs/archive/access.%Y-%m-%d.log 86400 +540\" combined env=!do_not_log
+    # CustomLog \"logs/access_log\" common
+    CustomLog \"|${SERVER_HOME}/${HTTPD_ALIAS}/bin/rotatelogs logs/access.%Y-%m-%d.log 86400 +540\" combined env=!do_not_log
+    # CustomLog \"|${SERVER_HOME}/${HTTPD_ALIAS}/bin/rotatelogs -L logs/access.log logs/archive/access.%Y-%m-%d.log 86400 +540\" combined env=!do_not_log
 
     #
     # If you prefer a logfile with access, agent, and referer information
@@ -1613,7 +1615,7 @@ echo "# Virtual Hosts
 # The first VirtualHost section is used for all requests that do not
 # match a ServerName or ServerAlias in any <VirtualHost> block.
 #
-Include conf/extra/vhosts/${INSTALL_WORKER_NAME}.conf
+Include conf/extra/sites-enabled/${INSTALL_WORKER_NAME}.conf
 " > ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-vhosts.conf
 
 
@@ -1658,7 +1660,7 @@ echo "<VirtualHost *:80>
     # Mount JK File
     JkMountFile conf/extra/uriworkermaps/${INSTALL_WORKER_NAME}.properties
 </VirtualHost>
-" > ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/vhosts/${INSTALL_WORKER_NAME}.conf
+" > ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/sites-enabled/${INSTALL_WORKER_NAME}.conf
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -1783,7 +1785,7 @@ SSLSessionCacheTimeout  300
 ##
 ## SSL Virtual Host Context
 ##
-Include conf/extra/vhosts/${INSTALL_WORKER_NAME}-ssl.conf
+Include conf/extra/sites-enabled/${INSTALL_WORKER_NAME}-ssl.conf
 " > ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-ssl.conf
 
 
@@ -1836,7 +1838,7 @@ echo "<VirtualHost _default_:443>
     # Mount JK File
     JkMountFile conf/extra/uriworkermaps/${INSTALL_WORKER_NAME}.properties
 </VirtualHost>
-" > ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/vhosts/${INSTALL_WORKER_NAME}-ssl.conf
+" > ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/sites-enabled/${INSTALL_WORKER_NAME}-ssl.conf
 
 
 # ----------------------------------------------------------------------------------------------------------------------

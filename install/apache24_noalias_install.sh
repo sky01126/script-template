@@ -265,7 +265,7 @@ else
     INSTALL_CONFIG="${INSTALL_CONFIG} --with-ssl=${SERVER_HOME}/${OPENSSL_ALIAS}"
 fi
 
-if [[ -z ${PCRE_HOME} ]]; then
+if [[ -z ${APR_ALIAS} ]]; then
     INSTALL_CONFIG="${INSTALL_CONFIG} --with-apr=${SERVER_HOME}${PROGRAME_HOME}/${APR_HOME}"
     INSTALL_CONFIG="${INSTALL_CONFIG} --with-apr-util=${SERVER_HOME}${PROGRAME_HOME}/${APR_HOME}"
 else

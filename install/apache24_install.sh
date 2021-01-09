@@ -280,7 +280,7 @@ make
 make install
 
 cd ${SERVER_HOME}
-ln -s ./${PROGRAME_HOME}/${HTTPD_HOME} ${HTTPD_ALIAS}
+ln -s .${PROGRAME_HOME}/${HTTPD_HOME} ${HTTPD_ALIAS}
 
 printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
 printf "\e[00;32m| \"${HTTPD_HOME}\" install success...\e[00m\n"

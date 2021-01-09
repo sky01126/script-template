@@ -17,7 +17,9 @@ set -e
 # 사용 하는 extglob 쉘 옵션 shopt 내장 명령을 사용 하 여 같은 확장된 패턴 일치 연산자를 사용
 shopt -s extglob
 
-rm -rf ${SERVER_HOME}/${OPENSSL_ALIAS}
+if [[ ! -z ${OPENSSL_ALIAS} ]]; then
+    rm -rf ${SERVER_HOME}/${OPENSSL_ALIAS}
+fi
 rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${OPENSSL_HOME}
 
 echo ${SRC_HOME}
@@ -50,27 +52,29 @@ cd ${SRC_HOME}/${OPENSSL_HOME}
 make
 make install
 
-cd ${SERVER_HOME}
-ln -s ./${PROGRAME_HOME}/${OPENSSL_HOME} ${OPENSSL_ALIAS}
+if [[ ! -z ${OPENSSL_ALIAS} ]]; then
+    cd ${SERVER_HOME}
+    ln -s ./${PROGRAME_HOME}/${OPENSSL_HOME} ${OPENSSL_ALIAS}
+
+    if [[ -f ${BASH_FILE} ]]; then
+        SET_OPENSSL_HOME=`awk "/# OpenSSL Home/" ${BASH_FILE}`
+        if [[ ! -n ${SET_OPENSSL_HOME} ]]; then
+            printf "\e[00;32m| Setting openssl home path...\e[00m\n"
+
+            echo "# OpenSSL Home
+    export OPENSSL_HOME=\"${SERVER_HOME}/${OPENSSL_ALIAS}\"
+    export PATH=\$OPENSSL_HOME/bin:\$PATH
+    export LD_LIBRARY_PATH=\$OPENSSL_HOME/lib:\$LD_LIBRARY_PATH
+    " >> ${BASH_FILE}
+
+            source ${BASH_FILE}
+        fi
+    fi
+fi
 
 # Install source delete
 if [[ -d "${SRC_HOME}/${OPENSSL_HOME}" ]]; then
     rm -rf ${SRC_HOME}/${OPENSSL_HOME}
-fi
-
-if [[ -f ${BASH_FILE} ]]; then
-    SET_OPENSSL_HOME=`awk "/# OpenSSL Home/" ${BASH_FILE}`
-    if [[ ! -n ${SET_OPENSSL_HOME} ]]; then
-        printf "\e[00;32m| Setting openssl home path...\e[00m\n"
-
-        echo "# OpenSSL Home
-export OPENSSL_HOME=\"${SERVER_HOME}/${OPENSSL_ALIAS}\"
-export PATH=\$OPENSSL_HOME/bin:\$PATH
-export LD_LIBRARY_PATH=\$OPENSSL_HOME/lib:\$LD_LIBRARY_PATH
-" >> ${BASH_FILE}
-
-        source ${BASH_FILE}
-    fi
 fi
 
 sudo cp ${SERVER_HOME}/${OPENSSL_ALIAS}/lib/libssl.so.1.1 /usr/lib64/

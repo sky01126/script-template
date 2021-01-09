@@ -105,59 +105,15 @@ printf "\e[00;32m+--------------+-----------------------------------------------
 # ----------------------------------------------------------------------------------------------------------------------
 # PCRE 설치 여부 확인
 if [[ ! -d "${SERVER_HOME}${PROGRAME_HOME}/${PCRE_HOME}" ]]; then
-    cd ${SRC_HOME}
-
-    printf "\e[00;32m| ${PCRE_HOME} install start...\e[00m\n"
-
-    # delete the compile source
-    if [[ -d "${SRC_HOME}/${PCRE_HOME}" ]]; then
-        printf "\e[00;32m| ${SRC_HOME}/${PCRE_HOME} delete...\e[00m\n"
-        rm -rf ${SRC_HOME}/${PCRE_HOME}
+    if [[ ! -f "${PRGDIR}/library/pcre.sh" ]]; then
+        curl -f -L -sS  https://raw.githubusercontent.com/sky01126/script-template/master/install/library/pcre.sh -o /tmp/pcre.sh
+        bash   /tmp/pcre.sh
+    else
+        bash  ${PRGDIR}/library/pcre.sh
     fi
-
-    # verify that the source exists download
-    if [ ! -f "${SRC_HOME}/${PCRE_NAME}" ]; then
-        printf "\e[00;32m| ${PCRE_NAME} download (URL : ${PCRE_DOWNLOAD_URL})\e[00m\n"
-        curl -L -O ${PCRE_DOWNLOAD_URL}
-    fi
-
-    tar xvzf ${PCRE_NAME}
-    cd ${SRC_HOME}/${PCRE_HOME}
-
-    ./configure --prefix=${SERVER_HOME}${PROGRAME_HOME}/${PCRE_HOME} --enable-pcre16 --enable-pcre32 --enable-utf
-    make
-    make install
-
+elif [[ ! -z ${PCRE_ALIAS}  ]] && [[ ! -d "${SERVER_HOME}/${PCRE_ALIAS}" ]]; then
     cd ${SERVER_HOME}
     ln -s ./${PROGRAME_HOME}/${PCRE_HOME} ${PCRE_ALIAS}
-
-    # Install source delete
-    if [[ -d "${SRC_HOME}/${PCRE_HOME}" ]]; then
-        rm -rf ${SRC_HOME}/${PCRE_HOME}
-    fi
-
-
-#     # ------------------------------------------------------------------------------------------------------------------
-#     if [[ -f ${BASH_FILE} ]]; then
-#         SET_PCRE_HOME=`awk '/# PCRE Home/' ${BASH_FILE}`
-#         if [[ ! -n ${SET_PCRE_HOME} ]]; then
-#             echo "# PCRE Home
-# export PCRE_HOME=\"${SERVER_HOME}/${PCRE_ALIAS}\"
-# export PATH=\$PCRE_HOME/bin:\$PATH
-# " >> ${BASH_FILE}
-#         fi
-#     fi
-
-    printf "\e[00;32m| ${PCRE_HOME} install success...\e[00m\n"
-    printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
-    sleep 0.5
-elif [[ ! -d "${SERVER_HOME}/${PCRE_ALIAS}" ]]; then
-    cd ${SERVER_HOME}
-    ln -s ./${PROGRAME_HOME}/${PCRE_HOME} ${PCRE_ALIAS}
-
-    printf "\e[00;32m| ${PCRE_ALIAS} link success...\e[00m\n"
-    printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
-    sleep 0.5
 fi
 
 
@@ -170,7 +126,7 @@ if [[ ! -d "${SERVER_HOME}${PROGRAME_HOME}/${OPENSSL_HOME}" ]]; then
     else
         bash  ${PRGDIR}/library/openssl.sh
     fi
-elif [[ ! -d "${SERVER_HOME}/${OPENSSL_ALIAS}" || ! -L "${SERVER_HOME}/${OPENSSL_ALIAS}" ]]; then
+elif [[ ! -z ${OPENSSL_ALIAS}  ]] && [[ ! -d "${SERVER_HOME}/${OPENSSL_ALIAS}" || ! -L "${SERVER_HOME}/${OPENSSL_ALIAS}" ]]; then
     cd ${SERVER_HOME}
     ln -s ./${PROGRAME_HOME}/${OPENSSL_HOME} ${OPENSSL_ALIAS}
 fi
@@ -185,7 +141,7 @@ if [[ ! -d "${SERVER_HOME}${PROGRAME_HOME}/${APR_HOME}" ]]; then
     else
         bash  ${PRGDIR}/library/apr.sh
     fi
-elif [[ ! -d "${SERVER_HOME}/${APR_ALIAS}" || ! -L "${SERVER_HOME}/${APR_ALIAS}" ]]; then
+elif [[ ! -z ${APR_ALIAS}  ]] && [[ ! -d "${SERVER_HOME}/${APR_ALIAS}" || ! -L "${SERVER_HOME}/${APR_ALIAS}" ]]; then
     cd ${SERVER_HOME}
     ln -s ./${PROGRAME_HOME}/${APR_HOME} ${APR_ALIAS}
 fi
@@ -289,11 +245,28 @@ INSTALL_CONFIG="${INSTALL_CONFIG} --enable-proxy-wstunnel"
 INSTALL_CONFIG="${INSTALL_CONFIG} --enable-rewrite"
 INSTALL_CONFIG="${INSTALL_CONFIG} --enable-so"
 INSTALL_CONFIG="${INSTALL_CONFIG} --enable-ssl"
-INSTALL_CONFIG="${INSTALL_CONFIG} --with-apr=${SERVER_HOME}/${APR_ALIAS}"
-INSTALL_CONFIG="${INSTALL_CONFIG} --with-apr-util=${SERVER_HOME}/${APR_ALIAS}"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-mpm=event"
-INSTALL_CONFIG="${INSTALL_CONFIG} --with-ssl=${SERVER_HOME}/${OPENSSL_ALIAS}"
-INSTALL_CONFIG="${INSTALL_CONFIG} --with-pcre=${SERVER_HOME}/${PCRE_ALIAS}"
+
+if [[ -z ${PCRE_HOME} ]]; then
+    INSTALL_CONFIG="${INSTALL_CONFIG} --with-pcre=${SERVER_HOME}${PROGRAME_HOME}/${PCRE_HOME}"
+else
+    INSTALL_CONFIG="${INSTALL_CONFIG} --with-pcre=${SERVER_HOME}/${PCRE_ALIAS}"
+fi
+
+if [[ -z ${PCRE_HOME} ]]; then
+    INSTALL_CONFIG="${INSTALL_CONFIG} --with-ssl=${SERVER_HOME}${PROGRAME_HOME}/${OPENSSL_HOME}"
+else
+    INSTALL_CONFIG="${INSTALL_CONFIG} --with-ssl=${SERVER_HOME}/${OPENSSL_ALIAS}"
+fi
+
+if [[ -z ${PCRE_HOME} ]]; then
+    INSTALL_CONFIG="${INSTALL_CONFIG} --with-apr=${SERVER_HOME}${PROGRAME_HOME}/${APR_HOME}"
+    INSTALL_CONFIG="${INSTALL_CONFIG} --with-apr-util=${SERVER_HOME}${PROGRAME_HOME}/${APR_HOME}"
+else
+    INSTALL_CONFIG="${INSTALL_CONFIG} --with-apr=${SERVER_HOME}/${APR_ALIAS}"
+    INSTALL_CONFIG="${INSTALL_CONFIG} --with-apr-util=${SERVER_HOME}/${APR_ALIAS}"
+fi
+
 
 ./configure ${INSTALL_CONFIG}
 make

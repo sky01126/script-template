@@ -107,7 +107,7 @@ export OPENJAVA_DOWNLOAD_URL='https://github.com/AdoptOpenJDK/openjdk8-upstream-
 
 # ----------------------------------------------------------------------------------------------------------------------
 # PCRE
-export PCRE_ALIAS='pcre'
+# export PCRE_ALIAS='pcre'
 
 export PCRE_VERSION="8.44"
 export PCRE_DOWNLOAD_URL="http://sourceforge.net/projects/pcre/files/pcre/${PCRE_VERSION}/pcre-${PCRE_VERSION}.tar.gz"
@@ -117,7 +117,7 @@ export PCRE_HOME=${PCRE_NAME%$EXTENSION}
 
 # ----------------------------------------------------------------------------------------------------------------------
 # OpenSSL 설정.
-export OPENSSL_ALIAS='openssl'
+# export OPENSSL_ALIAS='openssl'
 
 export OPENSSL_VERSION="1.1.1i"
 export OPENSSL_DOWNLOAD_URL="https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz"
@@ -127,7 +127,7 @@ export OPENSSL_HOME=${OPENSSL_NAME%$EXTENSION}
 
 # ----------------------------------------------------------------------------------------------------------------------
 # APR
-export APR_ALIAS='apr'
+# export APR_ALIAS='apr'
 
 export APR_VERSION="1.7.0"
 export APR_DOWNLOAD_URL="http://archive.apache.org/dist/apr/apr-${APR_VERSION}.tar.gz"

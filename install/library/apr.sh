@@ -17,7 +17,9 @@ set -e
 # 사용 하는 extglob 쉘 옵션 shopt 내장 명령을 사용 하 여 같은 확장된 패턴 일치 연산자를 사용
 shopt -s extglob
 
-rm -rf ${SERVER_HOME}/${APR_ALIAS}
+if [[ ! -z ${APR_ALIAS} ]]; then
+    rm -rf ${SERVER_HOME}/${APR_ALIAS}
+fi
 rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${APR_HOME}
 
 printf "\e[00;32m| ${APR_HOME} / ${APR_ICONV_NAME} / ${APR_UTIL_HOME} install start...\e[00m\n"
@@ -92,8 +94,10 @@ make install
 sleep 0.5
 
 # ----------------------------------------------------------------------------------------------------------------------
-cd ${SERVER_HOME}
-ln -s ./${PROGRAME_HOME}/${APR_HOME} ${APR_ALIAS}
+if [[ ! -z ${APR_ALIAS} ]]; then
+    cd ${SERVER_HOME}
+    ln -s ./${PROGRAME_HOME}/${APR_HOME} ${APR_ALIAS}
+fi
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Install source delete

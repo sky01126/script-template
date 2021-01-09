@@ -7,7 +7,7 @@
 # /_/ |_\___/\__,_/_/ /_/\__, /\__,_/_/ /_/\__, /
 #                       /____/            /____/
 #
-# 멀티 쉘 실행 : bash <(curl -f -L -sS https://raw.githubusercontent.com/sky01126/develop-document/master/Template/install-script/apache24_install.sh)
+# 멀티 쉘 실행 : bash <(curl -f -L -sS https://raw.githubusercontent.com/sky01126/script-template/master/install/apache24_install.sh)
 #
 # - 상용 리눅스
 #   yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
@@ -67,7 +67,7 @@ PRGDIR=`dirname "$PRG"`
 # ----------------------------------------------------------------------------------------------------------------------
 # 멀티의 setting.sh 읽기
 if [[ ! -f "${PRGDIR}/library/setting.sh" ]]; then
-    curl -f -L -sS  http://shell.pe.kr/document/install/library/setting.sh -o /tmp/setting.sh
+    curl -f -L -sS  https://raw.githubusercontent.com/sky01126/script-template/master/install/library/setting.sh -o /tmp/setting.sh
     source /tmp/setting.sh
     bash   /tmp/setting.sh
 else
@@ -165,7 +165,7 @@ fi
 # OpenSSL 설치 여부 확인
 if [[ ! -d "${SERVER_HOME}${PROGRAME_HOME}/${OPENSSL_HOME}" ]]; then
     if [[ ! -f "${PRGDIR}/library/openssl.sh" ]]; then
-        curl -f -L -sS  http://shell.pe.kr/document/install/library/openssl.sh -o /tmp/openssl.sh
+        curl -f -L -sS  https://raw.githubusercontent.com/sky01126/script-template/master/install/library/openssl.sh -o /tmp/openssl.sh
         bash   /tmp/openssl.sh
     else
         bash  ${PRGDIR}/library/openssl.sh
@@ -180,7 +180,7 @@ fi
 # APR / APR Util 설치 여부 확인
 if [[ ! -d "${SERVER_HOME}${PROGRAME_HOME}/${APR_HOME}" ]]; then
     if [[ ! -f "${PRGDIR}/library/apr.sh" ]]; then
-        curl -f -L -sS  http://shell.pe.kr/document/install/library/apr.sh -o /tmp/apr.sh
+        curl -f -L -sS  https://raw.githubusercontent.com/sky01126/script-template/master/install/library/apr.sh -o /tmp/apr.sh
         bash   /tmp/apr.sh
     else
         bash  ${PRGDIR}/library/apr.sh

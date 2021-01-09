@@ -71,10 +71,10 @@ if [[ ! -f "${PRGDIR}/library/setting.sh" ]]; then
 
     curl -f -L -sS  https://raw.githubusercontent.com/sky01126/script-template/master/install/library/setting.sh -o /tmp/setting.sh
     source /tmp/setting.sh
-    bash   /tmp/setting.sh
+    # bash   /tmp/setting.sh
 else
     source ${PRGDIR}/library/setting.sh
-    bash   ${PRGDIR}/library/setting.sh
+    # bash   ${PRGDIR}/library/setting.sh
 fi
 
 

@@ -253,13 +253,13 @@ INSTALL_CONFIG="${INSTALL_CONFIG} --enable-so"
 INSTALL_CONFIG="${INSTALL_CONFIG} --enable-ssl"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-mpm=event"
 
-if [[ -z ${PCRE_HOME} ]]; then
+if [[ -z ${PCRE_ALIAS} ]]; then
     INSTALL_CONFIG="${INSTALL_CONFIG} --with-pcre=${SERVER_HOME}${PROGRAME_HOME}/${PCRE_HOME}"
 else
     INSTALL_CONFIG="${INSTALL_CONFIG} --with-pcre=${SERVER_HOME}/${PCRE_ALIAS}"
 fi
 
-if [[ -z ${PCRE_HOME} ]]; then
+if [[ -z ${OPENSSL_ALIAS} ]]; then
     INSTALL_CONFIG="${INSTALL_CONFIG} --with-ssl=${SERVER_HOME}${PROGRAME_HOME}/${OPENSSL_HOME}"
 else
     INSTALL_CONFIG="${INSTALL_CONFIG} --with-ssl=${SERVER_HOME}/${OPENSSL_ALIAS}"

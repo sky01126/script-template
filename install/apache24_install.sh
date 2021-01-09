@@ -1398,7 +1398,8 @@ LoadModule jk_module modules/mod_jk.so
 
     # Our JK error log
     # You can (and should) use rotatelogs here
-    JkLogFile \"|${SERVER_HOME}/${HTTPD_ALIAS}/bin/rotatelogs -L logs/mod_jk.log logs/archive/mod_jk.%Y-%m-%d.log 86400 +540\"
+    JkLogFile \"|${SERVER_HOME}/${HTTPD_ALIAS}/bin/rotatelogs logs/mod_jk.%Y-%m-%d.log 86400 +540\"
+    # JkLogFile \"|${SERVER_HOME}/${HTTPD_ALIAS}/bin/rotatelogs -L logs/mod_jk.log logs/archive/mod_jk.%Y-%m-%d.log 86400 +540\"
 
     # Our JK log level (trace,debug,info,warn,error)
     JkLogLevel info

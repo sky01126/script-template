@@ -11,6 +11,8 @@
 #
 # 중요 - 아래 패키지 설치, Apache와 Nginx에서 사용되는 OpenSSL은 소스를 가지고 설치를 진행한다.
 #
+# Install : bash <(curl -fsSL https://raw.githubusercontent.com/sky01126/script-template/master/install/nginx_install.sh)
+#
 # ------------------------ CentOS --------------------------
 # - 개발 리눅스
 #   yum install -y zlib-devel ncurses-devel libpcap-devel libxml2-devel libxslt-devel
@@ -348,7 +350,7 @@ INSTALL_CONFIG="${INSTALL_CONFIG} --with-http_sub_module"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-http_v2_module"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-threads"
 
-INSTALL_CONFIG="${INSTALL_CONFIG} --with-http_geoip_module=dynamic"
+# INSTALL_CONFIG="${INSTALL_CONFIG} --with-http_geoip_module=dynamic"
 # INSTALL_CONFIG="${INSTALL_CONFIG} --with-http_image_filter_module=dynamic"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-http_xslt_module=dynamic"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-mail=dynamic"

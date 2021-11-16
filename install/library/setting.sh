@@ -120,7 +120,7 @@ if [[ -z ${PCRE_ALIAS} ]]; then
     echo
 fi
 
-export PCRE_VERSION="8.44"
+export PCRE_VERSION="8.45"
 export PCRE_DOWNLOAD_URL="http://sourceforge.net/projects/pcre/files/pcre/${PCRE_VERSION}/pcre-${PCRE_VERSION}.tar.gz"
 export PCRE_NAME=${PCRE_DOWNLOAD_URL##+(*/)}
 export PCRE_HOME=${PCRE_NAME%$EXTENSION}

@@ -27,7 +27,7 @@
 #   cp /home/server/openssl/lib/libssl.so.1.1 /usr/lib64/
 #   cp /home/server/openssl/lib/libcrypto.so.1.1 /usr/lib64/
 
-export SERVER_HOME=/apache
+export SERVER_HOME=/nkapps/nkshop
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Exit on error

@@ -76,7 +76,7 @@ export SRC_HOME=/var/tmp
 # ----------------------------------------------------------------------------------------------------------------------
 # Programe Home 경로 설정.
 # opt : 애드온(Add-on) 소프트웨어 패키지 디렉토리
-#export PROGRAME_HOME='/opt/local'
+export PROGRAME_HOME='/opt/local'
 if [[ -z ${PROGRAME_HOME} ]]; then
     printf "Enter the program install path (ex. /opt/local)"
     read -e -p " > " PROGRAME_HOME
@@ -113,7 +113,7 @@ export OPENJAVA_DOWNLOAD_URL='https://github.com/AdoptOpenJDK/openjdk8-upstream-
 
 # ----------------------------------------------------------------------------------------------------------------------
 # PCRE
-# export PCRE_ALIAS='pcre'
+export PCRE_ALIAS='pcre'
 if [[ -z ${PCRE_ALIAS} ]]; then
     printf "Enter the pcre alias (ex. pcre)"
     read -e -p " > " PCRE_ALIAS
@@ -128,7 +128,7 @@ export PCRE_HOME=${PCRE_NAME%$EXTENSION}
 
 # ----------------------------------------------------------------------------------------------------------------------
 # OpenSSL 설정.
-# export OPENSSL_ALIAS='openssl'
+export OPENSSL_ALIAS='openssl'
 if [[ -z ${OPENSSL_ALIAS} ]]; then
     printf "Enter the openssl alias (ex. openssl)"
     read -e -p " > " OPENSSL_ALIAS
@@ -143,7 +143,7 @@ export OPENSSL_HOME=${OPENSSL_NAME%$EXTENSION}
 
 # ----------------------------------------------------------------------------------------------------------------------
 # APR
-# export APR_ALIAS='apr'
+export APR_ALIAS='apr'
 if [[ -z ${APR_ALIAS} ]]; then
     printf "Enter the apr alias (ex. apr)"
     read -e -p " > " APR_ALIAS

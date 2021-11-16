@@ -46,6 +46,8 @@ set -e
 # 사용 하는 extglob 쉘 옵션 shopt 내장 명령을 사용 하 여 같은 확장된 패턴 일치 연산자를 사용
 shopt -s extglob
 
+SERVER_HOME=/nkapps/nkshop
+
 ## OS를 확인한다.
 export OS='unknown'
 if [ "$(uname)" == "Darwin" ]; then
@@ -96,15 +98,17 @@ printf "\e[00;32m| 1.19 :\e[00m NginX v1.19.X\n"
 printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
 
 # ARCHETYPE_ARTIFACT_ID을 받기위해서 대기한다.
-export NGINX_VERSION='1.19.2'
+export NGINX_VERSION='1.21.4'
 printf "\e[00;32m| Enter nginx version\e[00m"
-read -e -p " (default. 1.19) > " CHECK_NGINX_VERSION
+read -e -p " (default. 1.21) > " CHECK_NGINX_VERSION
 if [ "${CHECK_NGINX_VERSION}" == "1.12" ]; then
     NGINX_VERSION='1.12.2'
 elif [ "${CHECK_NGINX_VERSION}" == "1.14" ]; then
     NGINX_VERSION='1.14.2'
 elif [ "${CHECK_NGINX_VERSION}" == "1.16" ]; then
     NGINX_VERSION='1.16.1'
+elif [ "${CHECK_NGINX_VERSION}" == "1.19" ]; then
+    NGINX_VERSION='1.19.9'
 fi
 
 

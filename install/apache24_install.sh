@@ -27,7 +27,7 @@
 #   cp /home/server/openssl/lib/libssl.so.1.1 /usr/lib64/
 #   cp /home/server/openssl/lib/libcrypto.so.1.1 /usr/lib64/
 
-export SERVER_HOME=/apache
+export SERVER_HOME=/nkapps/nkshop
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Exit on error
@@ -82,7 +82,7 @@ fi
 # Apache 2.4
 HTTPD_ALIAS='httpd'
 
-HTTPD_VERSION="2.4.46"
+HTTPD_VERSION="2.4.51"
 HTTPD_DOWNLOAD_URL="http://archive.apache.org/dist/httpd/httpd-${HTTPD_VERSION}.tar.gz"
 HTTPD_NAME=${HTTPD_DOWNLOAD_URL##+(*/)}
 HTTPD_HOME=${HTTPD_NAME%$EXTENSION}

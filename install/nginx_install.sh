@@ -7,14 +7,13 @@
 # /_/ |_\___/\__,_/_/ /_/\__, /\__,_/_/ /_/\__, /
 #                       /____/            /____/
 #
-# 멀티 쉘 실행 : bash <(curl -fsSL https://raw.githubusercontent.com/sky01126/script-template/master/install/nginx_install.sh)
+# 멀티 쉘 실행 :
 #
 # 중요 - 아래 패키지 설치, Apache와 Nginx에서 사용되는 OpenSSL은 소스를 가지고 설치를 진행한다.
 #
 # ------------------------ CentOS --------------------------
 # - 개발 리눅스
-#   yum install -y zlib zlib-devel openssl-devel gd gd-devel ImageMagick ImageMagick-devel bzip2-devel bzip2 ncurses-devel sqlite-devel readline-devel tk-devel gdbm-devel db4-devel libpcap-devel libxml2-devel libxslt-devel  xz-devel
-#   yum install -y zlib-devel gd-devel ImageMagick-devel bzip2-devel ncurses-devel libpcap-devel libxml2-devel libxslt-devel
+#   yum install -y zlib-devel ncurses-devel libpcap-devel libxml2-devel libxslt-devel
 # - 상용 리눅스
 #   yum install -y zlib gd ImageMagick bzip2
 #
@@ -350,7 +349,7 @@ INSTALL_CONFIG="${INSTALL_CONFIG} --with-http_v2_module"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-threads"
 
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-http_geoip_module=dynamic"
-INSTALL_CONFIG="${INSTALL_CONFIG} --with-http_image_filter_module=dynamic"
+# INSTALL_CONFIG="${INSTALL_CONFIG} --with-http_image_filter_module=dynamic"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-http_xslt_module=dynamic"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-mail=dynamic"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-mail_ssl_module"

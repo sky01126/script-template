@@ -75,6 +75,7 @@ done
 # Get standard environment variables
 PRGDIR=`dirname "$PRG"`
 
+echo "1"
 
 # ------------------------------------------------------------------------------
 # 멀티의 setting.sh 읽기
@@ -262,6 +263,8 @@ if [ ! -d "${SERVER_HOME}/${PROGRAME_HOME}/${NGX_HTTP_PROXY_CONNECT_MODULE_HOME}
     if [ ! -d "${SRC_HOME}/${NGX_HTTP_PROXY_CONNECT_MODULE_HOME}" ]; then
         printf "\e[00;32m| \"${NGX_HTTP_PROXY_CONNECT_MODULE_HOME}\" download (URL : ${NGX_HTTP_PROXY_CONNECT_MODULE_DOWNLOAD_URL})\e[00m\n"
         git clone ${NGX_HTTP_PROXY_CONNECT_MODULE_DOWNLOAD_URL} ${NGX_HTTP_PROXY_CONNECT_MODULE_HOME}
+
+        patch -p1 < ${NGX_HTTP_PROXY_CONNECT_MODULE_DOWNLOAD_URL} ${NGX_HTTP_PROXY_CONNECT_MODULE_HOME}/patch/proxy_connect_rewrite_101504.patch
     fi
     sleep 0.5
 fi
@@ -1031,17 +1034,19 @@ mkdir -p ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/conf/sites-enabled
 
 
 # ------------------------------------------------------------------------------
-#echo "load_module modules/ngx_http_geoip_module.so;"        > ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-http-geoip.conf
-#echo "load_module modules/ngx_http_image_filter_module.so;" > ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-http-image-filter.conf
-echo "load_module modules/ngx_http_xslt_filter_module.so;"  > ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-http-xslt-filter.conf
-echo "load_module modules/ngx_mail_module.so;"              > ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-mail.conf
-echo "load_module modules/ngx_stream_module.so;"            > ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-stream.conf
+#echo "load_module modules/ngx_http_geoip_module.so;"                                        > ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-http-geoip.conf
+#echo "load_module modules/ngx_http_image_filter_module.so;"                                 > ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-http-image-filter.conf
+echo "load_module modules/ngx_http_xslt_filter_module.so;"                                  > ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-http-xslt-filter.conf
+echo "load_module modules/ngx_mail_module.so;"                                              > ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-mail.conf
+echo "load_module modules/ngx_stream_module.so;"                                            > ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-stream.conf
+echo "load_module modules/ngx_http_proxy_connect_module.so;"                                > ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-http-proxy-connect.conf
 
 #ln -sf ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-http-geoip.conf          ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-enabled/50-mod-http-geoip.conf
 #ln -sf ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-http-image-filter.conf   ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-enabled/50-mod-http-image-filter.conf
 ln -sf ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-http-xslt-filter.conf    ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-enabled/50-mod-http-xslt-filter.conf
 ln -sf ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-mail.conf                ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-enabled/50-mod-mail.conf
 ln -sf ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-stream.conf              ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-enabled/50-mod-stream.conf
+ln -sf ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-http-proxy-connect.conf  ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-enabled/50-mod-http-proxy-connect.conf
 
 
 # ------------------------------------------------------------------------------

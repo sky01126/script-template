@@ -118,6 +118,7 @@ fi
 export NGINX_DOWNLOAD_URL="https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz"
 export NGINX_RTMP_MODULE_DOWNLOAD_URL="https://github.com/arut/nginx-rtmp-module.git"
 export NGINX_HEADERS_MORE_MODULE_DOWNLOAD_URL="https://github.com/openresty/headers-more-nginx-module.git"
+export NGX_HTTP_PROXY_CONNECT_MODULE_DOWNLOAD_URL="https://github.com/chobits/ngx_http_proxy_connect_module.git"
 
 
 # ------------------------------------------------------------------------------
@@ -229,9 +230,8 @@ NGINX_RTMP_MODULE_HOME=${NGINX_RTMP_MODULE_NAME%$GIT_EXTENSION}
 #     sleep 0.5
 # fi
 
-
 # ------------------------------------------------------------------------------
-# Nginx Headers Modre Module
+# Nginx Headers More Module
 NGINX_HEADERS_MORE_MODULE_NAME=${NGINX_HEADERS_MORE_MODULE_DOWNLOAD_URL##+(*/)}
 NGINX_HEADERS_MORE_MODULE_HOME=${NGINX_HEADERS_MORE_MODULE_NAME%$GIT_EXTENSION}
 if [ ! -d "${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HEADERS_MORE_MODULE_HOME}" ]; then
@@ -244,6 +244,24 @@ if [ ! -d "${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HEADERS_MORE_MODULE_HOME}" ];
     if [ ! -d "${SRC_HOME}/${NGINX_HEADERS_MORE_MODULE_HOME}" ]; then
         printf "\e[00;32m| \"${NGINX_HEADERS_MORE_MODULE_HOME}\" download (URL : ${NGINX_HEADERS_MORE_MODULE_DOWNLOAD_URL})\e[00m\n"
         git clone ${NGINX_HEADERS_MORE_MODULE_DOWNLOAD_URL} ${NGINX_HEADERS_MORE_MODULE_HOME}
+    fi
+    sleep 0.5
+fi
+
+# ------------------------------------------------------------------------------
+# Nginx Http Proxy Connext Module
+NGX_HTTP_PROXY_CONNECT_MODULE_NAME=${NGX_HTTP_PROXY_CONNECT_MODULE_DOWNLOAD_URL##+(*/)}
+NGX_HTTP_PROXY_CONNECT_MODULE_HOME=${NGX_HTTP_PROXY_CONNECT_MODULE_NAME%$GIT_EXTENSION}
+if [ ! -d "${SERVER_HOME}/${PROGRAME_HOME}/${NGX_HTTP_PROXY_CONNECT_MODULE_HOME}" ]; then
+    # cd the compile source directory
+    cd ${SRC_HOME}
+
+    printf "\e[00;32m| \"${NGX_HTTP_PROXY_CONNECT_MODULE_HOME}\" install start...\e[00m\n"
+
+    # verify that the source exists download
+    if [ ! -d "${SRC_HOME}/${NGX_HTTP_PROXY_CONNECT_MODULE_HOME}" ]; then
+        printf "\e[00;32m| \"${NGX_HTTP_PROXY_CONNECT_MODULE_HOME}\" download (URL : ${NGX_HTTP_PROXY_CONNECT_MODULE_DOWNLOAD_URL})\e[00m\n"
+        git clone ${NGX_HTTP_PROXY_CONNECT_MODULE_DOWNLOAD_URL} ${NGX_HTTP_PROXY_CONNECT_MODULE_HOME}
     fi
     sleep 0.5
 fi
@@ -364,6 +382,7 @@ INSTALL_CONFIG="${INSTALL_CONFIG} --without-http_fastcgi_module"
 INSTALL_CONFIG="${INSTALL_CONFIG} --without-http_scgi_module"
 
 INSTALL_CONFIG="${INSTALL_CONFIG} --add-module=${SRC_HOME}/${NGINX_HEADERS_MORE_MODULE_HOME}"
+INSTALL_CONFIG="${INSTALL_CONFIG} --add-module=${SRC_HOME}/${NGX_HTTP_PROXY_CONNECT_MODULE_HOME}"
 
 # Nginx RTMP Module
 if [ "$(uppercase $INSTALL_NGINX_RTMP)" == "Y" ]; then

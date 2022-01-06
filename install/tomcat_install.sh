@@ -8,7 +8,7 @@
 # /_/ |_\___/\__,_/_/ /_/\__, /\__,_/_/ /_/\__, /
 #                       /____/            /____/
 #
-# 멀티 쉘 실행 : bash <(curl -f -L -sS http://shell.pe.kr/document/install/tomcat_install.sh)
+# 멀티 쉘 실행 : bash <(curl -fsSL -H 'Pragma: no-cache' https://raw.githubusercontent.com/sky01126/script-template/master/install/tomcat_install.sh)
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -28,6 +28,8 @@ elif [[ "$(expr substr $(uname -s) 1 5)" == "Linux" ]]; then
 fi
 
 unset TMOUT
+
+echo "---------------- v2022.01.06.001 ----------------"
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -57,12 +59,14 @@ PRGDIR=`dirname "$PRG"`
 # ----------------------------------------------------------------------------------------------------------------------
 # 멀티의 setting.sh 읽기
 if [[ ! -f "${PRGDIR}/library/setting.sh" ]]; then
-    curl -f -L -sS  http://shell.pe.kr/document/install/library/setting.sh -o /tmp/setting.sh
+    rm -rf /tmp/setting.sh
+
+    curl -f -L -sS  https://raw.githubusercontent.com/sky01126/script-template/master/install/library/setting.sh -o /tmp/setting.sh
     source /tmp/setting.sh
-    bash   /tmp/setting.sh
+    # bash   /tmp/setting.sh
 else
     source ${PRGDIR}/library/setting.sh
-    bash   ${PRGDIR}/library/setting.sh
+    # bash   ${PRGDIR}/library/setting.sh
 fi
 
 
@@ -87,9 +91,9 @@ LOGBACK_ACCESS_DOWNLOAD_URL="http://central.maven.org/maven2/ch/qos/logback/logb
 if [[ -z ${CHECK_TOMCAT} ]]; then
     printf "\e[00;32m| Tomcat 설치를 진행하려면 아래 옵션 중 하나를 선택하십시오.\e[00m\n"
     printf "\e[00;32m+------------------+--------------------------------------------------------------\e[00m\n"
-    printf "\e[00;32m| Tomcat7          |\e[00m Tomcat v7.0.X\n"
     printf "\e[00;32m| Tomcat8          |\e[00m Tomcat v8.5.X\n"
     printf "\e[00;32m| Tomcat9          |\e[00m Tomcat v9.0.X\n"
+    printf "\e[00;32m| Tomcat10         |\e[00m Tomcat v10.0.X\n"
     printf "\e[00;32m+------------------+--------------------------------------------------------------\e[00m\n"
 
     # ARCHETYPE_ARTIFACT_ID을 받기위해서 대기한다.
@@ -109,18 +113,14 @@ fi
 # ----------------------------------------------------------------------------------------------------------------------
 # 앞 / 뒤 공백 제거
 CHECK_TOMCAT=${CHECK_TOMCAT##*( )}
-if [[ "${CHECK_TOMCAT}" == "Tomcat7" ]]; then
+if [[ "${CHECK_TOMCAT}" == "Tomcat10" ]]; then
     # ------------------------------------------------------------------------------------------------------------------
-    # Tomcat 7.0.x
-    TOMCAT_VERSION='7.0.100'
+    # Tomcat 10.0.x
+    TOMCAT_VERSION='10.0.14'
     TOMCAT_DOWNLOAD_URL="http://archive.apache.org/dist/tomcat/tomcat-7/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz"
     TOMCAT_NATIVE_HOME='tomcat-native-*-src'
 
-    # ------------------------------------------------------------------------------------------------------------------
-    #BASE_JULI_DOWNLOAD_URL="https://github.com/tomcat-slf4j-logback/tomcat-slf4j-logback/releases/download/tomcat7(${TOMCAT_VERSION})"
-    # BASE_JULI_DOWNLOAD_URL='http://www.shell.pe.kr/document/tomcat-slf4j-logback'
-    #TOMCAT_JULI_DOWNLOAD_URL="${BASE_JULI_DOWNLOAD_URL}/tomcat-juli-${TOMCAT_VERSION}-slf4j-${SLF4J_VERSION}-logback-${LOGBACK_VERSION}.zip"
-    TOMCAT_JULI_DOWNLOAD_URL="https://github.com/tomcat-slf4j-logback/tomcat-slf4j-logback/releases/download/tomcat7(7.0.96)/tomcat-juli-7.0.92-slf4j-1.7.25-logback-1.2.3.zip"
+    TOMCAT_JULI_DOWNLOAD_URL="https://github.com/tomcat-slf4j-logback/tomcat-slf4j-logback/releases/download/tomcat10/tomcat10-slf4j-logback-10.0.0-M5-10.0.0-M5-slf4j-2.0.0-alpha1-logback-1.3.0-alpha5.zip"
 elif [[ "${CHECK_TOMCAT}" == "Tomcat9" ]]; then
     # ------------------------------------------------------------------------------------------------------------------
     # Tomcat 9.0.x
@@ -128,23 +128,15 @@ elif [[ "${CHECK_TOMCAT}" == "Tomcat9" ]]; then
     TOMCAT_DOWNLOAD_URL="http://archive.apache.org/dist/tomcat/tomcat-9/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz"
     TOMCAT_NATIVE_HOME='tomcat-native-*-src'
 
-    # ------------------------------------------------------------------------------------------------------------------
-    #BASE_JULI_DOWNLOAD_URL="https://github.com/tomcat-slf4j-logback/tomcat-slf4j-logback/releases/download/tomcat7(${TOMCAT_VERSION})"
-    # BASE_JULI_DOWNLOAD_URL='http://www.shell.pe.kr/document/tomcat-slf4j-logback'
-    #TOMCAT_JULI_DOWNLOAD_URL="${BASE_JULI_DOWNLOAD_URL}/tomcat-juli-${TOMCAT_VERSION}-slf4j-${SLF4J_VERSION}-logback-${LOGBACK_VERSION}.zip"
-    TOMCAT_JULI_DOWNLOAD_URL="https://github.com/tomcat-slf4j-logback/tomcat-slf4j-logback/releases/download/tomcat9(9.0.24)/tomcat-juli-9.0.14-slf4j-1.7.25-logback-1.2.3.zip"
+    TOMCAT_JULI_DOWNLOAD_URL="https://github.com/tomcat-slf4j-logback/tomcat-slf4j-logback/releases/download/tomcat9/tomcat-juli-9.0.14-slf4j-1.7.25-logback-1.2.3.zip"
 else
     # ------------------------------------------------------------------------------------------------------------------
     # Tomcat 8,5.x
-    TOMCAT_VERSION='8.5.53'
+    TOMCAT_VERSION='8.5.56'
     TOMCAT_DOWNLOAD_URL="http://archive.apache.org/dist/tomcat/tomcat-8/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz"
     TOMCAT_NATIVE_HOME='tomcat-native-*-src'
 
-    # ------------------------------------------------------------------------------------------------------------------
-    #BASE_JULI_DOWNLOAD_URL="https://github.com/tomcat-slf4j-logback/tomcat-slf4j-logback/releases/download/tomcat85(${TOMCAT_VERSION})"
-    # BASE_JULI_DOWNLOAD_URL='http://www.shell.pe.kr/document/tomcat-slf4j-logback'
-    #TOMCAT_JULI_DOWNLOAD_URL="${BASE_JULI_DOWNLOAD_URL}/tomcat-juli-${TOMCAT_VERSION}-slf4j-${SLF4J_VERSION}-logback-${LOGBACK_VERSION}.zip"
-    TOMCAT_JULI_DOWNLOAD_URL="https://github.com/tomcat-slf4j-logback/tomcat-slf4j-logback/releases/download/tomcat85(8.5.45)/tomcat-juli-8.5.37-slf4j-1.7.25-logback-1.2.3.zip"
+    TOMCAT_JULI_DOWNLOAD_URL="https://github.com/tomcat-slf4j-logback/tomcat-slf4j-logback/releases/download/tomcat85/tomcat-juli-8.5.37-slf4j-1.7.25-logback-1.2.3.zip"
 fi
 
 
@@ -163,7 +155,7 @@ printf "\e[00;32m+--------------------------------------------------------------
 # # Java 설치 여부 확인
 # if [[ "${OS}" == "linux" ]] && [[ ! -d "${SERVER_HOME}/${PROGRAME_HOME}/${JAVA_HOME}" ]]; then
 #     if [[ ! -f "${PRGDIR}/library/java.sh" ]]; then
-#         curl -f -L -sS  http://shell.pe.kr/document/install/library/java.sh -o /tmp/java.sh
+#         curl -f -L -sS  https://raw.githubusercontent.com/sky01126/script-template/master/install/library/java.sh -o /tmp/java.sh
 #         bash   /tmp/java.sh
 #     else
 #         bash  ${PRGDIR}/library/java.sh
@@ -175,7 +167,7 @@ printf "\e[00;32m+--------------------------------------------------------------
 # Open Java 설치 여부 확인
 if [[ "${OS}" == "linux" ]] && [[ ! -d "${SERVER_HOME}/${PROGRAME_HOME}/${OPENJAVA_HOME}" ]]; then
    if [[ ! -f "${PRGDIR}/library/openjava.sh" ]]; then
-       curl -f -L -sS  http://shell.pe.kr/document/install/library/openjava.sh -o /tmp/openjava.sh
+       curl -f -L -sS  https://raw.githubusercontent.com/sky01126/script-template/master/install/library/openjava.sh -o /tmp/openjava.sh
        bash /tmp/openjava.sh
    else
        bash ${PRGDIR}/library/openjava.sh
@@ -187,7 +179,7 @@ fi
 # OpenSSL 설치 여부 확인
 if [[ ! -d "${SERVER_HOME}/${PROGRAME_HOME}/${OPENSSL_HOME}" ]]; then
     if [[ ! -f "${PRGDIR}/library/openssl.sh" ]]; then
-        curl -f -L -sS  http://shell.pe.kr/document/install/library/openssl.sh -o /tmp/openssl.sh
+        curl -f -L -sS  https://raw.githubusercontent.com/sky01126/script-template/master/install/library/openssl.sh -o /tmp/openssl.sh
         bash   /tmp/openssl.sh
     else
         bash  ${PRGDIR}/library/openssl.sh
@@ -202,7 +194,7 @@ fi
 # APR / APR Util 설치 여부 확인
 if [[ ! -d "${SERVER_HOME}/${PROGRAME_HOME}/${APR_HOME}" ]]; then
     if [[ ! -f "${PRGDIR}/library/apr.sh" ]]; then
-        curl -f -L -sS  http://shell.pe.kr/document/install/library/apr.sh -o /tmp/apr.sh
+        curl -f -L -sS  https://raw.githubusercontent.com/sky01126/script-template/master/install/library/apr.sh -o /tmp/apr.sh
         bash   /tmp/apr.sh
     else
         bash  ${PRGDIR}/library/apr.sh
@@ -560,29 +552,6 @@ echo "#!/bin/sh
 # /_/  \____/_/ /_/ /_/\___/\__,_/\__/
 # :: Version ::              (v${TOMCAT_VERSION})
 # ---------------------------------------------------------------------------------
-# Multi-instance Apache Tomcat installation with a focus
-# on best-practices as defined by Apache, SpringSource, and MuleSoft
-# and enterprise use with large-scale deployments.
-
-# Credits:
-# Google -> Couldn't survive without it
-# Stackoverflow.com -> Community support
-# SpringSource -> Specifically best-practices and seminars (Expert Series)
-
-# Based On:
-# http://www.springsource.com/files/uploads/tomcat/tomcatx-performance-tuning.pdf
-# http://www.springsource.com/files/u1/PerformanceTuningApacheTomcat-Part2.pdf
-# http://www.springsource.com/files/uploads/tomcat/tomcatx-large-scale-deployments.pdf
-
-# Created By: Terrance A. Snyder
-# URL: http://www.terranceasnyder.com
-#      http://shutupandcode.net
-
-# Best Practice Documentation:
-# http://terranceasnyder.com/2011/05/tomcat-best-practices/
-
-# Looking for the latest version?
-# github @ https://github.com/terrancesnyder
 
 # ---------------------------------------------------------------------------------
 export APR_HOME=\"${SERVER_HOME%/}/apr\"
@@ -638,7 +607,7 @@ else
 fi
 
 echo "# Reserved code cache size
-#export CATALINA_OPTS=\"\$CATALINA_OPTS --XX:ReservedCodeCacheSize=256\"
+#export CATALINA_OPTS=\"\$CATALINA_OPTS -XX:ReservedCodeCacheSize=256m\"
 
 # Setting GC option
 export CATALINA_OPTS=\"\$CATALINA_OPTS -XX:+UseG1GC\"

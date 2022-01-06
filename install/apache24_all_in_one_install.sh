@@ -9,14 +9,14 @@
 # /_/ |_\___/\__,_/_/ /_/\__, /\__,_/_/ /_/\__, /
 #                       /____/            /____/
 #
-# 멀티 쉘 실행 : bash <(curl -f -L -sS http://shell.pe.kr/document/install/apache24_all_in_one_install.sh)
+# 멀티 쉘 실행 : bash <(curl -fsSL -H 'Pragma: no-cache' https://raw.githubusercontent.com/sky01126/script-template/master/install/apache24_all_in_one_install.sh)
 #
 # - 상용 리눅스
-#   yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+#   yum install -y epel-release
 #   yum install -y libnghttp2
 #
 # - 개발 리눅스
-#   yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+#   yum install -y epel-release
 #   yum install -y libnghttp2 libnghttp2-devel
 #
 # - 참조 사이트
@@ -202,11 +202,22 @@ tar xvzf ${HTTPD_NAME}
 # ----------------------------------------------------------------------------------------------------------------------
 # APR 추가
 cd ${SRC_HOME}
+if [ ! -f "${SRC_HOME}/${APR_NAME}" ]; then
+    printf "\e[00;32m| ${APR_NAME} download (URL : ${APR_DOWNLOAD_URL})\e[00m\n"
+    curl -L -O ${APR_DOWNLOAD_URL}
+fi
+
 tar xvzf ${APR_NAME} -C ${SRC_HOME}/${HTTPD_NAME%$EXTENSION}/srclib/
 cd ${SRC_HOME}/${HTTPD_NAME%$EXTENSION}/srclib/
 mv ${APR_HOME} apr
 
+
 cd ${SRC_HOME}
+if [ ! -f "${SRC_HOME}/${APR_UTIL_NAME}" ]; then
+    printf "\e[00;32m| ${APR_UTIL_NAME} download (URL : ${APR_UTIL_DOWNLOAD_URL})\e[00m\n"
+    curl -L -O ${APR_UTIL_DOWNLOAD_URL}
+fi
+
 tar xvzf ${APR_UTIL_NAME} -C ${SRC_HOME}/${HTTPD_NAME%$EXTENSION}/srclib/
 cd ${SRC_HOME}/${HTTPD_NAME%$EXTENSION}/srclib/
 mv ${APR_UTIL_HOME} apr-util
@@ -217,12 +228,23 @@ cd ${SRC_HOME}/${HTTPD_NAME%$EXTENSION}
 # ----------------------------------------------------------------------------------------------------------------------
 # PCRE 설치
 cd ${SRC_HOME}
+if [ ! -f "${SRC_HOME}/${PCRE_NAME}" ]; then
+    printf "\e[00;32m| ${PCRE_NAME} download (URL : ${PCRE_DOWNLOAD_URL})\e[00m\n"
+    curl -L -O ${PCRE_DOWNLOAD_URL}
+fi
+
 tar xvzf ${PCRE_NAME}
 cd ${SRC_HOME}/${PCRE_HOME}
 
 ./configure --prefix=${SRC_HOME}/${HTTPD_NAME%$EXTENSION}/srclib/pcre
 make
 make install
+
+# Install source delete
+if [[ -d "${SRC_HOME}/${PCRE_HOME}" ]]; then
+    printf "\e[00;32m| \"${SRC_HOME}/${PCRE_HOME}\" delete...\e[00m\n"
+    rm -rf ${SRC_HOME}/${PCRE_HOME}
+fi
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -263,6 +285,8 @@ INSTALL_CONFIG="${INSTALL_CONFIG} --enable-ssl"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-included-apr"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-mpm=event"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-pcre=${SRC_HOME}/${HTTPD_NAME%$EXTENSION}/srclib/pcre"
+
+cd ${SRC_HOME}/${HTTPD_NAME%$EXTENSION}
 
 ./configure ${INSTALL_CONFIG}
 make
@@ -1791,4 +1815,3 @@ echo "<VirtualHost _default_:443>
 printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
 printf "\e[00;32m| \"${HTTPD_HOME}\" install success...\e[00m\n"
 printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
-

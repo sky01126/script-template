@@ -1351,22 +1351,22 @@ chown \${CATALINA_USER}:\${CATALINA_GROUP} \${FILE_PATH}/\${DELETE_LOG_NAME}
 
 # ----------------------------------------------------------------------------------------------------------------------
 # ROOT 생성
-TMP_ROOT_URL="http://shell.pe.kr/document/ROOT/ROOT.war"
-TMP_ROOT_NAME=${TMP_ROOT_URL##+(*/)}
+# TMP_ROOT_URL="http://shell.pe.kr/document/ROOT/ROOT.war"
+# TMP_ROOT_NAME=${TMP_ROOT_URL##+(*/)}
 
-cd ${SRC_HOME}
+# cd ${SRC_HOME}
 
-# verify that the source exists download
-if [ ! -f "${SRC_HOME}/${TMP_ROOT_NAME}" ]; then
-    printf "\e[00;32m| ${TMP_ROOT_NAME} download...\e[00m\n"
-    curl -O ${TMP_ROOT_URL}
-fi
+# # verify that the source exists download
+# if [ ! -f "${SRC_HOME}/${TMP_ROOT_NAME}" ]; then
+#     printf "\e[00;32m| ${TMP_ROOT_NAME} download...\e[00m\n"
+#     curl -O ${TMP_ROOT_URL}
+# fi
 
-cp -rf ${SRC_HOME}/${TMP_ROOT_NAME} ${CATALINA_BASE}/webapps/ROOT
-cd ${CATALINA_BASE}/webapps/ROOT
-jar xvf ${TMP_ROOT_NAME}
-rm -rf ${CATALINA_BASE}/webapps/ROOT/META-INF
-rm -rf ${CATALINA_BASE}/webapps/ROOT/${TMP_ROOT_NAME}
+# cp -rf ${SRC_HOME}/${TMP_ROOT_NAME} ${CATALINA_BASE}/webapps/ROOT
+# cd ${CATALINA_BASE}/webapps/ROOT
+# jar xvf ${TMP_ROOT_NAME}
+# rm -rf ${CATALINA_BASE}/webapps/ROOT/META-INF
+# rm -rf ${CATALINA_BASE}/webapps/ROOT/${TMP_ROOT_NAME}
 
 
 # ----------------------------------------------------------------------------------------------------------------------

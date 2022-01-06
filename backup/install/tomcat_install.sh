@@ -1517,6 +1517,7 @@ echo "<?xml version='1.0' encoding='utf-8'?>
                enableLookups=\"false\"
                maxThreads=\"400\"
                redirectPort=\"8443\"
+               relaxedQueryChars=\"[\\\\]^\`{|}\"
                URIEncoding=\"UTF-8\" />
     -->
     <!-- Apache APR Protocol HTTP Connector -->

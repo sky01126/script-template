@@ -7,14 +7,15 @@
 # /_/ |_\___/\__,_/_/ /_/\__, /\__,_/_/ /_/\__, /
 #                       /____/            /____/
 #
-# 멀티 쉘 실행 : bash <(curl -fsSL https://raw.githubusercontent.com/sky01126/script-template/master/install/nginx_install.sh)
+# 멀티 쉘 실행 :
 #
 # 중요 - 아래 패키지 설치, Apache와 Nginx에서 사용되는 OpenSSL은 소스를 가지고 설치를 진행한다.
 #
+# Install : bash <(curl -fsSL -H 'Pragma: no-cache' https://raw.githubusercontent.com/sky01126/script-template/master/install/nginx_install.sh)
+#
 # ------------------------ CentOS --------------------------
 # - 개발 리눅스
-#   yum install -y zlib zlib-devel openssl-devel gd gd-devel ImageMagick ImageMagick-devel bzip2-devel bzip2 ncurses-devel sqlite-devel readline-devel tk-devel gdbm-devel db4-devel libpcap-devel libxml2-devel libxslt-devel  xz-devel
-#   yum install -y zlib-devel gd-devel ImageMagick-devel bzip2-devel ncurses-devel libpcap-devel libxml2-devel libxslt-devel
+#   yum install -y zlib-devel ncurses-devel libpcap-devel libxml2-devel libxslt-devel
 # - 상용 리눅스
 #   yum install -y zlib gd ImageMagick bzip2
 #
@@ -45,6 +46,8 @@ set -e
 # shopt은 shell option의 약자로 유틸이다.
 # 사용 하는 extglob 쉘 옵션 shopt 내장 명령을 사용 하 여 같은 확장된 패턴 일치 연산자를 사용
 shopt -s extglob
+
+export SERVER_HOME=/nkapps/nkshop
 
 ## OS를 확인한다.
 export OS='unknown'
@@ -96,15 +99,17 @@ printf "\e[00;32m| 1.19 :\e[00m NginX v1.19.X\n"
 printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
 
 # ARCHETYPE_ARTIFACT_ID을 받기위해서 대기한다.
-export NGINX_VERSION='1.19.2'
+export NGINX_VERSION='1.21.4'
 printf "\e[00;32m| Enter nginx version\e[00m"
-read -e -p " (default. 1.19) > " CHECK_NGINX_VERSION
+read -e -p " (default. 1.21) > " CHECK_NGINX_VERSION
 if [ "${CHECK_NGINX_VERSION}" == "1.12" ]; then
     NGINX_VERSION='1.12.2'
 elif [ "${CHECK_NGINX_VERSION}" == "1.14" ]; then
     NGINX_VERSION='1.14.2'
 elif [ "${CHECK_NGINX_VERSION}" == "1.16" ]; then
     NGINX_VERSION='1.16.1'
+elif [ "${CHECK_NGINX_VERSION}" == "1.19" ]; then
+    NGINX_VERSION='1.19.9'
 fi
 
 
@@ -345,8 +350,8 @@ INSTALL_CONFIG="${INSTALL_CONFIG} --with-http_sub_module"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-http_v2_module"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-threads"
 
-INSTALL_CONFIG="${INSTALL_CONFIG} --with-http_geoip_module=dynamic"
-INSTALL_CONFIG="${INSTALL_CONFIG} --with-http_image_filter_module=dynamic"
+# INSTALL_CONFIG="${INSTALL_CONFIG} --with-http_geoip_module=dynamic"
+# INSTALL_CONFIG="${INSTALL_CONFIG} --with-http_image_filter_module=dynamic"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-http_xslt_module=dynamic"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-mail=dynamic"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-mail_ssl_module"
@@ -983,8 +988,8 @@ http {
 
     # ----------------------------------------------------
     # HTTP/2
-    http2_chunk_size 8k;
-    http2_body_preread_size 64k;
+    #http2_chunk_size 8k;
+    #http2_body_preread_size 64k;
 
     # ----------------------------------------------------
     # Headers More Module
@@ -1007,14 +1012,14 @@ mkdir -p ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/conf/sites-enabled
 
 
 # ------------------------------------------------------------------------------
-echo "load_module modules/ngx_http_geoip_module.so;"        > ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-http-geoip.conf
-echo "load_module modules/ngx_http_image_filter_module.so;" > ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-http-image-filter.conf
+#echo "load_module modules/ngx_http_geoip_module.so;"        > ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-http-geoip.conf
+#echo "load_module modules/ngx_http_image_filter_module.so;" > ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-http-image-filter.conf
 echo "load_module modules/ngx_http_xslt_filter_module.so;"  > ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-http-xslt-filter.conf
 echo "load_module modules/ngx_mail_module.so;"              > ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-mail.conf
 echo "load_module modules/ngx_stream_module.so;"            > ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-stream.conf
 
-ln -sf ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-http-geoip.conf          ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-enabled/50-mod-http-geoip.conf
-ln -sf ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-http-image-filter.conf   ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-enabled/50-mod-http-image-filter.conf
+#ln -sf ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-http-geoip.conf          ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-enabled/50-mod-http-geoip.conf
+#ln -sf ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-http-image-filter.conf   ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-enabled/50-mod-http-image-filter.conf
 ln -sf ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-http-xslt-filter.conf    ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-enabled/50-mod-http-xslt-filter.conf
 ln -sf ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-mail.conf                ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-enabled/50-mod-mail.conf
 ln -sf ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-stream.conf              ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-enabled/50-mod-stream.conf

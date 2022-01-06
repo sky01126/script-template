@@ -7,7 +7,7 @@
 # /_/ |_\___/\__,_/_/ /_/\__, /\__,_/_/ /_/\__, /
 #                       /____/            /____/
 #
-# 멀티 쉘 실행 : bash <(curl -f -L -sS https://raw.githubusercontent.com/sky01126/develop-document/master/Template/install-script/apache24_install.sh)
+# 멀티 쉘 실행 : bash <(curl -f -L -sS https://raw.githubusercontent.com/sky01126/script-template/master/install/apache24_install.sh)
 #
 # - 상용 리눅스
 #   yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
@@ -26,6 +26,8 @@
 # - SSL 1.1.1 사용 시 아래 2개 파일 복사
 #   cp /home/server/openssl/lib/libssl.so.1.1 /usr/lib64/
 #   cp /home/server/openssl/lib/libcrypto.so.1.1 /usr/lib64/
+
+export SERVER_HOME=/nkapps/nkshop
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Exit on error
@@ -65,12 +67,14 @@ PRGDIR=`dirname "$PRG"`
 # ----------------------------------------------------------------------------------------------------------------------
 # 멀티의 setting.sh 읽기
 if [[ ! -f "${PRGDIR}/library/setting.sh" ]]; then
-    curl -f -L -sS  http://shell.pe.kr/document/install/library/setting.sh -o /tmp/setting.sh
+    rm -rf /tmp/setting.sh
+
+    curl -f -L -sS  https://raw.githubusercontent.com/sky01126/script-template/master/install/library/setting.sh -o /tmp/setting.sh
     source /tmp/setting.sh
-    bash   /tmp/setting.sh
+    # bash   /tmp/setting.sh
 else
     source ${PRGDIR}/library/setting.sh
-    bash   ${PRGDIR}/library/setting.sh
+    # bash   ${PRGDIR}/library/setting.sh
 fi
 
 
@@ -78,7 +82,7 @@ fi
 # Apache 2.4
 HTTPD_ALIAS='httpd'
 
-HTTPD_VERSION="2.4.46"
+HTTPD_VERSION="2.4.51"
 HTTPD_DOWNLOAD_URL="http://archive.apache.org/dist/httpd/httpd-${HTTPD_VERSION}.tar.gz"
 HTTPD_NAME=${HTTPD_DOWNLOAD_URL##+(*/)}
 HTTPD_HOME=${HTTPD_NAME%$EXTENSION}
@@ -94,103 +98,65 @@ MOD_JK_DOWNLOAD_URL="http://archive.apache.org/dist/tomcat/tomcat-connectors/jk/
 printf "\e[00;32m+--------------+----------------------------------------------------------\e[00m\n"
 printf "\e[00;32m| SRC_HOME     |\e[00m ${SRC_HOME}\n"
 printf "\e[00;32m| SERVER_HOME  |\e[00m ${SERVER_HOME}\n"
-printf "\e[00;32m| HTTPD_HOME   |\e[00m ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}\n"
+printf "\e[00;32m| HTTPD_HOME   |\e[00m ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}\n"
 printf "\e[00;32m| HTTPD_ALIAS  |\e[00m ${SERVER_HOME}/${HTTPD_ALIAS}\n"
 printf "\e[00;32m+--------------+------------------------------------------------------------------\e[00m\n"
 
 
 # ----------------------------------------------------------------------------------------------------------------------
 # PCRE 설치 여부 확인
-if [[ ! -d "${SERVER_HOME}/${PROGRAME_HOME}/${PCRE_HOME}" ]]; then
-    cd ${SRC_HOME}
+if [[ ! -d "${SERVER_HOME}${PROGRAME_HOME}/${PCRE_HOME}" ]]; then
+    if [[ ! -f "${PRGDIR}/library/pcre.sh" ]]; then
+        rm -rf /tmp/pcre.sh
 
-    printf "\e[00;32m| ${PCRE_HOME} install start...\e[00m\n"
-
-    # delete the compile source
-    if [[ -d "${SRC_HOME}/${PCRE_HOME}" ]]; then
-        printf "\e[00;32m| ${SRC_HOME}/${PCRE_HOME} delete...\e[00m\n"
-        rm -rf ${SRC_HOME}/${PCRE_HOME}
+        curl -f -L -sS  https://raw.githubusercontent.com/sky01126/script-template/master/install/library/pcre.sh -o /tmp/pcre.sh
+        bash   /tmp/pcre.sh
+    else
+        bash  ${PRGDIR}/library/pcre.sh
     fi
-
-    # verify that the source exists download
-    if [ ! -f "${SRC_HOME}/${PCRE_NAME}" ]; then
-        printf "\e[00;32m| ${PCRE_NAME} download (URL : ${PCRE_DOWNLOAD_URL})\e[00m\n"
-        curl -L -O ${PCRE_DOWNLOAD_URL}
-    fi
-
-    tar xvzf ${PCRE_NAME}
-    cd ${SRC_HOME}/${PCRE_HOME}
-
-    ./configure --prefix=${SERVER_HOME}/${PROGRAME_HOME}/${PCRE_HOME} --enable-pcre16 --enable-pcre32 --enable-utf
-    make
-    make install
-
+elif [[ ! -z ${PCRE_ALIAS}  ]] && [[ ! -d "${SERVER_HOME}/${PCRE_ALIAS}" ]]; then
     cd ${SERVER_HOME}
-    ln -s ./${PROGRAME_HOME}/${PCRE_HOME} ${PCRE_ALIAS}
-
-    # Install source delete
-    if [[ -d "${SRC_HOME}/${PCRE_HOME}" ]]; then
-        rm -rf ${SRC_HOME}/${PCRE_HOME}
-    fi
-
-
-#     # ------------------------------------------------------------------------------------------------------------------
-#     if [[ -f ${BASH_FILE} ]]; then
-#         SET_PCRE_HOME=`awk '/# PCRE Home/' ${BASH_FILE}`
-#         if [[ ! -n ${SET_PCRE_HOME} ]]; then
-#             echo "# PCRE Home
-# export PCRE_HOME=\"${SERVER_HOME}/${PCRE_ALIAS}\"
-# export PATH=\$PCRE_HOME/bin:\$PATH
-# " >> ${BASH_FILE}
-#         fi
-#     fi
-
-    printf "\e[00;32m| ${PCRE_HOME} install success...\e[00m\n"
-    printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
-    sleep 0.5
-elif [[ ! -d "${SERVER_HOME}/${PCRE_ALIAS}" ]]; then
-    cd ${SERVER_HOME}
-    ln -s ./${PROGRAME_HOME}/${PCRE_HOME} ${PCRE_ALIAS}
-
-    printf "\e[00;32m| ${PCRE_ALIAS} link success...\e[00m\n"
-    printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
-    sleep 0.5
+    ln -s .${PROGRAME_HOME}/${PCRE_HOME} ${PCRE_ALIAS}
 fi
 
 
 # ----------------------------------------------------------------------------------------------------------------------
 # OpenSSL 설치 여부 확인
-if [[ ! -d "${SERVER_HOME}/${PROGRAME_HOME}/${OPENSSL_HOME}" ]]; then
+if [[ ! -d "${SERVER_HOME}${PROGRAME_HOME}/${OPENSSL_HOME}" ]]; then
     if [[ ! -f "${PRGDIR}/library/openssl.sh" ]]; then
-        curl -f -L -sS  http://shell.pe.kr/document/install/library/openssl.sh -o /tmp/openssl.sh
+        rm -rf /tmp/openssl.sh
+
+        curl -f -L -sS  https://raw.githubusercontent.com/sky01126/script-template/master/install/library/openssl.sh -o /tmp/openssl.sh
         bash   /tmp/openssl.sh
     else
         bash  ${PRGDIR}/library/openssl.sh
     fi
-elif [[ ! -d "${SERVER_HOME}/${OPENSSL_ALIAS}" || ! -L "${SERVER_HOME}/${OPENSSL_ALIAS}" ]]; then
+elif [[ ! -z ${OPENSSL_ALIAS}  ]] && [[ ! -d "${SERVER_HOME}/${OPENSSL_ALIAS}" || ! -L "${SERVER_HOME}/${OPENSSL_ALIAS}" ]]; then
     cd ${SERVER_HOME}
-    ln -s ./${PROGRAME_HOME}/${OPENSSL_HOME} ${OPENSSL_ALIAS}
+    ln -s .${PROGRAME_HOME}/${OPENSSL_HOME} ${OPENSSL_ALIAS}
 fi
 
 
 # ----------------------------------------------------------------------------------------------------------------------
 # APR / APR Util 설치 여부 확인
-if [[ ! -d "${SERVER_HOME}/${PROGRAME_HOME}/${APR_HOME}" ]]; then
+if [[ ! -d "${SERVER_HOME}${PROGRAME_HOME}/${APR_HOME}" ]]; then
     if [[ ! -f "${PRGDIR}/library/apr.sh" ]]; then
-        curl -f -L -sS  http://shell.pe.kr/document/install/library/apr.sh -o /tmp/apr.sh
+        rm -rf /tmp/apr.sh
+
+        curl -f -L -sS  https://raw.githubusercontent.com/sky01126/script-template/master/install/library/apr.sh -o /tmp/apr.sh
         bash   /tmp/apr.sh
     else
         bash  ${PRGDIR}/library/apr.sh
     fi
-elif [[ ! -d "${SERVER_HOME}/${APR_ALIAS}" || ! -L "${SERVER_HOME}/${APR_ALIAS}" ]]; then
+elif [[ ! -z ${APR_ALIAS}  ]] && [[ ! -d "${SERVER_HOME}/${APR_ALIAS}" || ! -L "${SERVER_HOME}/${APR_ALIAS}" ]]; then
     cd ${SERVER_HOME}
-    ln -s ./${PROGRAME_HOME}/${APR_HOME} ${APR_ALIAS}
+    ln -s .${PROGRAME_HOME}/${APR_HOME} ${APR_ALIAS}
 fi
 
 
 # ----------------------------------------------------------------------------------------------------------------------
 # 설치 여부 확인
-if [[ -d "${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}" ]]; then
+if [[ -d "${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}" ]]; then
     printf "\e[00;32m|\e[00m \e[00;31m기존에 설치된 Apache가 있습니다. 삭제하고 다시 설치하려면 \"Y\"를 입력하세요.\e[00m\n"
     printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
     printf "\e[00;32m| Enter whether to install \"${HTTPD_HOME}\" service\e[00m\n"
@@ -233,9 +199,9 @@ fi
 printf "\e[00;32m| \"${HTTPD_HOME}\" install start...\e[00m\n"
 
 # delete the previous home
-if [[ -d "${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}" ]]; then
+if [[ -d "${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}" ]]; then
     printf "\e[00;32m| \"${HTTPD_HOME}\" delete...\e[00m\n"
-    rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}
+    rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}
 fi
 if [[ -d "${SERVER_HOME}/${HTTPD_ALIAS}" || -L "${SERVER_HOME}/${HTTPD_ALIAS}" ]]; then
     printf "\e[00;32m| \"${HTTPD_ALIAS}\" delete...\e[00m\n"
@@ -265,7 +231,7 @@ if [ "$OS" == "linux" ]; then
 fi
 
 
-INSTALL_CONFIG="--prefix=${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}"
+INSTALL_CONFIG="--prefix=${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}"
 INSTALL_CONFIG="${INSTALL_CONFIG} --enable-cache"
 INSTALL_CONFIG="${INSTALL_CONFIG} --enable-cache-disk"
 INSTALL_CONFIG="${INSTALL_CONFIG} --enable-deflate"
@@ -286,18 +252,35 @@ INSTALL_CONFIG="${INSTALL_CONFIG} --enable-proxy-wstunnel"
 INSTALL_CONFIG="${INSTALL_CONFIG} --enable-rewrite"
 INSTALL_CONFIG="${INSTALL_CONFIG} --enable-so"
 INSTALL_CONFIG="${INSTALL_CONFIG} --enable-ssl"
-INSTALL_CONFIG="${INSTALL_CONFIG} --with-apr=${SERVER_HOME}/${APR_ALIAS}"
-INSTALL_CONFIG="${INSTALL_CONFIG} --with-apr-util=${SERVER_HOME}/${APR_ALIAS}"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-mpm=event"
-INSTALL_CONFIG="${INSTALL_CONFIG} --with-ssl=${SERVER_HOME}/${OPENSSL_ALIAS}"
-INSTALL_CONFIG="${INSTALL_CONFIG} --with-pcre=${SERVER_HOME}/${PCRE_ALIAS}"
+
+if [[ -z ${PCRE_HOME} ]]; then
+    INSTALL_CONFIG="${INSTALL_CONFIG} --with-pcre=${SERVER_HOME}${PROGRAME_HOME}/${PCRE_HOME}"
+else
+    INSTALL_CONFIG="${INSTALL_CONFIG} --with-pcre=${SERVER_HOME}/${PCRE_ALIAS}"
+fi
+
+if [[ -z ${PCRE_HOME} ]]; then
+    INSTALL_CONFIG="${INSTALL_CONFIG} --with-ssl=${SERVER_HOME}${PROGRAME_HOME}/${OPENSSL_HOME}"
+else
+    INSTALL_CONFIG="${INSTALL_CONFIG} --with-ssl=${SERVER_HOME}/${OPENSSL_ALIAS}"
+fi
+
+if [[ -z ${PCRE_HOME} ]]; then
+    INSTALL_CONFIG="${INSTALL_CONFIG} --with-apr=${SERVER_HOME}${PROGRAME_HOME}/${APR_HOME}"
+    INSTALL_CONFIG="${INSTALL_CONFIG} --with-apr-util=${SERVER_HOME}${PROGRAME_HOME}/${APR_HOME}"
+else
+    INSTALL_CONFIG="${INSTALL_CONFIG} --with-apr=${SERVER_HOME}/${APR_ALIAS}"
+    INSTALL_CONFIG="${INSTALL_CONFIG} --with-apr-util=${SERVER_HOME}/${APR_ALIAS}"
+fi
+
 
 ./configure ${INSTALL_CONFIG}
 make
 make install
 
 cd ${SERVER_HOME}
-ln -s ./${PROGRAME_HOME}/${HTTPD_HOME} ${HTTPD_ALIAS}
+ln -s .${PROGRAME_HOME}/${HTTPD_HOME} ${HTTPD_ALIAS}
 
 printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
 printf "\e[00;32m| \"${HTTPD_HOME}\" install success...\e[00m\n"
@@ -321,11 +304,11 @@ fi
 tar xvzf ${MOD_JK_NAME}
 cd ${SRC_HOME}/${MOD_JK_HOME}/native
 
-./configure --with-apxs=${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/bin/apxs
+./configure --with-apxs=${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/bin/apxs
 make
 make install
 
-cp -rf apache-2.0/mod_jk.so ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/modules/
+cp -rf apache-2.0/mod_jk.so ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/modules/
 
 # Install source delete
 if [[ -d "${SRC_HOME}/${MOD_JK_HOME}" ]]; then
@@ -340,19 +323,20 @@ if [[ -d "${SRC_HOME}/${HTTPD_HOME}" ]]; then
 fi
 
 # HTTPD 서버에서 필요없는 디렉토리 삭제.
-rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/build
-rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/cgi-bin
-rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/error
-rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/htdocs
-rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/icons
-rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/man
-rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/manual
+# rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/build
+rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/cgi-bin
+rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/error
+rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/htdocs
+rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/icons
+rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/man
+rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/manual
 
 # 필요 디렉토리 생성.
-mkdir -p ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/conf/extra/uriworkermaps
-mkdir -p ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/conf/extra/vhosts
-mkdir -p ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/logs/archive
-mkdir -p ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/work
+mkdir -p ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/conf/extra/uriworkermaps
+mkdir -p ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/conf/extra/sites-enabled
+##mkdir -p ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/logs/archive
+#mkdir -p ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/logs/archive
+mkdir -p ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/work
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -750,7 +734,8 @@ GROUP=${GROUPNAME}
 
 # 파일 경로와 파일명 분리.
 MAX_HISTORYS='30'
-FILE_PATH='${SERVER_HOME}/${HTTPD_ALIAS}/logs/archive'
+# FILE_PATH='${SERVER_HOME}/${HTTPD_ALIAS}/logs/archive'
+FILE_PATH='${SERVER_HOME}/${HTTPD_ALIAS}/logs'
 FILE_NAME=\`basename \"\${FILE_PATH}\"\`
 EXTENSION='${EXTENSION}'
 
@@ -1066,7 +1051,8 @@ ServerName ${DOMAIN_NAME}:80
 # logged here.  If you *do* define an error logfile for a <VirtualHost>
 # container, that host's errors will be logged there and not here.
 #
-ErrorLog \"|${SERVER_HOME}/${HTTPD_ALIAS}/bin/rotatelogs -L logs/error.log logs/archive/error.%Y-%m-%d.log 86400 +540
+ErrorLog \"|${SERVER_HOME}/${HTTPD_ALIAS}/bin/rotatelogs logs/error.%Y-%m-%d.log 86400 +540
+# ErrorLog \"|${SERVER_HOME}/${HTTPD_ALIAS}/bin/rotatelogs -L logs/error.log logs/archive/error.%Y-%m-%d.log 86400 +540
 
 #
 # LogLevel: Control the number of messages logged to the error_log.
@@ -1081,8 +1067,8 @@ LogLevel warn
     # a CustomLog directive (see below).
     #
     SetEnvIf REQUEST_URI \"favicon.ico\" do_not_log
-    #LogFormat \"%h %l %u %t \\\"%{Host}i\\\" \\\"%r\\\" %>s %b \\\"%{Referer}i\\\" \\\"%{User-Agent}i\\\" TIME:%T\" combined
-    LogFormat \"%h %{NS-CLIENT-IP}i %l %u %t \\\"%{Host}i\\\" \\\"%r\\\" %>s %b \\\"%{Referer}i\\\" \\\"%{User-Agent}i\\\" TIME:%T\" combined
+    LogFormat \"%h %l %u %t \\\"%{Host}i\\\" \\\"%r\\\" %>s %b \\\"%{Referer}i\\\" \\\"%{User-Agent}i\\\" TIME:%T\" combined
+    # LogFormat \"%h %{NS-CLIENT-IP}i %l %u %t \\\"%{Host}i\\\" \\\"%r\\\" %>s %b \\\"%{Referer}i\\\" \\\"%{User-Agent}i\\\" TIME:%T\" combined
 
     #<IfModule logio_module>
     #  # You need to enable mod_logio.c to use %I and %O
@@ -1096,8 +1082,9 @@ LogLevel warn
     # define per-<VirtualHost> access logfiles, transactions will be
     # logged therein and *not* in this file.
     #
-    #CustomLog \"logs/access_log\" common
-    CustomLog \"|${SERVER_HOME}/${HTTPD_ALIAS}/bin/rotatelogs -L logs/access.log logs/archive/access.%Y-%m-%d.log 86400 +540\" combined env=!do_not_log
+    # CustomLog \"logs/access_log\" common
+    CustomLog \"|${SERVER_HOME}/${HTTPD_ALIAS}/bin/rotatelogs logs/access.%Y-%m-%d.log 86400 +540\" combined env=!do_not_log
+    # CustomLog \"|${SERVER_HOME}/${HTTPD_ALIAS}/bin/rotatelogs -L logs/access.log logs/archive/access.%Y-%m-%d.log 86400 +540\" combined env=!do_not_log
 
     #
     # If you prefer a logfile with access, agent, and referer information
@@ -1411,7 +1398,8 @@ LoadModule jk_module modules/mod_jk.so
 
     # Our JK error log
     # You can (and should) use rotatelogs here
-    JkLogFile \"|${SERVER_HOME}/${HTTPD_ALIAS}/bin/rotatelogs -L logs/mod_jk.log logs/archive/mod_jk.%Y-%m-%d.log 86400 +540\"
+    JkLogFile \"|${SERVER_HOME}/${HTTPD_ALIAS}/bin/rotatelogs logs/mod_jk.%Y-%m-%d.log 86400 +540\"
+    # JkLogFile \"|${SERVER_HOME}/${HTTPD_ALIAS}/bin/rotatelogs -L logs/mod_jk.log logs/archive/mod_jk.%Y-%m-%d.log 86400 +540\"
 
     # Our JK log level (trace,debug,info,warn,error)
     JkLogLevel info
@@ -1630,7 +1618,7 @@ echo "# Virtual Hosts
 # The first VirtualHost section is used for all requests that do not
 # match a ServerName or ServerAlias in any <VirtualHost> block.
 #
-Include conf/extra/vhosts/${INSTALL_WORKER_NAME}.conf
+Include conf/extra/sites-enabled/${INSTALL_WORKER_NAME}.conf
 " > ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-vhosts.conf
 
 
@@ -1675,7 +1663,7 @@ echo "<VirtualHost *:80>
     # Mount JK File
     JkMountFile conf/extra/uriworkermaps/${INSTALL_WORKER_NAME}.properties
 </VirtualHost>
-" > ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/vhosts/${INSTALL_WORKER_NAME}.conf
+" > ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/sites-enabled/${INSTALL_WORKER_NAME}.conf
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -1800,7 +1788,7 @@ SSLSessionCacheTimeout  300
 ##
 ## SSL Virtual Host Context
 ##
-Include conf/extra/vhosts/${INSTALL_WORKER_NAME}-ssl.conf
+Include conf/extra/sites-enabled/${INSTALL_WORKER_NAME}-ssl.conf
 " > ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-ssl.conf
 
 
@@ -1853,7 +1841,7 @@ echo "<VirtualHost _default_:443>
     # Mount JK File
     JkMountFile conf/extra/uriworkermaps/${INSTALL_WORKER_NAME}.properties
 </VirtualHost>
-" > ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/vhosts/${INSTALL_WORKER_NAME}-ssl.conf
+" > ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/sites-enabled/${INSTALL_WORKER_NAME}-ssl.conf
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -1864,7 +1852,7 @@ printf "\e[00;32m| Enter whether to ssl setting?\e[00m"
 read -e -p ' [Y / n](enter)] (default. n) > ' CHECK_SSL
 if [[ ! -z ${CHECK_SSL}  ]] && [[ "$(uppercase ${CHECK_SSL})" == "Y" ]]; then
     # 사설 인증키 생성
-    mkdir ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/conf/ssl
+    mkdir ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/conf/ssl
 
     echo "[v3_extensions]
 # Extensions to add to a certificate request
@@ -1911,7 +1899,7 @@ distinguished_name              = distinguished_name
 x509_extensions                 = v3_extensions
 # 인증서 요청시에도 extension 이 들어가면 authorityKeyIdentifier 를 찾지 못해 에러가 나므로 막아둔다.
 #req_extensions                  = v3_extensions
-    " > ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/conf/ssl/${DOMAIN_NAME}.conf
+    " > ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/conf/ssl/${DOMAIN_NAME}.conf
 
     ${SERVER_HOME}/${OPENSSL_ALIAS}/bin/openssl genpkey                         \
         -algorithm RSA                                                          \
@@ -1935,7 +1923,7 @@ x509_extensions                 = v3_extensions
         -out     ${SERVER_HOME}/${HTTPD_ALIAS}/conf/ssl/${DOMAIN_NAME}.crt      \
         -extfile ${SERVER_HOME}/${HTTPD_ALIAS}/conf/ssl/${DOMAIN_NAME}.conf
 
-    rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/conf/ssl/${DOMAIN_NAME}.conf
+    rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/conf/ssl/${DOMAIN_NAME}.conf
 fi
 
 

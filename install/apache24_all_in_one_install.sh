@@ -1253,7 +1253,7 @@ PidFile work/httpd.pid
 # Apache Tomcat JK Connect setting
 Include conf/extra/httpd-jk.conf
 
-# mod_deflate 설정
+# Setting MOD Default
 <IfModule mod_deflate>
     # 특별한 MIME type만 압축
     AddOutputFilterByType DEFLATE text/plain text/html text/xml
@@ -1277,7 +1277,7 @@ Include conf/extra/httpd-jk.conf
     SetEnvIfNoCase Request_URI \\.(?:gif|jpe?g|png|bmp|zip|tar|rar|alz|a00|ace|mp3|mp4|mpe?g|wav|asf|wma|wmv|swf|exe|pdf|doc|xsl|hwp|java|t?gz|bz2|7z)$ no-gzip dont-vary
 </IfModule>
 
-# Expire 설정
+# Setting Expire
 <IfModule expires_module>
     ExpiresActive On
     ExpiresByType text/css \"modification plus 1 years\"
@@ -1291,7 +1291,7 @@ Include conf/extra/httpd-jk.conf
     ExpiresByType image/png \"modification plus 1 years\"
 </IfModule>
 
-# The HTTP/2 protocol - worker / event 모드에서는 정상 동작 확인.
+# The HTTP/2 protocol - Check normal operation in worker / event mode.
 #<IfModule http2_module>
 #    ProtocolsHonorOrder On
 #
@@ -1310,8 +1310,8 @@ Include conf/extra/httpd-jk.conf
 #    Header set Strict-Transport-Security \"max-age=31536000; includeSubDomains; preload\"
 #</IfModule>
 
-# 지정된 Method\"HEAD GET POST PUT DELETE OPTIONS\"만 접속 허용
-# 만약 정상 동작하지 않는 경우 \"ErrorDocument 403\" 부분을 주석 처리 후 테스트 진행.
+# Allow access only to the specified Method\"HEAD GET POST PUT DELETE OPTIONS\"
+# If it does not work properly, comment out the \"ErrorDocument 403\" part and proceed with the test.
 <Location />
     Order allow,deny
     Allow from all
@@ -1405,11 +1405,11 @@ echo "<Location /jkmanager>
 </Location>
 
 <LocationMatch \"/WEB-INF\">
-    deny from all
+    Require all denied
 </LocationMatch>
 
 <LocationMatch \"/META-INF\">
-    deny from all
+    Require all denied
 </LocationMatch>
 " > ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/security.conf
 

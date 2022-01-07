@@ -11,7 +11,7 @@
 #
 # 중요 - 아래 패키지 설치, Apache와 Nginx에서 사용되는 OpenSSL은 소스를 가지고 설치를 진행한다.
 #
-# Install : bash <(curl -fsSL -H 'Pragma: no-cache' https://raw.githubusercontent.com/sky01126/script-template/master/install/nginx_install.sh)
+# Install : bash <(curl -fsSL -H 'Pragma: no-cache' https://raw.githubusercontent.com/sky01126/script-template/master/install/nginx_all_in_one_install.sh)
 #
 # ------------------------ CentOS --------------------------
 # - 개발 리눅스
@@ -37,7 +37,30 @@
 # alias nginx-restart=\"sudo /home/server/nginx/bin/restart.sh\"
 # alias nginx-conf=\"sudo /home/server/nginx/bin/configtest.sh\"
 # " >> $HOME/.bash_aliases && source $HOME/.bashrc
+# ------------------------------------------------------------------------------
+# 대문자 변환
+uppercase() {
+    echo $* | tr "[a-z]" "[A-Z]"
+}
 
+# 소문자변환
+lowercase() {
+    echo $* | tr "[A-Z]" "[a-z]"
+}
+
+
+# ------------------------------------------------------------------------------
+# File Extension
+export EXTENSION=".tar.gz"
+export GIT_EXTENSION=".git"
+export XZ_EXTENSION=".tar.xz"
+export BZ2_EXTENSION=".tar.bz2"
+
+
+# ------------------------------------------------------------------------------
+export SRC_HOME="/var/tmp"
+export SERVER_HOME="/nginx"
+export LOG_HOME="/nx_log"
 
 # ------------------------------------------------------------------------------
 # Exit on error
@@ -46,16 +69,6 @@ set -e
 # shopt은 shell option의 약자로 유틸이다.
 # 사용 하는 extglob 쉘 옵션 shopt 내장 명령을 사용 하 여 같은 확장된 패턴 일치 연산자를 사용
 shopt -s extglob
-
-export SERVER_HOME=/nkapps/nkshop
-
-## OS를 확인한다.
-export OS='unknown'
-if [ "$(uname)" == "Darwin" ]; then
-    OS="darwin"
-elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
-    OS="linux"
-fi
 
 unset TMOUT
 
@@ -75,16 +88,6 @@ done
 # Get standard environment variables
 PRGDIR=`dirname "$PRG"`
 
-
-# ------------------------------------------------------------------------------
-# 멀티의 setting.sh 읽기
-# if [ ! -f "${PRGDIR}/library/setting.sh" ]; then
-#     source <(curl -fsSL https://raw.githubusercontent.com/sky01126/script-template/master/install/library/setting.sh)
-# else
-#     source ${PRGDIR}/library/setting.sh
-#     bash   ${PRGDIR}/library/setting.sh
-# fi
-source <(curl -fsSL https://raw.githubusercontent.com/sky01126/script-template/master/install/library/setting.sh)
 
 # ------------------------------------------------------------------------------
 # NginX 설치 버전 선택.
@@ -107,7 +110,7 @@ if [ "${CHECK_NGINX_VERSION}" == "1.12" ]; then
 elif [ "${CHECK_NGINX_VERSION}" == "1.14" ]; then
     NGINX_VERSION='1.14.2'
 elif [ "${CHECK_NGINX_VERSION}" == "1.16" ]; then
-    NGINX_VERSION='1.16.0'
+    NGINX_VERSION='1.16.1'
 elif [ "${CHECK_NGINX_VERSION}" == "1.19" ]; then
     NGINX_VERSION='1.19.9'
 fi
@@ -116,15 +119,14 @@ fi
 # ------------------------------------------------------------------------------
 # NginX
 export NGINX_DOWNLOAD_URL="https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz"
-export NGINX_RTMP_MODULE_DOWNLOAD_URL="https://github.com/arut/nginx-rtmp-module.git"
 export NGINX_HEADERS_MORE_MODULE_DOWNLOAD_URL="https://github.com/openresty/headers-more-nginx-module.git"
 
 
 # ------------------------------------------------------------------------------
 # Nginx Install
 export NGINX_NAME=${NGINX_DOWNLOAD_URL##+(*/)}
-export NGINX_HOME=${NGINX_NAME%$EXTENSION}
-export NGINX_ALIAS='nginx'
+# export NGINX_HOME=${NGINX_NAME%$EXTENSION}
+export NGINX_HOME="nginx116"
 
 
 # ------------------------------------------------------------------------------
@@ -139,16 +141,14 @@ printf "\e[00;32m|  :: Nginx ::        (v${NGINX_VERSION})    \n"
 # ------------------------------------------------------------------------------
 printf "\e[00;32m+-------------------------------------------------------------------------\e[00m\n"
 printf "\e[00;32m| SRC_HOME     :\e[00m ${SRC_HOME}\n"
-printf "\e[00;32m| SERVER_HOME  :\e[00m ${SERVER_HOME}\n"
-printf "\e[00;32m| NGINX_HOME   :\e[00m ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}\n"
-printf "\e[00;32m| NGINX_ALIAS  :\e[00m ${SERVER_HOME}/${NGINX_ALIAS}\n"
+printf "\e[00;32m| NGINX_HOME   :\e[00m ${SERVER_HOME}/${NGINX_HOME}\n"
 
 
 # ------------------------------------------------------------------------------
 # 설치 여부 확인
-if [ -d "${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}" ]; then
+if [ -d "${SERVER_HOME}/${NGINX_HOME}" ]; then
     printf "\e[00;32m+-------------------------------------------------------------------------\e[00m\n"
-    printf "\e[00;32m| 기존에 설치된 \"${NGINX_ALIAS}\"가 있습니다. 삭제하고 다시 설치하려면 \"Y\"를 입력하세요.\e[00m\n"
+    printf "\e[00;32m| 기존에 설치된 \"${NGINX_HOME}\"가 있습니다. 삭제하고 다시 설치하려면 \"Y\"를 입력하세요.\e[00m\n"
     printf "\e[00;32m+-------------------------------------------------------------------------\e[00m\n"
     printf "\e[00;32m| Enter whether to install \"${NGINX_HOME}\" service?\e[00m"
     read -e -p ' [Y / n] > ' INSTALL_CHECK
@@ -158,7 +158,7 @@ if [ -d "${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}" ]; then
 
     if [ "$(uppercase ${INSTALL_CHECK})" != "Y" ]; then
         printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
-        printf "\e[00;32m|\e[00m \e[00;31m\"${NGINX_ALIAS}\" 서비스 설치 취소...\e[00m\n"
+        printf "\e[00;32m|\e[00m \e[00;31m\"${NGINX_HOME}\" 서비스 설치 취소...\e[00m\n"
         printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
         exit 1
     fi
@@ -167,7 +167,11 @@ fi
 
 # ------------------------------------------------------------------------------
 # OpenSSL 다운로드 확인
-#
+export OPENSSL_VERSION="1.1.1m"
+export OPENSSL_DOWNLOAD_URL="https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz"
+export OPENSSL_NAME=${OPENSSL_DOWNLOAD_URL##+(*/)}
+export OPENSSL_HOME=${OPENSSL_NAME%$EXTENSION}
+
 # verify that the source exists download
 if [ ! -f "${SRC_HOME}/${OPENSSL_NAME}" ]; then
     cd ${SRC_HOME}
@@ -187,7 +191,11 @@ fi
 
 # ------------------------------------------------------------------------------
 # PCRE  다운로드 확인
-#
+export PCRE_VERSION="8.43"
+export PCRE_DOWNLOAD_URL="http://sourceforge.net/projects/pcre/files/pcre/${PCRE_VERSION}/pcre-${PCRE_VERSION}.tar.gz"
+export PCRE_NAME=${PCRE_DOWNLOAD_URL##+(*/)}
+export PCRE_HOME=${PCRE_NAME%$EXTENSION}
+
 # verify that the source exists download
 if [ ! -f "${SRC_HOME}/${PCRE_NAME}" ]; then
     cd ${SRC_HOME}
@@ -206,35 +214,34 @@ fi
 
 
 # ------------------------------------------------------------------------------
-# Nginx RTMP Module
-NGINX_RTMP_MODULE_NAME=${NGINX_RTMP_MODULE_DOWNLOAD_URL##+(*/)}
-NGINX_RTMP_MODULE_HOME=${NGINX_RTMP_MODULE_NAME%$GIT_EXTENSION}
+# ZLIB  다운로드 확인
+export ZLIB_VERSION="1.2.11"
+export ZLIB_DOWNLOAD_URL="http://www.zlib.net/zlib-${ZLIB_VERSION}.tar.gz"
+export ZLIB_NAME=${ZLIB_DOWNLOAD_URL##+(*/)}
+export ZLIB_HOME=${ZLIB_NAME%$EXTENSION}
 
-# printf "\e[00;32m+-------------------------------------------------------------------------\e[00m\n"
-# printf "\e[00;32m| RTMP 모듈을 설치 하시겠습니까?\e[00m\n"
-# printf "\e[00;32m+-------------------------------------------------------------------------\e[00m\n"
-# printf "\e[00;32m| Enter whether to install the nginx rtmp module?\e[00m"
-# read -e -p ' [Y / no(enter]) > ' INSTALL_NGINX_RTMP
-# if [ "$(uppercase $INSTALL_NGINX_RTMP)" == "Y" ]; then
-#     # cd the compile source directory
-#     cd ${SRC_HOME}
-#
-#     printf "\e[00;32m| \"${NGINX_RTMP_MODULE_HOME}\" install start...\e[00m\n"
-#
-#     # verify that the source exists download
-#     if [ ! -d "${SRC_HOME}/${NGINX_RTMP_MODULE_HOME}" ]; then
-#         printf "\e[00;32m| \"${NGINX_RTMP_MODULE_HOME}\" download (URL : ${NGINX_RTMP_MODULE_DOWNLOAD_URL})\e[00m\n"
-#         git clone ${NGINX_RTMP_MODULE_DOWNLOAD_URL} ${NGINX_RTMP_MODULE_HOME}
-#     fi
-#     sleep 0.5
-# fi
+# verify that the source exists download
+if [ ! -f "${SRC_HOME}/${ZLIB_NAME}" ]; then
+    cd ${SRC_HOME}
+    printf "\e[00;32m| \"${ZLIB_NAME}\" download (URL : ${ZLIB_DOWNLOAD_URL})\e[00m\n"
+    curl -L -O ${ZLIB_DOWNLOAD_URL}
+    sleep 0.5
+fi
+
+# uncompress source
+if [ ! -d "${SRC_HOME}/${ZLIB_HOME}" ]; then
+    cd ${SRC_HOME}
+    printf "\e[00;32m| \"${ZLIB_NAME}\" uncompress...\e[00m\n"
+    tar xvzf ${ZLIB_NAME}
+    sleep 0.5
+fi
 
 
 # ------------------------------------------------------------------------------
 # Nginx Headers Modre Module
 NGINX_HEADERS_MORE_MODULE_NAME=${NGINX_HEADERS_MORE_MODULE_DOWNLOAD_URL##+(*/)}
 NGINX_HEADERS_MORE_MODULE_HOME=${NGINX_HEADERS_MORE_MODULE_NAME%$GIT_EXTENSION}
-if [ ! -d "${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HEADERS_MORE_MODULE_HOME}" ]; then
+if [ ! -d "${SERVER_HOME}/${NGINX_HEADERS_MORE_MODULE_HOME}" ]; then
     # cd the compile source directory
     cd ${SRC_HOME}
 
@@ -251,13 +258,9 @@ fi
 
 # ------------------------------------------------------------------------------
 # delete the previous home
-if [ -d "${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}" ]; then
+if [ -d "${SERVER_HOME}/${NGINX_HOME}" ]; then
     printf "\e[00;32m| \"${NGINX_HOME}\" delete...\e[00m\n"
-    rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}
-fi
-if [ -d "${SERVER_HOME}/${NGINX_ALIAS}" || -L "${SERVER_HOME}/${NGINX_ALIAS}" ]; then
-    printf "\e[00;32m| \"${NGINX_ALIAS}\" delete...\e[00m\n"
-    rm -rf ${SERVER_HOME}/${NGINX_ALIAS}
+    rm -rf ${SERVER_HOME}/${NGINX_HOME}
 fi
 
 # cd the compile source directory
@@ -322,18 +325,19 @@ fi
 # | http_uwsgi_module   | uWSGI 프로토콜 지원 모듈
 # +---------------------+-------------------------------------------------------
 # Config 설정.
-INSTALL_CONFIG="--prefix=${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}"
+INSTALL_CONFIG="--prefix=${SERVER_HOME}/${NGINX_HOME}"
 #INSTALL_CONFIG="${INSTALL_CONFIG} --user=${USERNAME}"
 #INSTALL_CONFIG="${INSTALL_CONFIG} --group=${GROUPNAME}"
-INSTALL_CONFIG="${INSTALL_CONFIG} --sbin-path=${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/sbin/nginx"
-INSTALL_CONFIG="${INSTALL_CONFIG} --conf-path=${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/conf/nginx.conf"
-INSTALL_CONFIG="${INSTALL_CONFIG} --pid-path=${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/work/nginx.pid"
-INSTALL_CONFIG="${INSTALL_CONFIG} --lock-path=${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/work/nginx.lock"
-INSTALL_CONFIG="${INSTALL_CONFIG} --modules-path=${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/modules"
-INSTALL_CONFIG="${INSTALL_CONFIG} --http-proxy-temp-path=${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/var/lib/nginx/proxy"
-INSTALL_CONFIG="${INSTALL_CONFIG} --http-client-body-temp-path=${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/var/lib/nginx/body"
+INSTALL_CONFIG="${INSTALL_CONFIG} --sbin-path=${SERVER_HOME}/${NGINX_HOME}/sbin/nginx"
+INSTALL_CONFIG="${INSTALL_CONFIG} --conf-path=${SERVER_HOME}/${NGINX_HOME}/conf/nginx.conf"
+INSTALL_CONFIG="${INSTALL_CONFIG} --pid-path=${SERVER_HOME}/${NGINX_HOME}/work/nginx.pid"
+INSTALL_CONFIG="${INSTALL_CONFIG} --lock-path=${SERVER_HOME}/${NGINX_HOME}/work/nginx.lock"
+INSTALL_CONFIG="${INSTALL_CONFIG} --modules-path=${SERVER_HOME}/${NGINX_HOME}/modules"
+INSTALL_CONFIG="${INSTALL_CONFIG} --http-proxy-temp-path=${SERVER_HOME}/${NGINX_HOME}/var/lib/nginx/proxy"
+INSTALL_CONFIG="${INSTALL_CONFIG} --http-client-body-temp-path=${SERVER_HOME}/${NGINX_HOME}/var/lib/nginx/body"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-openssl=${SRC_HOME}/${OPENSSL_HOME}"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-pcre=${SRC_HOME}/${PCRE_HOME}"
+INSTALL_CONFIG="${INSTALL_CONFIG} --with-zlib=${SRC_HOME}/${ZLIB_HOME}"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-cc-opt=-Wno-error"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-http_addition_module"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-http_auth_request_module"
@@ -350,11 +354,9 @@ INSTALL_CONFIG="${INSTALL_CONFIG} --with-http_sub_module"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-http_v2_module"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-threads"
 
-# INSTALL_CONFIG="${INSTALL_CONFIG} --with-http_geoip_module=dynamic"
-# INSTALL_CONFIG="${INSTALL_CONFIG} --with-http_image_filter_module=dynamic"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-http_xslt_module=dynamic"
-INSTALL_CONFIG="${INSTALL_CONFIG} --with-mail=dynamic"
-INSTALL_CONFIG="${INSTALL_CONFIG} --with-mail_ssl_module"
+# INSTALL_CONFIG="${INSTALL_CONFIG} --with-mail=dynamic"
+# INSTALL_CONFIG="${INSTALL_CONFIG} --with-mail_ssl_module"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-stream=dynamic"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-stream_ssl_module"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-stream_ssl_preread_module"
@@ -365,26 +367,17 @@ INSTALL_CONFIG="${INSTALL_CONFIG} --without-http_scgi_module"
 
 INSTALL_CONFIG="${INSTALL_CONFIG} --add-module=${SRC_HOME}/${NGINX_HEADERS_MORE_MODULE_HOME}"
 
-# Nginx RTMP Module
-if [ "$(uppercase $INSTALL_NGINX_RTMP)" == "Y" ]; then
-    INSTALL_CONFIG="${INSTALL_CONFIG} --add-module=${SRC_HOME}/${NGINX_RTMP_MODULE_HOME}"
-fi
-
 ./configure ${INSTALL_CONFIG} --with-ld-opt="-Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,-z,now -fPIC"
 make
 make install
 
-# 링크 설정
-cd ${SERVER_HOME}
-ln -sf ./${PROGRAME_HOME}/${NGINX_HOME} ${NGINX_ALIAS}
-
 # Nginx 디렉토리 생성
-mkdir -p ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/bin
-mkdir -p ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/work
-mkdir -p ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/var/lib/nginx
+mkdir -p ${SERVER_HOME}/${NGINX_HOME}/bin
+mkdir -p ${SERVER_HOME}/${NGINX_HOME}/work
+mkdir -p ${SERVER_HOME}/${NGINX_HOME}/var/lib/nginx
 
 # 불필요한 파일 삭제.
-rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/conf/*.default
+rm -rf ${SERVER_HOME}/${NGINX_HOME}/conf/*.default
 
 # 컴파일 소스 삭제.
 if [ -d "${SRC_HOME}/${NGINX_HOME}" ]; then
@@ -412,15 +405,10 @@ echo "#!/bin/sh
 # chkconfig: 2345 85 15
 # description: NginX is a World Wide Web server.
 #
-
-NGINX_HOME=\"${SERVER_HOME}/${NGINX_ALIAS}\"
-
+NGINX_HOME=\"${SERVER_HOME}/${NGINX_HOME}\"
 NGINX=\"\${NGINX_HOME}/sbin/nginx\"
-
 NGINX_CONFIG=\"\${NGINX_HOME}/conf/nginx.conf\"
-
 NGINX_LOCKFILE=\"\${NGINX_HOME}/work/nginx.lock\"
-
 PROG=\$(basename \${NGINX_HOME})
 
 # ------------------------------------------------------------------------------
@@ -596,7 +584,7 @@ case "\$1" in
     usage
     exit 2
 esac
-" > ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/bin/nginx.sh
+" > ${SERVER_HOME}/${NGINX_HOME}/bin/nginx.sh
 
 
 # ------------------------------------------------------------------------------
@@ -629,7 +617,7 @@ PRGDIR=\`dirname \"\$PRG\"\`
 export NGINX_HOME=\`cd \"\${PRGDIR}/..\" >/dev/null; pwd\`
 
 \${NGINX_HOME}/bin/nginx.sh start
-" > ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/bin/start.sh
+" > ${SERVER_HOME}/${NGINX_HOME}/bin/start.sh
 
 
 # ------------------------------------------------------------------------------
@@ -662,7 +650,7 @@ PRGDIR=\`dirname \"\$PRG\"\`
 export NGINX_HOME=\`cd \"\${PRGDIR}/..\" >/dev/null; pwd\`
 
 \${NGINX_HOME}/bin/nginx.sh stop
-" > ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/bin/stop.sh
+" > ${SERVER_HOME}/${NGINX_HOME}/bin/stop.sh
 
 
 # ------------------------------------------------------------------------------
@@ -695,7 +683,7 @@ PRGDIR=\`dirname \"\$PRG\"\`
 export NGINX_HOME=\`cd \"\${PRGDIR}/..\" >/dev/null; pwd\`
 
 \${NGINX_HOME}/bin/nginx.sh reload
-" > ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/bin/reload.sh
+" > ${SERVER_HOME}/${NGINX_HOME}/bin/reload.sh
 
 
 # ------------------------------------------------------------------------------
@@ -728,7 +716,7 @@ PRGDIR=\`dirname \"\$PRG\"\`
 export NGINX_HOME=\`cd \"\${PRGDIR}/..\" >/dev/null; pwd\`
 
 \${NGINX_HOME}/bin/nginx.sh restart
-" > ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/bin/restart.sh
+" > ${SERVER_HOME}/${NGINX_HOME}/bin/restart.sh
 
 
 # ------------------------------------------------------------------------------
@@ -761,7 +749,7 @@ PRGDIR=\`dirname \"\$PRG\"\`
 export NGINX_HOME=\`cd \"\${PRGDIR}/..\" >/dev/null; pwd\`
 
 \${NGINX_HOME}/bin/nginx.sh status
-" > ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/bin/status.sh
+" > ${SERVER_HOME}/${NGINX_HOME}/bin/status.sh
 
 
 # ------------------------------------------------------------------------------
@@ -794,11 +782,11 @@ PRGDIR=\`dirname \"\$PRG\"\`
 export NGINX_HOME=\`cd \"\${PRGDIR}/..\" >/dev/null; pwd\`
 
 \${NGINX_HOME}/bin/nginx.sh configtest
-" > ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/bin/configtest.sh
+" > ${SERVER_HOME}/${NGINX_HOME}/bin/configtest.sh
 
 
 # ------------------------------------------------------------------------------
-chmod +x ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/bin/*
+chmod +x ${SERVER_HOME}/${NGINX_HOME}/bin/*
 
 
 # ------------------------------------------------------------------------------
@@ -843,7 +831,7 @@ events {
 #                           '\"\$upstream_bytes_received\" '
 #                           '\"\$upstream_connect_time\"';
 #
-#    # access_log logs/stream-access.log main_stream buffer=32k;
+#    # access_log ${LOG_HOME}/stream-access.log main_stream buffer=32k;
 #
 #    upstream mysql {
 #        server 127.0.0.1:3306;
@@ -882,12 +870,12 @@ http {
                        'TIME:\$request_time '
                        'UPTIME:\$upstream_response_time';
 
-    # access_log logs/access.log  main;
+    # access_log ${LOG_HOME}/access.log  main;
 
-    # error_log logs/error.log;
-    # error_log logs/error.log notice;
-    # error_log logs/error.log info;
-    error_log logs/error.log error;
+    # error_log ${LOG_HOME}/error.log;
+    # error_log ${LOG_HOME}/error.log notice;
+    # error_log ${LOG_HOME}/error.log info;
+    error_log ${LOG_HOME}/error.log error;
 
 
     server_names_hash_bucket_size 64;
@@ -1000,29 +988,29 @@ http {
     include conf.d/*.conf;
     include sites-enabled/*;
 }
-" > ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/conf/nginx.conf
+" > ${SERVER_HOME}/${NGINX_HOME}/conf/nginx.conf
 
 
 # ------------------------------------------------------------------------------
-mkdir -p ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/conf/conf.d
-mkdir -p ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/conf/modules-available
-mkdir -p ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/conf/modules-enabled
-mkdir -p ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/conf/sites-available
-mkdir -p ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/conf/sites-enabled
+mkdir -p ${SERVER_HOME}/${NGINX_HOME}/conf/conf.d
+mkdir -p ${SERVER_HOME}/${NGINX_HOME}/conf/modules-available
+mkdir -p ${SERVER_HOME}/${NGINX_HOME}/conf/modules-enabled
+mkdir -p ${SERVER_HOME}/${NGINX_HOME}/conf/sites-available
+mkdir -p ${SERVER_HOME}/${NGINX_HOME}/conf/sites-enabled
 
 
 # ------------------------------------------------------------------------------
-#echo "load_module modules/ngx_http_geoip_module.so;"        > ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-http-geoip.conf
-#echo "load_module modules/ngx_http_image_filter_module.so;" > ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-http-image-filter.conf
-echo "load_module modules/ngx_http_xslt_filter_module.so;"  > ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-http-xslt-filter.conf
-echo "load_module modules/ngx_mail_module.so;"              > ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-mail.conf
-echo "load_module modules/ngx_stream_module.so;"            > ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-stream.conf
+#echo "load_module modules/ngx_http_geoip_module.so;"        > ${SERVER_HOME}/${NGINX_HOME}/conf/modules-available/50-mod-http-geoip.conf
+#echo "load_module modules/ngx_http_image_filter_module.so;" > ${SERVER_HOME}/${NGINX_HOME}/conf/modules-available/50-mod-http-image-filter.conf
+echo "load_module modules/ngx_http_xslt_filter_module.so;"  > ${SERVER_HOME}/${NGINX_HOME}/conf/modules-available/50-mod-http-xslt-filter.conf
+# echo "load_module modules/ngx_mail_module.so;"              > ${SERVER_HOME}/${NGINX_HOME}/conf/modules-available/50-mod-mail.conf
+echo "load_module modules/ngx_stream_module.so;"            > ${SERVER_HOME}/${NGINX_HOME}/conf/modules-available/50-mod-stream.conf
 
-#ln -sf ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-http-geoip.conf          ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-enabled/50-mod-http-geoip.conf
-#ln -sf ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-http-image-filter.conf   ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-enabled/50-mod-http-image-filter.conf
-ln -sf ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-http-xslt-filter.conf    ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-enabled/50-mod-http-xslt-filter.conf
-ln -sf ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-mail.conf                ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-enabled/50-mod-mail.conf
-ln -sf ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-available/50-mod-stream.conf              ${SERVER_HOME}/${NGINX_ALIAS}/conf/modules-enabled/50-mod-stream.conf
+#ln -sf ${SERVER_HOME}/${NGINX_HOME}/conf/modules-available/50-mod-http-geoip.conf          ${SERVER_HOME}/${NGINX_HOME}/conf/modules-enabled/50-mod-http-geoip.conf
+#ln -sf ${SERVER_HOME}/${NGINX_HOME}/conf/modules-available/50-mod-http-image-filter.conf   ${SERVER_HOME}/${NGINX_HOME}/conf/modules-enabled/50-mod-http-image-filter.conf
+ln -sf ${SERVER_HOME}/${NGINX_HOME}/conf/modules-available/50-mod-http-xslt-filter.conf    ${SERVER_HOME}/${NGINX_HOME}/conf/modules-enabled/50-mod-http-xslt-filter.conf
+# ln -sf ${SERVER_HOME}/${NGINX_HOME}/conf/modules-available/50-mod-mail.conf                ${SERVER_HOME}/${NGINX_HOME}/conf/modules-enabled/50-mod-mail.conf
+ln -sf ${SERVER_HOME}/${NGINX_HOME}/conf/modules-available/50-mod-stream.conf              ${SERVER_HOME}/${NGINX_HOME}/conf/modules-enabled/50-mod-stream.conf
 
 
 # ------------------------------------------------------------------------------
@@ -1032,7 +1020,7 @@ echo "server {
 
     # charset koi8-r;
 
-    # access_log logs/host.access.log main;
+    # access_log ${LOG_HOME}/host.access.log main;
 
     location / {
         root html;
@@ -1129,106 +1117,13 @@ echo "server {
 #        index index.html index.htm;
 #    }
 #}
-" > ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/conf/sites-available/default
+" > ${SERVER_HOME}/${NGINX_HOME}/conf/sites-available/default
 
-ln -sf ${SERVER_HOME}/${NGINX_ALIAS}/conf/sites-available/default ${SERVER_HOME}/${NGINX_ALIAS}/conf/sites-enabled/default
-
-
-# ------------------------------------------------------------------------------
-printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
-printf "\e[00;32m| 사설 인증키를 생성하려면 도메인을 입력주세요.\e[00m\n"
-printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
-printf "Enter whether to ssl setting? [\e[00;32mY\e[00m / \e[00;31mn(enter)\e[00m] (default. n)"
-read -e -p ' > ' CHECK_SSL
-if [ ! -z ${CHECK_SSL}  ] && [ "$(uppercase ${CHECK_SSL})" == "Y" ]; then
-    # 사설 인증키 생성
-    mkdir ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/conf/ssl
-
-    if [[ -z ${DOMAIN_NAME} ]]; then
-        printf "Enter your domain (ex. scala.or.kr)"
-        read -e -p " > " DOMAIN
-        while [[ -z ${DOMAIN_NAME} ]]; do
-            printf "Enter your domain (ex. scala.or.kr)"
-            read -e -p " > " DOMAIN
-        done
-        echo
-    fi
-
-    echo "[v3_extensions]
-# Extensions to add to a certificate request
-basicConstraints                = CA:FALSE
-authorityKeyIdentifier          = keyid,issuer
-subjectKeyIdentifier            = hash
-keyUsage                        = nonRepudiation, digitalSignature, keyEncipherment
-
-## SSL 용 확장키 필드
-extendedKeyUsage                = serverAuth,clientAuth
-subjectAltName                  = @subject_alternative_name
-
-[subject_alternative_name]
-# Subject AltName의 DNSName field에 SSL Host 의 도메인 이름을 적어준다.
-# 멀티 도메인일 경우 *.lesstif.com 처럼 쓸 수 있다.
-DNS.1                           = *.${DOMAIN_NAME}
-
-[distinguished_name]
-countryName                     = Seoul
-countryName_default             = KR
-countryName_min                 = 2
-countryName_max                 = 2
-
-# 회사명 입력
-organizationName                = KTH
-organizationName_default        = KTH Inc.
-
-# 부서 입력
-#organizationalUnitName         = Organizational Unit Name (eg, section)
-#organizationalUnitName_default = lesstif SSL Project
-
-# SSL 서비스할 domain 명 입력
-commonName                      = ${DOMAIN_NAME}
-commonName_default              = admin@${DOMAIN_NAME}
-commonName_max                  = 64
-
-[req]
-# 화면으로 입력 받지 않도록 설정.
-prompt                          = no
-default_bits                    = 2048
-default_md                      = sha1
-default_keyfile                 = lesstif-rootca.key
-distinguished_name              = distinguished_name
-x509_extensions                 = v3_extensions
-# 인증서 요청시에도 extension 이 들어가면 authorityKeyIdentifier 를 찾지 못해 에러가 나므로 막아둔다.
-#req_extensions                  = v3_extensions
-" > ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/conf/ssl/${DOMAIN_NAME}.conf
-
-    #${SERVER_HOME}/${OPENSSL_ALIAS}/bin/openssl genpkey                                                                 \
-    openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:4096                                                        \
-                    -out ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/conf/ssl/${DOMAIN_NAME}.key
-
-    chmod 400 ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/conf/ssl/${DOMAIN_NAME}.key
-
-    #${SERVER_HOME}/${OPENSSL_ALIAS}/bin/openssl req                                                                     \
-    openssl req -new -sha256                                                                                            \
-                -key    ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/conf/ssl/${DOMAIN_NAME}.key                            \
-                -out    ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/conf/ssl/${DOMAIN_NAME}.csr                            \
-                -config ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/conf/ssl/${DOMAIN_NAME}.conf
-
-    #${SERVER_HOME}/${OPENSSL_ALIAS}/bin/openssl x509 -req                                                               \
-    openssl x509 -req -days 3650 -extensions v3_extensions                                                              \
-                 -in      ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/conf/ssl/${DOMAIN_NAME}.csr                          \
-                 -signkey ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/conf/ssl/${DOMAIN_NAME}.key                          \
-                 -out     ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/conf/ssl/${DOMAIN_NAME}.crt                          \
-                 -extfile ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/conf/ssl/${DOMAIN_NAME}.conf
-
-    # 인증서 확인
-    openssl x509 -text -in ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/conf/ssl/${DOMAIN_NAME}.crt
-
-    rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${NGINX_HOME}/conf/ssl/${DOMAIN_NAME}.conf
-fi
+ln -sf ${SERVER_HOME}/${NGINX_HOME}/conf/sites-available/default ${SERVER_HOME}/${NGINX_HOME}/conf/sites-enabled/default
 
 
 # ------------------------------------------------------------------------------
 printf "\e[00;32m+-------------------------------------------------------------------------\e[00m\n"
-printf "\e[00;32m| \"${NGINX_ALIAS}\" install success...\e[00m\n"
+printf "\e[00;32m| \"${NGINX_HOME}\" install success...\e[00m\n"
 printf "\e[00;32m+-------------------------------------------------------------------------\e[00m\n"
 

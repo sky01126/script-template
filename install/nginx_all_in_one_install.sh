@@ -128,16 +128,30 @@ fi
 
 
 # ------------------------------------------------------------------------------
-# NginX
+# Setting NginX version
 export NGINX_DOWNLOAD_URL="https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz"
 export NGINX_HEADERS_MORE_MODULE_DOWNLOAD_URL="https://github.com/openresty/headers-more-nginx-module.git"
-
-
-# ------------------------------------------------------------------------------
-# Nginx Install
 export NGINX_NAME=${NGINX_DOWNLOAD_URL##+(*/)}
 # export NGINX_HOME=${NGINX_NAME%$EXTENSION}
 export NGINX_HOME="nginx116"
+
+# Setting OpenSSL version
+export OPENSSL_VERSION="1.1.1m"
+export OPENSSL_DOWNLOAD_URL="https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz"
+export OPENSSL_NAME=${OPENSSL_DOWNLOAD_URL##+(*/)}
+export OPENSSL_HOME=${OPENSSL_NAME%$EXTENSION}
+
+# Setting PCRE version
+export PCRE_VERSION="8.43"
+export PCRE_DOWNLOAD_URL="http://sourceforge.net/projects/pcre/files/pcre/${PCRE_VERSION}/pcre-${PCRE_VERSION}.tar.gz"
+export PCRE_NAME=${PCRE_DOWNLOAD_URL##+(*/)}
+export PCRE_HOME=${PCRE_NAME%$EXTENSION}
+
+# Setting ZLIB version
+export ZLIB_VERSION="1.2.11"
+export ZLIB_DOWNLOAD_URL="http://www.zlib.net/zlib-${ZLIB_VERSION}.tar.gz"
+export ZLIB_NAME=${ZLIB_DOWNLOAD_URL##+(*/)}
+export ZLIB_HOME=${ZLIB_NAME%$EXTENSION}
 
 
 # ------------------------------------------------------------------------------
@@ -178,11 +192,6 @@ fi
 
 # ------------------------------------------------------------------------------
 # OpenSSL 다운로드 확인
-export OPENSSL_VERSION="1.1.1m"
-export OPENSSL_DOWNLOAD_URL="https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz"
-export OPENSSL_NAME=${OPENSSL_DOWNLOAD_URL##+(*/)}
-export OPENSSL_HOME=${OPENSSL_NAME%$EXTENSION}
-
 # verify that the source exists download
 if [ ! -f "${SRC_HOME}/${OPENSSL_NAME}" ]; then
     cd ${SRC_HOME}
@@ -201,12 +210,7 @@ fi
 
 
 # ------------------------------------------------------------------------------
-# PCRE  다운로드 확인
-export PCRE_VERSION="8.43"
-export PCRE_DOWNLOAD_URL="http://sourceforge.net/projects/pcre/files/pcre/${PCRE_VERSION}/pcre-${PCRE_VERSION}.tar.gz"
-export PCRE_NAME=${PCRE_DOWNLOAD_URL##+(*/)}
-export PCRE_HOME=${PCRE_NAME%$EXTENSION}
-
+# PCRE 다운로드 확인
 # verify that the source exists download
 if [ ! -f "${SRC_HOME}/${PCRE_NAME}" ]; then
     cd ${SRC_HOME}
@@ -225,12 +229,7 @@ fi
 
 
 # ------------------------------------------------------------------------------
-# ZLIB  다운로드 확인
-export ZLIB_VERSION="1.2.11"
-export ZLIB_DOWNLOAD_URL="http://www.zlib.net/zlib-${ZLIB_VERSION}.tar.gz"
-export ZLIB_NAME=${ZLIB_DOWNLOAD_URL##+(*/)}
-export ZLIB_HOME=${ZLIB_NAME%$EXTENSION}
-
+# ZLIB 다운로드 확인
 # verify that the source exists download
 if [ ! -f "${SRC_HOME}/${ZLIB_NAME}" ]; then
     cd ${SRC_HOME}
@@ -337,13 +336,19 @@ fi
 # +---------------------+-------------------------------------------------------
 # Config 설정.
 INSTALL_CONFIG="--prefix=${SERVER_HOME}/${NGINX_HOME}"
-#INSTALL_CONFIG="${INSTALL_CONFIG} --user=${USERNAME}"
-#INSTALL_CONFIG="${INSTALL_CONFIG} --group=${GROUPNAME}"
 INSTALL_CONFIG="${INSTALL_CONFIG} --sbin-path=${SERVER_HOME}/${NGINX_HOME}/sbin/nginx"
+INSTALL_CONFIG="${INSTALL_CONFIG} --modules-path=${SERVER_HOME}/${NGINX_HOME}/modules"
 INSTALL_CONFIG="${INSTALL_CONFIG} --conf-path=${SERVER_HOME}/${NGINX_HOME}/conf/nginx.conf"
+INSTALL_CONFIG="${INSTALL_CONFIG} --error-log-path=${LOG_HOME}/error.log"
 INSTALL_CONFIG="${INSTALL_CONFIG} --pid-path=${SERVER_HOME}/${NGINX_HOME}/work/nginx.pid"
 INSTALL_CONFIG="${INSTALL_CONFIG} --lock-path=${SERVER_HOME}/${NGINX_HOME}/work/nginx.lock"
-INSTALL_CONFIG="${INSTALL_CONFIG} --modules-path=${SERVER_HOME}/${NGINX_HOME}/modules"
+
+#INSTALL_CONFIG="${INSTALL_CONFIG} --user=${USERNAME}"
+#INSTALL_CONFIG="${INSTALL_CONFIG} --group=${GROUPNAME}"
+
+# set http access log pathname
+INSTALL_CONFIG="${INSTALL_CONFIG} --http-log-path=${LOG_HOME}/access.log"
+
 INSTALL_CONFIG="${INSTALL_CONFIG} --http-proxy-temp-path=${SERVER_HOME}/${NGINX_HOME}/var/lib/nginx/proxy"
 INSTALL_CONFIG="${INSTALL_CONFIG} --http-client-body-temp-path=${SERVER_HOME}/${NGINX_HOME}/var/lib/nginx/body"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-openssl=${SRC_HOME}/${OPENSSL_HOME}"
@@ -860,7 +865,7 @@ http {
     # log_format main    '\$remote_addr '
     #                    '\$http_NS_CLIENT_IP '
     #                    '\$remote_user '
-    #                    '\$time_local '
+    #                    '[\$time_local] '
     #                    '\"\$host\" '
     #                    '\"\$request\" '
     #                    '\$status  '
@@ -871,8 +876,7 @@ http {
     #                    'UPTIME:\$upstream_response_time';
     log_format main    '\$remote_addr '
                        '\$remote_user '
-                       '\$time_local '
-                       '\"\$host\" '
+                       '[\$time_local] '
                        '\"\$request\" '
                        '\$status  '
                        '\$body_bytes_sent '
@@ -887,7 +891,6 @@ http {
     # error_log ${LOG_HOME}/error.log notice;
     # error_log ${LOG_HOME}/error.log info;
     error_log ${LOG_HOME}/error.log error;
-
 
     server_names_hash_bucket_size 64;
 
@@ -1067,6 +1070,12 @@ echo "server {
     #     root html;
     # }
 
+    # Favicon Access Log Off.
+    location = /favicon.ico {
+        return 404;
+        log_not_found off;
+        access_log off;
+    }
 
     # proxy the PHP scripts to Apache listening on 127.0.0.1:80
     #

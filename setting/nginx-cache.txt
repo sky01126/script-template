@@ -1,0 +1,24 @@
+# ----------------------------------------------------------
+- Memory 디스트 추가
+  # mkdir -p /var/cache/nginx
+  # mount -t tmpfs -o size=1G tmpfs /var/cache/nginx
+
+- fstab에 추가해서 재부팅 시에도 자동 마운트
+  # vi /etc/fstab
+
+tmpfs                   /var/cache/nginx        tmpfs   defaults,size=1G 0 0
+
+
+# ----------------------------------------------------------
+- NginX 와 로그 디렉토리 추가
+  # mkdir /nginx /nx_log
+
+- NginX 사용자 추가
+  # useradd --shell /sbin/nologin -d /nginx nginx
+
+또는
+
+  # useradd --shell /usr/sbin/nologin -d /nginx nginx
+
+- NginX 사용자 삭제
+# userdel -r nginx

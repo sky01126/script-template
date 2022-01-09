@@ -1280,15 +1280,15 @@ Include conf/extra/httpd-jk.conf
 # Setting Expire
 <IfModule expires_module>
     ExpiresActive On
-    ExpiresByType text/css \"modification plus 1 years\"
-    ExpiresByType text/javascript \"modification plus 1 years\"
     ExpiresByType application/javascript \"modification plus 1 years\"
     ExpiresByType application/x-javascript \"modification plus 1 years\"
-    ExpiresByType text/xml \"modification plus 1 years\"
     ExpiresByType application/x-shockwave-flash \"modification plus 1 years\"
-    ExpiresByType image/jpeg \"modification plus 1 years\"
     ExpiresByType image/gif \"modification plus 1 years\"
+    ExpiresByType image/jpeg \"modification plus 1 years\"
     ExpiresByType image/png \"modification plus 1 years\"
+    ExpiresByType text/css \"modification plus 1 years\"
+    ExpiresByType text/javascript \"modification plus 1 years\"
+    ExpiresByType text/xml \"modification plus 1 years\"
 </IfModule>
 
 # The HTTP/2 protocol - Check normal operation in worker / event mode.

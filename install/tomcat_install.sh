@@ -1141,198 +1141,198 @@ source \$PRGDIR/appenv.sh
 " > ${CATALINA_BASE}/bin/status.sh
 
 
-# ----------------------------------------------------------------------------------------------------------------------
-# Linux boot start / stop
-echo "#!/bin/sh
-# ---------------------------------------------------------------------------------
-#   ______                           __
-#  /_  __/___  ____ ___  _________ _/ /_
-#   / / / __ \/ __ \`__ \/ ___/ __ \`/ __/
-#  / / / /_/ / / / / / / /__/ /_/ / /_
-# /_/  \____/_/ /_/ /_/\___/\__,_/\__/
-# :: Version ::              (v${TOMCAT_VERSION})
-# ---------------------------------------------------------------------------------
-# chkconfig: 2345 90 15
-# description: Tomcat(${SERVICE_NAME}) server.
-#
+# # ----------------------------------------------------------------------------------------------------------------------
+# # Linux boot start / stop
+# echo "#!/bin/sh
+# # ---------------------------------------------------------------------------------
+# #   ______                           __
+# #  /_  __/___  ____ ___  _________ _/ /_
+# #   / / / __ \/ __ \`__ \/ ___/ __ \`/ __/
+# #  / / / /_/ / / / / / / /__/ /_/ / /_
+# # /_/  \____/_/ /_/ /_/\___/\__,_/\__/
+# # :: Version ::              (v${TOMCAT_VERSION})
+# # ---------------------------------------------------------------------------------
+# # chkconfig: 2345 90 15
+# # description: Tomcat(${SERVICE_NAME}) server.
+# #
 
-# CATALINA_BASE is the location of the configuration files of this instance of Tomcat
-export CATALINA_BASE=\"${CATALINA_BASE}\"
+# # CATALINA_BASE is the location of the configuration files of this instance of Tomcat
+# export CATALINA_BASE=\"${CATALINA_BASE}\"
 
-# CATALINA_USER is the default user of tomcat
-export CATALINA_USER=\""${USERNAME}"\"
+# # CATALINA_USER is the default user of tomcat
+# export CATALINA_USER=\""${USERNAME}"\"
 
-su - \$CATALINA_USER -c \"\$CATALINA_BASE/bin/tomcat.sh \$1\"
-" > ${CATALINA_BASE}/bin/${TOMCAT_BASE}
-
-
-# ----------------------------------------------------------------------------------------------------------------------
-# rotatelog.sh
-echo "#!/bin/bash
-# ---------------------------------------------------------------------------------
-#   ______                           __
-#  /_  __/___  ____ ___  _________ _/ /_
-#   / / / __ \/ __ \`__ \/ ___/ __ \`/ __/
-#  / / / /_/ / / / / / / /__/ /_/ / /_
-# /_/  \____/_/ /_/ /_/\___/\__,_/\__/
-# :: Version ::              (v${TOMCAT_VERSION})
-# ---------------------------------------------------------------------------------
-# 기본 정보 설정.
-# resolve links - \$0 may be a softlink
-PRG=\"\$0\"
-while [[ -h \"\$PRG\" ]]; do
-    ls=\`ls -ld \"\$PRG\"\`
-    link=\`expr \"\$ls\" : '.*-> \(.*\)\$'\`
-    if expr \"\$link\" : '/.*' > /dev/null; then
-        PRG=\"\$link\"
-    else
-        PRG=\`dirname \"\$PRG\"\`/\"\$link\"
-    fi
-done
-PRGDIR=\`dirname \"\$PRG\"\`
-
-source \$PRGDIR/appenv.sh
-
-# crontab 에 등록
-# 0 0 * * * ${CATALINA_BASE}/bin/rotatelog.sh
-
-# 스크립트에 에러가 있는 경우 즉시 종료.
-set -e
-
-# 파일 경로와 파일명 분리.
-FILE_PATH='${CATALINA_BASE}/logs'
-FILE_EXTENSION='.out'
-
-# File Extension
-EXTENSION='${EXTENSION}'
-
-# 파일 백업 경로에서 끝에 \"/\"가 있으면 제거.
-BACKUP_PATH='${CATALINA_BASE}/logs/archive'
-BACKUP_LOG_NAME=\"backup-\$(date -d \"1 day ago\" +\"%Y-%m\").log\"
-
-# 예외 디렉토리
-EXCEPTION_PATH=\`basename \"\${BACKUP_PATH}\"\`
-
-# 백업 디렉토리 생성 및 사용자, 그룹을 변경.
-if [[ ! -d \"\${BACKUP_PATH}\" ]]; then
-    mkdir -p \${BACKUP_PATH}
-    chown -R \${CATALINA_USER}:\${CATALINA_GROUP} \${BACKUP_PATH}
-fi
-
-echo \"-----------------------------------------------------------------------------------------------------------------\" | tee -a \${BACKUP_PATH}/\${BACKUP_LOG_NAME}
-echo \"- 파일 백업 : \$(date +\"%Y:%m:%d %H-%M-%S\")\" | tee -a \${BACKUP_PATH}/\${BACKUP_LOG_NAME}
-
-# 파일의 디렉토리로 이동.
-pushd \${FILE_PATH} > /dev/null
-
-# 파일을 백업한다.
-find . ! \\( -path \"./\${EXCEPTION_PATH}\" -prune \\) -name \"*\${FILE_EXTENSION}*\" -type f | while IFS= read -r FILE; do
-    pushd \${FILE_PATH} > /dev/null
-
-    BACKUP_FILE=\`basename \"\${FILE}\"\`
-    BACKUP_NAME=\"\${BACKUP_FILE}.\$(date -d \"1 day ago\" +\"%Y-%m-%d\")\"
-
-    COUNT=100001;
-    while [[ -f \"\${BACKUP_PATH}/\${BACKUP_NAME}-\${COUNT}.\${EXTENSION}\" ]]; do
-        let COUNT=\${COUNT}+1;
-    done
-
-    BACKUP_NAME=\"\${BACKUP_NAME}-\${COUNT}\${EXTENSION}\"
-
-    echo \"FILE - \${FILE}\"
-    echo \"BACKUP_FILE - \${BACKUP_FILE}\"
-    echo \"BACKUP_NAME - \${BACKUP_NAME}\"
-
-    FILE_SIZE=\`stat -c %s \${BACKUP_FILE}\`
-    echo \"FILE_SIZE - \${FILE_SIZE}\"
-
-    if [[ \${FILE_SIZE} = 0 ]]; then
-        echo \"  . Backup file name : '\${BACKUP_FILE}' is empty.\" | tee -a \${BACKUP_PATH}/\${BACKUP_LOG_NAME}
-    else
-        # 백업 파일을 백업 디렉토리에 옮긴다.
-        cp \${BACKUP_FILE} \${BACKUP_PATH}
-
-        ## OUT 파일을 초기화한다.
-        cat /dev/null > \${BACKUP_FILE}
-
-        # 백업 디렉토리로 이동한다.
-        pushd \${BACKUP_PATH} > /dev/null
-
-        # 파일을 압축한다.
-        tar cvzf \${BACKUP_NAME} \${BACKUP_FILE}
-
-        # 원본파일을 삭제한다.
-        rm -rf \${BACKUP_FILE}
-
-        echo \"  . Backup file name : '\${BACKUP_FILE}' is initialization complete...\" | tee -a \${BACKUP_PATH}/\${BACKUP_LOG_NAME}
-
-        chown -R \${CATALINA_USER}:\${CATALINA_GROUP} \${BACKUP_PATH}/\${BACKUP_NAME}
-    fi
-done
-" > ${CATALINA_BASE}/bin/rotatelog.sh
+# su - \$CATALINA_USER -c \"\$CATALINA_BASE/bin/tomcat.sh \$1\"
+# " > ${CATALINA_BASE}/bin/${TOMCAT_BASE}
 
 
-# ----------------------------------------------------------------------------------------------------------------------
-# log_delete.sh
-echo "#!/bin/bash
-# ---------------------------------------------------------------------------------
-#   ______                           __
-#  /_  __/___  ____ ___  _________ _/ /_
-#   / / / __ \/ __ \`__ \/ ___/ __ \`/ __/
-#  / / / /_/ / / / / / / /__/ /_/ / /_
-# /_/  \____/_/ /_/ /_/\___/\__,_/\__/
-# :: Version ::              (v${TOMCAT_VERSION})
-# ---------------------------------------------------------------------------------
-# 기본 정보 설정.
-# resolve links - \$0 may be a softlink
-PRG=\"\$0\"
-while [[ -h \"\$PRG\" ]]; do
-    ls=\`ls -ld \"\$PRG\"\`
-    link=\`expr \"\$ls\" : '.*-> \(.*\)\$'\`
-    if expr \"\$link\" : '/.*' > /dev/null; then
-        PRG=\"\$link\"
-    else
-        PRG=\`dirname \"\$PRG\"\`/\"\$link\"
-    fi
-done
-PRGDIR=\`dirname \"\$PRG\"\`
+# # ----------------------------------------------------------------------------------------------------------------------
+# # rotatelog.sh
+# echo "#!/bin/bash
+# # ---------------------------------------------------------------------------------
+# #   ______                           __
+# #  /_  __/___  ____ ___  _________ _/ /_
+# #   / / / __ \/ __ \`__ \/ ___/ __ \`/ __/
+# #  / / / /_/ / / / / / / /__/ /_/ / /_
+# # /_/  \____/_/ /_/ /_/\___/\__,_/\__/
+# # :: Version ::              (v${TOMCAT_VERSION})
+# # ---------------------------------------------------------------------------------
+# # 기본 정보 설정.
+# # resolve links - \$0 may be a softlink
+# PRG=\"\$0\"
+# while [[ -h \"\$PRG\" ]]; do
+#     ls=\`ls -ld \"\$PRG\"\`
+#     link=\`expr \"\$ls\" : '.*-> \(.*\)\$'\`
+#     if expr \"\$link\" : '/.*' > /dev/null; then
+#         PRG=\"\$link\"
+#     else
+#         PRG=\`dirname \"\$PRG\"\`/\"\$link\"
+#     fi
+# done
+# PRGDIR=\`dirname \"\$PRG\"\`
 
-source \$PRGDIR/appenv.sh
+# source \$PRGDIR/appenv.sh
 
-# crontab 에 등록
-# 10 0 * * * ${CATALINA_BASE}/bin/log_delete.sh
+# # crontab 에 등록
+# # 0 0 * * * ${CATALINA_BASE}/bin/rotatelog.sh
 
-# 파일 경로와 파일명 분리.
-MAX_HISTORYS='30'
-FILE_PATH='${CATALINA_BASE}/archive'
-FILE_NAME=\`basename \"\${FILE_PATH}\"\`
-EXTENSION='${EXTENSION}'
+# # 스크립트에 에러가 있는 경우 즉시 종료.
+# set -e
 
-DELETE_LOG_NAME=\"delete-\$(date -d \"1 day ago\" +\"%Y-%m\").log\"
+# # 파일 경로와 파일명 분리.
+# FILE_PATH='${CATALINA_BASE}/logs'
+# FILE_EXTENSION='.out'
 
-# 백업 디렉토리 생성 및 사용자, 그룹을 변경.
-if [[ ! -d \"\${FILE_PATH}\" ]]; then
-    mkdir -p \${FILE_PATH}
-    chown -R \${CATALINA_USER}:\${CATALINA_GROUP} \${FILE_PATH}
-fi
+# # File Extension
+# EXTENSION='${EXTENSION}'
 
-echo \"-----------------------------------------------------------------------------------------------------------------\" | tee -a \${FILE_PATH}/\${DELETE_LOG_NAME}
-echo \"- 파일 삭제 : \$(date +\"%Y:%m:%d %H-%M-%S\")\" | tee -a \${FILE_PATH}/\${DELETE_LOG_NAME}
+# # 파일 백업 경로에서 끝에 \"/\"가 있으면 제거.
+# BACKUP_PATH='${CATALINA_BASE}/logs/archive'
+# BACKUP_LOG_NAME=\"backup-\$(date -d \"1 day ago\" +\"%Y-%m\").log\"
 
-# 파일의 디렉토리로 이동.
-pushd \${FILE_PATH} > /dev/null
+# # 예외 디렉토리
+# EXCEPTION_PATH=\`basename \"\${BACKUP_PATH}\"\`
 
-# 보관주기가 지난 백업 파일은 삭제한다.
-OLD_BACKUP_FILES=\`find . -mtime +\$((MAX_HISTORYS - 1)) -name \"*\${EXTENSION}\" -type f\`
-if [[ -n \${OLD_BACKUP_FILES} ]]; then
-    rm -rf \${OLD_BACKUP_FILES}
-    echo \"  . 로그 파일 삭제 : \${OLD_BACKUP_FILES}\" | tee -a \${FILE_PATH}/\${DELETE_LOG_NAME}
-else
-    echo \"  . 삭제 대상 로그 파일이 없습니다.\" | tee -a \${FILE_PATH}/\${DELETE_LOG_NAME}
-fi
+# # 백업 디렉토리 생성 및 사용자, 그룹을 변경.
+# if [[ ! -d \"\${BACKUP_PATH}\" ]]; then
+#     mkdir -p \${BACKUP_PATH}
+#     chown -R \${CATALINA_USER}:\${CATALINA_GROUP} \${BACKUP_PATH}
+# fi
 
-chown \${CATALINA_USER}:\${CATALINA_GROUP} \${FILE_PATH}/\${DELETE_LOG_NAME}
-" > ${CATALINA_BASE}/bin/log_delete.sh
+# echo \"-----------------------------------------------------------------------------------------------------------------\" | tee -a \${BACKUP_PATH}/\${BACKUP_LOG_NAME}
+# echo \"- 파일 백업 : \$(date +\"%Y:%m:%d %H-%M-%S\")\" | tee -a \${BACKUP_PATH}/\${BACKUP_LOG_NAME}
+
+# # 파일의 디렉토리로 이동.
+# pushd \${FILE_PATH} > /dev/null
+
+# # 파일을 백업한다.
+# find . ! \\( -path \"./\${EXCEPTION_PATH}\" -prune \\) -name \"*\${FILE_EXTENSION}*\" -type f | while IFS= read -r FILE; do
+#     pushd \${FILE_PATH} > /dev/null
+
+#     BACKUP_FILE=\`basename \"\${FILE}\"\`
+#     BACKUP_NAME=\"\${BACKUP_FILE}.\$(date -d \"1 day ago\" +\"%Y-%m-%d\")\"
+
+#     COUNT=100001;
+#     while [[ -f \"\${BACKUP_PATH}/\${BACKUP_NAME}-\${COUNT}.\${EXTENSION}\" ]]; do
+#         let COUNT=\${COUNT}+1;
+#     done
+
+#     BACKUP_NAME=\"\${BACKUP_NAME}-\${COUNT}\${EXTENSION}\"
+
+#     echo \"FILE - \${FILE}\"
+#     echo \"BACKUP_FILE - \${BACKUP_FILE}\"
+#     echo \"BACKUP_NAME - \${BACKUP_NAME}\"
+
+#     FILE_SIZE=\`stat -c %s \${BACKUP_FILE}\`
+#     echo \"FILE_SIZE - \${FILE_SIZE}\"
+
+#     if [[ \${FILE_SIZE} = 0 ]]; then
+#         echo \"  . Backup file name : '\${BACKUP_FILE}' is empty.\" | tee -a \${BACKUP_PATH}/\${BACKUP_LOG_NAME}
+#     else
+#         # 백업 파일을 백업 디렉토리에 옮긴다.
+#         cp \${BACKUP_FILE} \${BACKUP_PATH}
+
+#         ## OUT 파일을 초기화한다.
+#         cat /dev/null > \${BACKUP_FILE}
+
+#         # 백업 디렉토리로 이동한다.
+#         pushd \${BACKUP_PATH} > /dev/null
+
+#         # 파일을 압축한다.
+#         tar cvzf \${BACKUP_NAME} \${BACKUP_FILE}
+
+#         # 원본파일을 삭제한다.
+#         rm -rf \${BACKUP_FILE}
+
+#         echo \"  . Backup file name : '\${BACKUP_FILE}' is initialization complete...\" | tee -a \${BACKUP_PATH}/\${BACKUP_LOG_NAME}
+
+#         chown -R \${CATALINA_USER}:\${CATALINA_GROUP} \${BACKUP_PATH}/\${BACKUP_NAME}
+#     fi
+# done
+# " > ${CATALINA_BASE}/bin/rotatelog.sh
+
+
+# # ----------------------------------------------------------------------------------------------------------------------
+# # log_delete.sh
+# echo "#!/bin/bash
+# # ---------------------------------------------------------------------------------
+# #   ______                           __
+# #  /_  __/___  ____ ___  _________ _/ /_
+# #   / / / __ \/ __ \`__ \/ ___/ __ \`/ __/
+# #  / / / /_/ / / / / / / /__/ /_/ / /_
+# # /_/  \____/_/ /_/ /_/\___/\__,_/\__/
+# # :: Version ::              (v${TOMCAT_VERSION})
+# # ---------------------------------------------------------------------------------
+# # 기본 정보 설정.
+# # resolve links - \$0 may be a softlink
+# PRG=\"\$0\"
+# while [[ -h \"\$PRG\" ]]; do
+#     ls=\`ls -ld \"\$PRG\"\`
+#     link=\`expr \"\$ls\" : '.*-> \(.*\)\$'\`
+#     if expr \"\$link\" : '/.*' > /dev/null; then
+#         PRG=\"\$link\"
+#     else
+#         PRG=\`dirname \"\$PRG\"\`/\"\$link\"
+#     fi
+# done
+# PRGDIR=\`dirname \"\$PRG\"\`
+
+# source \$PRGDIR/appenv.sh
+
+# # crontab 에 등록
+# # 10 0 * * * ${CATALINA_BASE}/bin/log_delete.sh
+
+# # 파일 경로와 파일명 분리.
+# MAX_HISTORYS='30'
+# FILE_PATH='${CATALINA_BASE}/archive'
+# FILE_NAME=\`basename \"\${FILE_PATH}\"\`
+# EXTENSION='${EXTENSION}'
+
+# DELETE_LOG_NAME=\"delete-\$(date -d \"1 day ago\" +\"%Y-%m\").log\"
+
+# # 백업 디렉토리 생성 및 사용자, 그룹을 변경.
+# if [[ ! -d \"\${FILE_PATH}\" ]]; then
+#     mkdir -p \${FILE_PATH}
+#     chown -R \${CATALINA_USER}:\${CATALINA_GROUP} \${FILE_PATH}
+# fi
+
+# echo \"-----------------------------------------------------------------------------------------------------------------\" | tee -a \${FILE_PATH}/\${DELETE_LOG_NAME}
+# echo \"- 파일 삭제 : \$(date +\"%Y:%m:%d %H-%M-%S\")\" | tee -a \${FILE_PATH}/\${DELETE_LOG_NAME}
+
+# # 파일의 디렉토리로 이동.
+# pushd \${FILE_PATH} > /dev/null
+
+# # 보관주기가 지난 백업 파일은 삭제한다.
+# OLD_BACKUP_FILES=\`find . -mtime +\$((MAX_HISTORYS - 1)) -name \"*\${EXTENSION}\" -type f\`
+# if [[ -n \${OLD_BACKUP_FILES} ]]; then
+#     rm -rf \${OLD_BACKUP_FILES}
+#     echo \"  . 로그 파일 삭제 : \${OLD_BACKUP_FILES}\" | tee -a \${FILE_PATH}/\${DELETE_LOG_NAME}
+# else
+#     echo \"  . 삭제 대상 로그 파일이 없습니다.\" | tee -a \${FILE_PATH}/\${DELETE_LOG_NAME}
+# fi
+
+# chown \${CATALINA_USER}:\${CATALINA_GROUP} \${FILE_PATH}/\${DELETE_LOG_NAME}
+# " > ${CATALINA_BASE}/bin/log_delete.sh
 
 
 # ----------------------------------------------------------------------------------------------------------------------

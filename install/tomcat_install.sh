@@ -581,10 +581,6 @@ fi
 fi
 
 echo "# ---------------------------------------------------------------------------------
-# Tomcat logs home directory (로그 기록 경로가 변경되는 경우 변경 아래 경로를 변경.)
-export CATALINA_OPTS=\"\$CATALINA_OPTS -Dserver.logs.home=\$CATALINA_BASE/logs\"
-
-# ---------------------------------------------------------------------------------
 # discourage address map swapping by setting Xms and Xmx to the same value
 # http://confluence.atlassian.com/display/DOC/Garbage+Collector+Performance+Issues
 export CATALINA_OPTS=\"\$CATALINA_OPTS -Xms${MIN_MEMORY}m\"
@@ -625,8 +621,7 @@ if [[ ${JAVA_VERSION} -ge 9 ]]; then
 export CATALINA_OPTS=\"\$CATALINA_OPTS -Xlog:gc*:file=\$CATALINA_BASE/logs/gc.log::filecount=10,filesize=10M\"
 " >> ${CATALINA_BASE}/bin/setenv.sh
 else
-    echo "
-# GC 로그 기록, 서버에 많은 부하를 주지는 않음, 별도의 GC 모니터링이 필요 하다면 추가
+    echo "# GC 로그 기록, 서버에 많은 부하를 주지는 않음, 별도의 GC 모니터링이 필요 하다면 추가
 export CATALINA_OPTS=\"\$CATALINA_OPTS -Xloggc:\$CATALINA_BASE/logs/gc.log\"
 
 export CATALINA_OPTS=\"\$CATALINA_OPTS -verbose:gc\"
@@ -1602,7 +1597,7 @@ echo "<?xml version='1.0' encoding='utf-8'?>
 echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 <configuration>
     <property name=\"max.historys\" value=\"30\" />
-    <!--<property name=\"server.logs.home\" value=\"\${catalina.base}/logs  \"/>-->
+    <property name=\"catalina_logs\" value=\"\${catalina.base}/logs \"/>
 
     <appender name=\"CONSOLE\" class=\"org.apache.juli.logging.ch.qos.logback.core.ConsoleAppender\">
         <encoder>
@@ -1610,51 +1605,51 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
         </encoder>
     </appender>
     <appender name=\"CATALINA-FILE\" class=\"org.apache.juli.logging.ch.qos.logback.core.rolling.RollingFileAppender\">
-        <file>\${server.logs.home}/catalina.log</file>
+        <file>\${catalina_logs}/catalina.log</file>
         <append>true</append>
         <encoder>
             <charset>UTF-8</charset>
             <pattern>[%date{ISO8601}] [%thread] %-5level: %logger\(%M:%line\) - %msg%n</pattern>
         </encoder>
         <rollingPolicy class=\"org.apache.juli.logging.ch.qos.logback.core.rolling.TimeBasedRollingPolicy\">
-            <fileNamePattern>\${server.logs.home}/archive/catalina.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>\${catalina_logs}/archive/catalina.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>\${max.historys}</maxHistory>
         </rollingPolicy>
     </appender>
     <appender name=\"LOCALHOST-FILE\" class=\"org.apache.juli.logging.ch.qos.logback.core.rolling.RollingFileAppender\">
-        <file>\${server.logs.home}/localhost.log</file>
+        <file>\${catalina_logs}/localhost.log</file>
         <append>true</append>
         <encoder>
             <charset>UTF-8</charset>
             <pattern>[%date{ISO8601}] [%thread] %-5level: %logger\(%M:%line\) - %msg%n</pattern>
         </encoder>
         <rollingPolicy class=\"org.apache.juli.logging.ch.qos.logback.core.rolling.TimeBasedRollingPolicy\">
-            <fileNamePattern>\${server.logs.home}/archive/localhost.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>\${catalina_logs}/archive/localhost.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>\${max.historys}</maxHistory>
         </rollingPolicy>
     </appender>
     <!--
     <appender name=\"MANAGER-FILE\" class=\"org.apache.juli.logging.ch.qos.logback.core.rolling.RollingFileAppender\">
-        <file>\${server.logs.home}/manager.log</file>
+        <file>\${catalina_logs}/manager.log</file>
         <append>true</append>
         <encoder>
             <charset>UTF-8</charset>
             <pattern>[%date{ISO8601}] [%thread] %-5level: %logger\(%M:%line\) - %msg%n</pattern>
         </encoder>
         <rollingPolicy class=\"org.apache.juli.logging.ch.qos.logback.core.rolling.TimeBasedRollingPolicy\">
-            <fileNamePattern>\${server.logs.home}/archive/manager.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>\${catalina_logs}/archive/manager.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>\${max.historys}</maxHistory>
         </rollingPolicy>
     </appender>
     <appender name=\"HOST-MANAGER-FILE\" class=\"org.apache.juli.logging.ch.qos.logback.core.rolling.RollingFileAppender\">
-        <file>\${server.logs.home}/host-manager.log</file>
+        <file>\${catalina_logs}/host-manager.log</file>
         <append>true</append>
         <encoder>
             <charset>UTF-8</charset>
             <pattern>[%date{ISO8601}] [%thread] %-5level: %logger\(%M:%line\) - %msg%n</pattern>
         </encoder>
         <rollingPolicy class=\"org.apache.juli.logging.ch.qos.logback.core.rolling.TimeBasedRollingPolicy\">
-            <fileNamePattern>\${server.logs.home}/archive/host-manager.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>\${catalina_logs}/archive/host-manager.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>\${max.historys}</maxHistory>
         </rollingPolicy>
     </appender>
@@ -1686,13 +1681,13 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 echo "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>
 <configuration>
     <property name=\"max.historys\" value=\"30\" />
-    <!--<property name=\"server.logs.home\" value=\"\${catalina.base}/logs\"/>-->
+    <property name=\"catalina_logs\" value=\"\${catalina.base}/logs\" />
 
     <!-- always a good activate OnConsoleStatusListener -->
     <statusListener class=\"ch.qos.logback.core.status.OnConsoleStatusListener\" />
 
     <appender name=\"ACCESS-LOG-FILE\" class=\"ch.qos.logback.core.rolling.RollingFileAppender\">
-        <file>\${server.logs.home}/access.log</file>
+        <file>\${catalina_logs}/access.log</file>
         <append>true</append>
         <encoder>
             <charset>UTF-8</charset>
@@ -1700,7 +1695,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>
             <pattern>%h %i{X-Forwarded-For} [%i{X-B3-TraceId},%i{X-B3-SpanId},%i{X-B3-ParentSpanId}] %l %u [%t{yyyy-MM-dd HH:mm:ss}] \"%i{Host}\" \"%r\" %s %b \"%i{Referer}\" \"%i{User-Agent}\" %D</pattern>
         </encoder>
         <rollingPolicy class=\"ch.qos.logback.core.rolling.TimeBasedRollingPolicy\">
-            <fileNamePattern>\${server.logs.home}/archive/access.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>\${catalina_logs}/archive/access.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>\${max.historys}</maxHistory>
         </rollingPolicy>
     </appender>

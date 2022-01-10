@@ -717,15 +717,6 @@ echo "#!/bin/sh
 # and enterprise use with large-scale deployments.
 
 # ---------------------------------------------------------------------------------
-# OS 확인.
-OS='unknown'
-if [[ \"\$(uname)\" == \"Darwin\" ]]; then
-    OS=\"darwin\"
-elif [[ \"\$(expr substr \$(uname -s) 1 5)\" == \"Linux\" ]]; then
-    OS=\"linux\"
-fi
-
-# ---------------------------------------------------------------------------------
 # 기본 정보 설정.
 PRG=\`realpath \$0\`
 PRGDIR=\`dirname \"\$PRG\"\`

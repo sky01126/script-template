@@ -10,6 +10,8 @@
 # 멀티의 setting.sh 읽기
 # source /dev/stdin  <<< "$(curl -f -L -sS  http://shell.pe.kr/document/install/library/setting.sh)"
 
+echo "---------------- PCRE - v2022.01.10.002 ----------------"
+
 # Exit on error
 set -e
 
@@ -20,7 +22,7 @@ shopt -s extglob
 if [[ ! -z ${PCRE_ALIAS} ]]; then
     rm -rf ${SERVER_HOME}/${PCRE_ALIAS}
 fi
-rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${PCRE_HOME}
+rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${PCRE_HOME}
 
 cd ${SRC_HOME}
 
@@ -41,7 +43,7 @@ fi
 tar xvzf ${PCRE_NAME}
 cd ${SRC_HOME}/${PCRE_HOME}
 
-./configure --prefix=${SERVER_HOME}${PROGRAME_HOME}/${PCRE_HOME} --enable-pcre16 --enable-pcre32 --enable-utf
+./configure --prefix=${SERVER_HOME}/${PROGRAME_HOME}/${PCRE_HOME} --enable-pcre16 --enable-pcre32 --enable-utf
 make
 make install
 

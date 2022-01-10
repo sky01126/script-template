@@ -7,8 +7,7 @@
 # /_/ |_\___/\__,_/_/ /_/\__, /\__,_/_/ /_/\__, /
 #                       /____/            /____/
 
-echo "---------------- Setting - v2022.01.10.001 ----------------"
-
+echo "---------------- Setting - v2022.01.10.002 ----------------"
 
 # ----------------------------------------------------------------------------------------------------------------------
 # 현재 사용자의 아이디명과 그룹정보
@@ -84,11 +83,12 @@ if [[ -z ${PROGRAME_HOME} ]]; then
     read -e -p " > " PROGRAME_HOME
     echo
 fi
-if [[ ! -z ${PROGRAME_HOME} ]] && [[ ! -d "${SERVER_HOME}${PROGRAME_HOME}" ]]; then
+if [[ ! -z ${PROGRAME_HOME} ]] && [[ ! -d "${SERVER_HOME}/${PROGRAME_HOME}" ]]; then
+    export PROGRAME_HOME=${PROGRAME_HOME#/}
     export PROGRAME_HOME=${PROGRAME_HOME%/}
     PROGRAME_HOME=${PROGRAME_HOME/\/\//\/}
-    printf "Create program install directory : \e[00;32m${SERVER_HOME}${PROGRAME_HOME}\e[00m\n"
-    mkdir -p ${SERVER_HOME}${PROGRAME_HOME}
+    printf "Create program install directory : \e[00;32m${SERVER_HOME}/${PROGRAME_HOME}\e[00m\n"
+    mkdir -p ${SERVER_HOME}/${PROGRAME_HOME}
 fi
 
 

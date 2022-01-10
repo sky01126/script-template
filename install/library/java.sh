@@ -20,7 +20,7 @@ set -e
 shopt -s extglob
 
 rm -rf ${SERVER_HOME}/${JAVA_ALIAS}
-rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${JAVA_HOME}
+rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${JAVA_HOME}
 
 printf "\e[00;32m| ${JAVA_HOME} install start...\e[00m\n"
 
@@ -32,7 +32,7 @@ if [ ! -f "${SRC_HOME}/${JAVA_DOWNLOAD_URL##+(*/)}" ]; then
     curl -L -b "oraclelicense=a" -O ${JAVA_DOWNLOAD_URL}
 fi
 
-tar xvzf ${JAVA_DOWNLOAD_URL##+(*/)} -C ${SERVER_HOME}${PROGRAME_HOME}
+tar xvzf ${JAVA_DOWNLOAD_URL##+(*/)} -C ${SERVER_HOME}/${PROGRAME_HOME}
 
 cd ${SERVER_HOME}
 ln -s ./${PROGRAME_HOME}/${JAVA_HOME} ${JAVA_ALIAS}

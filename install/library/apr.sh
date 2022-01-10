@@ -13,6 +13,8 @@
 # Exit on error
 set -e
 
+echo "---------------- APR - v2022.01.10.002 ----------------"
+
 # shopt은 shell option의 약자로 유틸이다.
 # 사용 하는 extglob 쉘 옵션 shopt 내장 명령을 사용 하 여 같은 확장된 패턴 일치 연산자를 사용
 shopt -s extglob
@@ -20,7 +22,7 @@ shopt -s extglob
 if [[ ! -z ${APR_ALIAS} ]]; then
     rm -rf ${SERVER_HOME}/${APR_ALIAS}
 fi
-rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${APR_HOME}
+rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${APR_HOME}
 
 printf "\e[00;32m| ${APR_HOME} / ${APR_ICONV_NAME} / ${APR_UTIL_HOME} install start...\e[00m\n"
 
@@ -51,7 +53,7 @@ fi
 tar xvzf ${APR_NAME}
 cd ${SRC_HOME}/${APR_HOME}
 
-./configure --prefix=${SERVER_HOME}${PROGRAME_HOME}/${APR_HOME}
+./configure --prefix=${SERVER_HOME}/${PROGRAME_HOME}/${APR_HOME}
 make
 make install
 sleep 0.5
@@ -69,8 +71,8 @@ fi
 tar xvzf ${APR_UTIL_NAME}
 cd ${SRC_HOME}/${APR_UTIL_HOME}
 
-./configure --prefix=${SERVER_HOME}${PROGRAME_HOME}/${APR_HOME}                 \
-            --with-apr=${SERVER_HOME}${PROGRAME_HOME}/${APR_HOME}
+./configure --prefix=${SERVER_HOME}/${PROGRAME_HOME}/${APR_HOME}                \
+            --with-apr=${SERVER_HOME}/${PROGRAME_HOME}/${APR_HOME}
 make
 make install
 
@@ -87,8 +89,8 @@ make install
 # tar xvzf ${APR_ICONV_NAME}
 # cd ${SRC_HOME}/${APR_ICONV_HOME}
 
-# ./configure --prefix=${SERVER_HOME}${PROGRAME_HOME}/${APR_HOME}                 \
-#             --with-apr=${SERVER_HOME}${PROGRAME_HOME}/${APR_HOME}
+# ./configure --prefix=${SERVER_HOME}/${PROGRAME_HOME}/${APR_HOME}                \
+#             --with-apr=${SERVER_HOME}/${PROGRAME_HOME}/${APR_HOME}
 # make
 # make install
 # sleep 0.5

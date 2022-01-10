@@ -12,6 +12,8 @@
 # CentOS 7 에서 "/lib/ld-linux.so.2: bad ELF interpreter" 에러 발생 시 아래 패키지 설치
 # sudo yum install -y ld-linux.so.2
 
+echo "---------------- OpenJDK - v2022.01.10.002 ----------------"
+
 # Exit on error
 set -e
 
@@ -21,7 +23,7 @@ set -e
 shopt -s extglob
 
 rm -rf ${SERVER_HOME}/${OPENJAVA_ALIAS}
-rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${OPENJAVA_HOME}
+rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${OPENJAVA_HOME}
 
 printf "\e[00;32m| ${OPENJAVA_HOME} install start...\e[00m\n"
 
@@ -33,7 +35,7 @@ if [ ! -f "${SRC_HOME}/${OPENJAVA_DOWNLOAD_URL##+(*/)}" ]; then
     curl -L -O ${OPENJAVA_DOWNLOAD_URL}
 fi
 
-tar xvzf ${OPENJAVA_DOWNLOAD_URL##+(*/)} -C ${SERVER_HOME}${PROGRAME_HOME}
+tar xvzf ${OPENJAVA_DOWNLOAD_URL##+(*/)} -C ${SERVER_HOME}/${PROGRAME_HOME}
 
 cd ${SERVER_HOME}
 ln -s ./${PROGRAME_HOME}/${OPENJAVA_HOME} ${OPENJAVA_ALIAS}

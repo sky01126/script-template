@@ -12,7 +12,7 @@
 # CentOS 7 에서 "/lib/ld-linux.so.2: bad ELF interpreter" 에러 발생 시 아래 패키지 설치
 # sudo yum install -y ld-linux.so.2
 
-echo "---------------- OpenJDK - v2022.01.10.002 ----------------"
+echo "---------------- OpenJDK - v2022.01.10.003 ----------------"
 
 # Exit on error
 set -e

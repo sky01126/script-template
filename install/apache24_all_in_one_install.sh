@@ -33,7 +33,7 @@
 #   Apache HTTP Server에서 널 포인터 역참조로 인해 발생하는 서비스거부 취약점(CVE-2021-44224)
 #   Apache HTTP Server에서 입력값 검증이 미흡하여 발생하는 버퍼오버플로우 취약점(CVE-2021-44790)
 
-echo "---------------- Apache - v2022.01.11.006 ----------------"
+echo "---------------- Apache - v2022.01.11.007 ----------------"
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Exit on error
@@ -100,9 +100,15 @@ export EXTENSION='.tar.gz'
 export SRC_HOME="/apache/src"
 export LOG_HOME="/ap_log"
 export SERVER_HOME="/apache"
-mkdir -p ${SRC_HOME}
-mkdir -p ${LOG_HOME}
-mkdir -p ${SERVER_HOME}
+if [[ ! -d "${SRC_HOME}" ]]; then
+    mkdir -p ${SRC_HOME}
+fi
+if [[ ! -d "${LOG_HOME}" ]]; then
+    mkdir -p ${LOG_HOME}
+fi
+if [[ ! -d "${SERVER_HOME}" ]]; then
+    mkdir -p ${SERVER_HOME}
+fi
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -146,7 +152,7 @@ export HTTPD_HOME='apache24'
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Apache Tomcat Connector
-MOD_JK_VERSION="1.2.46"
+MOD_JK_VERSION="1.2.48"
 MOD_JK_DOWNLOAD_URL="http://archive.apache.org/dist/tomcat/tomcat-connectors/jk/tomcat-connectors-${MOD_JK_VERSION}-src.tar.gz"
 
 

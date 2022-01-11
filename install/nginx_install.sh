@@ -809,7 +809,8 @@ else
     WORKER_PROCESSES=`grep processor /proc/cpuinfo | wc -l`
 fi
 
-echo "user ${USERNAME};
+echo "user [서비스_계정] [서비스_그룹]
+user ${USERNAME} ${GROUPNAME};
 
 # 프로세스 확인 : grep processor /proc/cpuinfo | wc -l
 worker_processes auto;

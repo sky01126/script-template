@@ -51,8 +51,8 @@ lowercase() {
 
 # ----------------------------------------------------------------------------------------------------------------------
 # 현재 사용자의 아이디명과 그룹정보
-export USERNAME=`id -u -n`
-export GROUPNAME=`id -g -n`
+export USERNAME="nginx"
+export GROUPNAME="nginx"
 
 
 # ------------------------------------------------------------------------------
@@ -64,13 +64,16 @@ export BZ2_EXTENSION=".tar.bz2"
 
 # ------------------------------------------------------------------------------
 export SRC_HOME="/var/tmp"
-export SERVER_HOME="/nginx"
 export LOG_HOME="/nx_log"
-if [[ ! -d "${SERVER_HOME}" ]]; then
-    mkdir -p ${SERVER_HOME}
+export SERVER_HOME="/nginx"
+if [[ ! -d "${SRC_HOME}" ]]; then
+    mkdir -p ${SRC_HOME}
 fi
 if [[ ! -d "${LOG_HOME}" ]]; then
     mkdir -p ${LOG_HOME}
+fi
+if [[ ! -d "${SERVER_HOME}" ]]; then
+    mkdir -p ${SERVER_HOME}
 fi
 
 # ------------------------------------------------------------------------------
@@ -813,7 +816,8 @@ else
     WORKER_PROCESSES=`grep processor /proc/cpuinfo | wc -l`
 fi
 
-echo "user ${USERNAME};
+echo "user [서비스_계정] [서비스_그룹]
+user ${USERNAME} ${GROUPNAME};
 
 # 프로세스 확인 : grep processor /proc/cpuinfo | wc -l
 worker_processes auto;

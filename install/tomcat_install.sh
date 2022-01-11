@@ -10,7 +10,7 @@
 #
 # 멀티 쉘 실행 : bash <(curl -fsSL https://raw.githubusercontent.com/sky01126/script-template/master/install/tomcat_install.sh)
 
-echo "---------------- Tomcat - v2022.01.12.002 ----------------"
+echo "---------------- Tomcat - v2022.01.12.003 ----------------"
 
 # ----------------------------------------------------------------------------------------------------------------------
 export SERVER_HOME="/tomcat"
@@ -650,13 +650,6 @@ export CATALINA_OPTS=\"\$CATALINA_OPTS -Djava.rmi.server.hostname=${SERVER_IP}\"
 " >> ${CATALINA_BASE}/bin/setenv.sh
 fi
 
-echo "## Setting Pinpoint Agent
-#export AGENT_PATH={Pinpoint Agent Path}
-#export CATALINA_OPTS=\"\$CATALINA_OPTS -javaagent:\$AGENT_PATH/pinpoint-bootstrap-1.0.4-SNAPSHOT.jar\"
-#export CATALINA_OPTS=\"\$CATALINA_OPTS -Dpinpoint.agentId=AgentId\"
-#export CATALINA_OPTS=\"\$CATALINA_OPTS -Dpinpoint.applicationName=AgentIdName\"
-" >> ${CATALINA_BASE}/bin/setenv.sh
-
 echo "# ----------------------------------------------------------------------------------------------------
 # The hotspot server JVM has specific code-path optimizations
 # which yield an approximate 10% gain over the client version.
@@ -672,11 +665,6 @@ export JAVA_OPTS=\"\$JAVA_OPTS -Duser.timezone=GMT+09:00\"
 export JAVA_OPTS=\"\$JAVA_OPTS -Dsun.java2d.opengl=false\"
 export JAVA_OPTS=\"\$JAVA_OPTS -Djava.awt.headless=true\"
 export JAVA_OPTS=\"\$JAVA_OPTS -Djava.net.preferIPv4Stack=true\"
-
-# Setting Server Environment
-# export JAVA_OPTS=\"\$JAVA_OPTS -Dserver.address=127.0.0.1\"
-# export JAVA_OPTS=\"\$JAVA_OPTS -Dserver.port=${HTTP_PORT}\"
-# export JAVA_OPTS=\"\$JAVA_OPTS -Dspring.profiles.active=dev\"
 
 # Setting Logback Info
 export JAVA_OPTS=\"\$JAVA_OPTS -Djuli-logback.logLevel='${LOG_LEVEL}'\"
@@ -729,9 +717,9 @@ export HOSTNAME=\`hostname\`
 if [[ ! -d \"\$CATALINA_BASE/lib\" ]]; then
     mkdir -p \$CATALINA_BASE/lib
 fi
-#if [[ ! -d \"\$CATALINA_BASE/logs\" ]]; then
-#    mkdir -p \$CATALINA_BASE/logs
-#fi
+if [[ ! -d \"\$CATALINA_BASE/logs\" ]]; then
+    mkdir -p \$CATALINA_BASE/logs
+fi
 if [[ ! -d \"\$CATALINA_BASE/temp\" ]]; then
     mkdir -p \$CATALINA_BASE/temp
 fi

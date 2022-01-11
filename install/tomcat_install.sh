@@ -10,7 +10,7 @@
 #
 # 멀티 쉘 실행 : bash <(curl -fsSL https://raw.githubusercontent.com/sky01126/script-template/master/install/tomcat_install.sh)
 
-echo "---------------- Tomcat - v2022.01.12.001 ----------------"
+echo "---------------- Tomcat - v2022.01.12.002 ----------------"
 
 # ----------------------------------------------------------------------------------------------------------------------
 export SERVER_HOME="/tomcat"
@@ -617,11 +617,11 @@ export CATALINA_OPTS=\"\$CATALINA_OPTS -XX:+DisableExplicitGC\"
 
 if [[ ${JAVA_VERSION} -ge 9 ]]; then
     echo "# Java 9 이상에서 GC 로그 기록, 서버에 많은 부하를 주지는 않음, 별도의 GC 모니터링이 필요 하다면 추가
-export CATALINA_OPTS=\"\$CATALINA_OPTS -Xlog:gc*:file=\$CATALINA_BASE/logs/gc.log::filecount=10,filesize=10M\"
+export CATALINA_OPTS=\"\$CATALINA_OPTS -Xlog:gc*:file=${LOG_HOME}/gc.log::filecount=10,filesize=10M\"
 " >> ${CATALINA_BASE}/bin/setenv.sh
 else
     echo "# GC 로그 기록, 서버에 많은 부하를 주지는 않음, 별도의 GC 모니터링이 필요 하다면 추가
-export CATALINA_OPTS=\"\$CATALINA_OPTS -Xloggc:\$CATALINA_BASE/logs/gc.log\"
+export CATALINA_OPTS=\"\$CATALINA_OPTS -Xloggc:${LOG_HOME}/gc.log\"
 
 export CATALINA_OPTS=\"\$CATALINA_OPTS -verbose:gc\"
 export CATALINA_OPTS=\"\$CATALINA_OPTS -XX:+PrintGCDetails\"
@@ -640,7 +640,7 @@ export CATALINA_OPTS=\"\$CATALINA_OPTS -XX:+HeapDumpOnOutOfMemoryError\"
 export CATALINA_OPTS=\"\$CATALINA_OPTS -XX:HeapDumpPath=\$CATALINA_BASE/temp\"
 
 # Error Log
-export CATALINA_OPTS=\"\$CATALINA_OPTS -XX:ErrorFile=\$CATALINA_BASE/logs/hs_err_%p.log\"
+export CATALINA_OPTS=\"\$CATALINA_OPTS -XX:ErrorFile=${LOG_HOME}/hs_err_%p.log\"
 " >> ${CATALINA_BASE}/bin/setenv.sh
 
 # 아아피 주소가 공백이 아닌 경우에만 설정한다.
@@ -729,9 +729,9 @@ export HOSTNAME=\`hostname\`
 if [[ ! -d \"\$CATALINA_BASE/lib\" ]]; then
     mkdir -p \$CATALINA_BASE/lib
 fi
-if [[ ! -d \"\$CATALINA_BASE/logs\" ]]; then
-    mkdir -p \$CATALINA_BASE/logs
-fi
+#if [[ ! -d \"\$CATALINA_BASE/logs\" ]]; then
+#    mkdir -p \$CATALINA_BASE/logs
+#fi
 if [[ ! -d \"\$CATALINA_BASE/temp\" ]]; then
     mkdir -p \$CATALINA_BASE/temp
 fi
@@ -944,7 +944,7 @@ status() {
 
 # ---------------------------------------------------------------------------------
 log() {
-    tail -f \$CATALINA_BASE/logs/catalina.out
+    tail -f ${LOG_HOME}/catalina.out
 }
 
 # ---------------------------------------------------------------------------------

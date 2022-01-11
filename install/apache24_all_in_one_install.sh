@@ -9,7 +9,7 @@
 # /_/ |_\___/\__,_/_/ /_/\__, /\__,_/_/ /_/\__, /
 #                       /____/            /____/
 #
-# 멀티 쉘 실행 : bash <(curl -fsSL -H 'Pragma: no-cache' https://raw.githubusercontent.com/sky01126/script-template/master/install/apache24_all_in_one_install.sh)
+# 멀티 쉘 실행 : bash <(curl -fsSL -H "Cache-Control: no-cache" -H 'Pragma: no-cache' https://raw.githubusercontent.com/sky01126/script-template/master/install/apache24_all_in_one_install.sh)
 #
 # - 상용 리눅스
 #   yum install -y epel-release
@@ -33,7 +33,7 @@
 #   Apache HTTP Server에서 널 포인터 역참조로 인해 발생하는 서비스거부 취약점(CVE-2021-44224)
 #   Apache HTTP Server에서 입력값 검증이 미흡하여 발생하는 버퍼오버플로우 취약점(CVE-2021-44790)
 
-echo "---------------- Apache - v2022.01.11.004 ----------------"
+echo "---------------- Apache - v2022.01.11.005 ----------------"
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Exit on error
@@ -752,7 +752,7 @@ chmod +x ${SERVER_HOME}/${HTTPD_HOME}/bin/*.sh
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Apache Config 수정.
-cp ${SERVER_HOME}/${HTTPD_HOME}/conf/httpd.conf ${SERVER_HOME}/${HTTPD_HOME}/conf/httpd.conf.org
+mv ${SERVER_HOME}/${HTTPD_HOME}/conf/httpd.conf ${SERVER_HOME}/${HTTPD_HOME}/conf/httpd.conf.org
 
 echo "ServerRoot \"${SERVER_HOME}/${HTTPD_HOME}\"
 
@@ -1383,7 +1383,7 @@ echo "# This file provides sample mappings for example wlb
 
 # ----------------------------------------------------------------------------------------------------------------------
 # httpd-vhosts settings
-${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-vhosts.conf ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-vhosts.conf.org
+mv ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-vhosts.conf ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-vhosts.conf.org
 
 echo "# Virtual Hosts
 #
@@ -1457,7 +1457,7 @@ echo "<VirtualHost *:80>
 
 # ----------------------------------------------------------------------------------------------------------------------
 # httpd-vhosts settings
-cp ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-ssl.conf ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-ssl.conf.org
+mv ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-ssl.conf ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-ssl.conf.org
 
 echo "
 #

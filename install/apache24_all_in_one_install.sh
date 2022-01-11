@@ -33,7 +33,7 @@
 #   Apache HTTP Server에서 널 포인터 역참조로 인해 발생하는 서비스거부 취약점(CVE-2021-44224)
 #   Apache HTTP Server에서 입력값 검증이 미흡하여 발생하는 버퍼오버플로우 취약점(CVE-2021-44790)
 
-echo "---------------- Apache - v2022.01.11.003 ----------------"
+echo "---------------- Apache - v2022.01.11.004 ----------------"
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Exit on error
@@ -112,7 +112,7 @@ export BASH_FILE=${HOME}/.bashrc
 
 # ----------------------------------------------------------------------------------------------------------------------
 # PCRE
-export PCRE_VERSION="8.38"
+export PCRE_VERSION="8.45"
 export PCRE_DOWNLOAD_URL="http://sourceforge.net/projects/pcre/files/pcre/${PCRE_VERSION}/pcre-${PCRE_VERSION}.tar.gz"
 export PCRE_NAME=${PCRE_DOWNLOAD_URL##+(*/)}
 export PCRE_HOME=${PCRE_NAME%$EXTENSION}

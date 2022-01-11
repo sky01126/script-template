@@ -8,7 +8,7 @@
 # /_/ |_\___/\__,_/_/ /_/\__, /\__,_/_/ /_/\__, /
 #                       /____/            /____/
 #
-# 멀티 쉘 실행 : bash <(curl -fsSL -H 'Pragma: no-cache' https://raw.githubusercontent.com/sky01126/script-template/master/install/tomcat_install.sh)
+# 멀티 쉘 실행 : bash <(curl -fsSL https://raw.githubusercontent.com/sky01126/script-template/master/install/tomcat_install.sh)
 
 echo "---------------- Tomcat - v2022.01.12.001 ----------------"
 
@@ -551,6 +551,7 @@ echo "#!/bin/sh
 # /_/  \____/_/ /_/ /_/\___/\__,_/\__/
 # :: Version ::              (v${TOMCAT_VERSION})
 # ---------------------------------------------------------------------------------
+export JAVA_HOME=\"${SERVER_HOME%/}/java\"
 
 # ---------------------------------------------------------------------------------
 export APR_HOME=\"${SERVER_HOME%/}/apr\"
@@ -1477,6 +1478,7 @@ echo "<?xml version='1.0' encoding='utf-8'?>
     <!-- <Connector address=\"127.0.0.1\" port=\"${HTTP_PORT}\" protocol=\"org.apache.coyote.http11.Http11AprProtocol\" -->
     <Connector port=\"${HTTP_PORT}\" protocol=\"org.apache.coyote.http11.Http11AprProtocol\"
                acceptCount=\"100\"
+               address=\"0.0.0.0\"
                compression=\"off\"
                connectionTimeout=\"5000\"
                disableUploadTimeout=\"true\"
@@ -1508,6 +1510,7 @@ echo "<?xml version='1.0' encoding='utf-8'?>
     <!--
     <Connector address=\"127.0.0.1\" port=\"443\" protocol=\"org.apache.coyote.http11.Http11AprProtocol\"
                acceptCount=\"100\"
+               address=\"0.0.0.0\"
                compression=\"off\"
                connectionTimeout=\"5000\"
                disableUploadTimeout=\"true\"
@@ -1706,27 +1709,27 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-if [[ -f ${BASH_FILE} ]]; then
-    if [[ "$TOMCAT_BASE" != "tomcat" ]]; then
-        SET_TOMCAT_BASE=`awk "/# Tomcat(${TOMCAT_BASE}) Start \/ Restart \/ Stop script/" ${BASH_FILE}`
-        if [[ ! -n ${SET_TOMCAT_BASE} ]]; then
-            echo "# Tomcat(${TOMCAT_BASE}) Start / Restart / Stop script
-alias $(lowercase ${TOMCAT_BASE})-start='${CATALINA_BASE}/bin/start.sh     && tail -f ${CATALINA_BASE}/logs/catalina.log'
-alias $(lowercase ${TOMCAT_BASE})-stop='${CATALINA_BASE}/bin/stop.sh'
-alias $(lowercase ${TOMCAT_BASE})-restart='${CATALINA_BASE}/bin/restart.sh && tail -f ${CATALINA_BASE}/logs/catalina.log'
-" >> ${BASH_FILE}
-        fi
-    else
-        SET_TOMCAT_BASE=`awk "/# Tomcat Start \/ Restart \/ Stop script/" ${BASH_FILE}`
-        if [[ ! -n ${SET_TOMCAT_BASE} ]]; then
-            echo "# Tomcat Start / Restart / Stop script
-alias tomcat-start='${CATALINA_BASE}/bin/start.sh     && tail -f ${CATALINA_BASE}/logs/catalina.log'
-alias tomcat-stop='${CATALINA_BASE}/bin/stop.sh'
-alias tomcat-restart='${CATALINA_BASE}/bin/restart.sh && tail -f ${CATALINA_BASE}/logs/catalina.log'
-" >> ${BASH_FILE}
-        fi
-    fi
-fi
+#if [[ -f ${BASH_FILE} ]]; then
+#    if [[ "$TOMCAT_BASE" != "tomcat" ]]; then
+#        SET_TOMCAT_BASE=`awk "/# Tomcat(${TOMCAT_BASE}) Start \/ Restart \/ Stop script/" ${BASH_FILE}`
+#        if [[ ! -n ${SET_TOMCAT_BASE} ]]; then
+#            echo "# Tomcat(${TOMCAT_BASE}) Start / Restart / Stop script
+#alias $(lowercase ${TOMCAT_BASE})-start='${CATALINA_BASE}/bin/start.sh     && tail -f ${CATALINA_BASE}/logs/catalina.log'
+#alias $(lowercase ${TOMCAT_BASE})-stop='${CATALINA_BASE}/bin/stop.sh'
+#alias $(lowercase ${TOMCAT_BASE})-restart='${CATALINA_BASE}/bin/restart.sh && tail -f ${CATALINA_BASE}/logs/catalina.log'
+#" >> ${BASH_FILE}
+#        fi
+#    else
+#        SET_TOMCAT_BASE=`awk "/# Tomcat Start \/ Restart \/ Stop script/" ${BASH_FILE}`
+#        if [[ ! -n ${SET_TOMCAT_BASE} ]]; then
+#            echo "# Tomcat Start / Restart / Stop script
+#alias tomcat-start='${CATALINA_BASE}/bin/start.sh     && tail -f ${CATALINA_BASE}/logs/catalina.log'
+#alias tomcat-stop='${CATALINA_BASE}/bin/stop.sh'
+#alias tomcat-restart='${CATALINA_BASE}/bin/restart.sh && tail -f ${CATALINA_BASE}/logs/catalina.log'
+#" >> ${BASH_FILE}
+#        fi
+#    fi
+#fi
 
 
 # ----------------------------------------------------------------------------------------------------------------------

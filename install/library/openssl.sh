@@ -58,20 +58,20 @@ if [[ ! -z ${OPENSSL_ALIAS} ]]; then
     cd ${SERVER_HOME}
     ln -s ./${PROGRAME_HOME}/${OPENSSL_HOME} ${OPENSSL_ALIAS}
 
-    if [[ -f ${BASH_FILE} ]]; then
-        SET_OPENSSL_HOME=`awk "/# OpenSSL Home/" ${BASH_FILE}`
-        if [[ ! -n ${SET_OPENSSL_HOME} ]]; then
-            printf "\e[00;32m| Setting openssl home path...\e[00m\n"
-
-            echo "# OpenSSL Home
-    export OPENSSL_HOME=\"${SERVER_HOME}/${OPENSSL_ALIAS}\"
-    export PATH=\$OPENSSL_HOME/bin:\$PATH
-    export LD_LIBRARY_PATH=\$OPENSSL_HOME/lib:\$LD_LIBRARY_PATH
-    " >> ${BASH_FILE}
-
-            source ${BASH_FILE}
-        fi
-    fi
+#    if [[ -f ${BASH_FILE} ]]; then
+#        SET_OPENSSL_HOME=`awk "/# OpenSSL Home/" ${BASH_FILE}`
+#        if [[ ! -n ${SET_OPENSSL_HOME} ]]; then
+#            printf "\e[00;32m| Setting openssl home path...\e[00m\n"
+#
+#            echo "# OpenSSL Home
+#    export OPENSSL_HOME=\"${SERVER_HOME}/${OPENSSL_ALIAS}\"
+#    export PATH=\$OPENSSL_HOME/bin:\$PATH
+#    export LD_LIBRARY_PATH=\$OPENSSL_HOME/lib:\$LD_LIBRARY_PATH
+#    " >> ${BASH_FILE}
+#
+#            source ${BASH_FILE}
+#        fi
+#    fi
 
     sudo cp ${SERVER_HOME}/${OPENSSL_ALIAS}/lib/libssl.so.1.1 /usr/lib64/
     sudo cp ${SERVER_HOME}/${OPENSSL_ALIAS}/lib/libcrypto.so.1.1 /usr/lib64/

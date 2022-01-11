@@ -37,19 +37,19 @@ tar xvzf ${JAVA_DOWNLOAD_URL##+(*/)} -C ${SERVER_HOME}/${PROGRAME_HOME}
 cd ${SERVER_HOME}
 ln -s ./${PROGRAME_HOME}/${JAVA_HOME} ${JAVA_ALIAS}
 
-if [[ -f ${BASH_FILE} ]]; then
-    SET_JAVA_HOME=`awk "/# Java Home/" ${BASH_FILE}`
-    if [[ ! -n ${SET_JAVA_HOME} ]]; then
-        printf "\e[00;32m| Setting java home path...\e[00m\n"
-
-        echo "# Java Home
-export JAVA_HOME=\"${SERVER_HOME%/}/${JAVA_ALIAS}\"
-export PATH=\$JAVA_HOME/bin:\$PATH
-" >> ${BASH_FILE}
-
-        source ${BASH_FILE}
-    fi
-fi
+# if [[ -f ${BASH_FILE} ]]; then
+#     SET_JAVA_HOME=`awk "/# Java Home/" ${BASH_FILE}`
+#     if [[ ! -n ${SET_JAVA_HOME} ]]; then
+#         printf "\e[00;32m| Setting java home path...\e[00m\n"
+#
+#         echo "# Java Home
+# export JAVA_HOME=\"${SERVER_HOME%/}/${JAVA_ALIAS}\"
+# export PATH=\$JAVA_HOME/bin:\$PATH
+# " >> ${BASH_FILE}
+#
+#         source ${BASH_FILE}
+#     fi
+# fi
 
 printf "\e[00;32m|---------------------------------------------------------------------------------\e[00m\n"
 printf "\e[00;32m| ${JAVA_HOME} install success...\e[00m\n"

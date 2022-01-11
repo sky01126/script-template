@@ -69,12 +69,6 @@ else
 fi
 
 
-# ------------------------------------------------------------------------------
-# 사용자의 아이디명과 그룹정보
-export USERNAME="aicc"
-export GROUPNAME="KPCT"
-
-
 # ----------------------------------------------------------------------------------------------------------------------
 printf "\e[00;32m+------------------+--------------------------------------------------------------\e[00m\n"
 printf "\e[00;32m| SRC_HOME         |\e[00m ${SRC_HOME}\n"
@@ -181,18 +175,18 @@ fi
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-# OpenSSL 설치 여부 확인
-# if [[ ! -d "${SERVER_HOME}/${PROGRAME_HOME}/${OPENSSL_HOME}" ]]; then
-#     if [[ ! -f "${PRGDIR}/library/openssl.sh" ]]; then
-#         curl -f -L -sS  https://raw.githubusercontent.com/sky01126/script-template/master/install/library/openssl.sh -o /tmp/openssl.sh
-#         bash   /tmp/openssl.sh
-#     else
-#         bash  ${PRGDIR}/library/openssl.sh
-#     fi
-# elif [[ ! -d "${SERVER_HOME}/${OPENSSL_ALIAS}" || ! -L "${SERVER_HOME}/${OPENSSL_ALIAS}" ]]; then
-#     cd ${SERVER_HOME}
-#     ln -s ./${PROGRAME_HOME}/${OPENSSL_HOME} ${OPENSSL_ALIAS}
-# fi
+OpenSSL 설치 여부 확인
+if [[ ! -d "${SERVER_HOME}/${PROGRAME_HOME}/${OPENSSL_HOME}" ]]; then
+    if [[ ! -f "${PRGDIR}/library/openssl.sh" ]]; then
+        curl -f -L -sS  https://raw.githubusercontent.com/sky01126/script-template/master/install/library/openssl.sh -o /tmp/openssl.sh
+        bash   /tmp/openssl.sh
+    else
+        bash  ${PRGDIR}/library/openssl.sh
+    fi
+elif [[ ! -d "${SERVER_HOME}/${OPENSSL_ALIAS}" || ! -L "${SERVER_HOME}/${OPENSSL_ALIAS}" ]]; then
+    cd ${SERVER_HOME}
+    ln -s ./${PROGRAME_HOME}/${OPENSSL_HOME} ${OPENSSL_ALIAS}
+fi
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -560,7 +554,7 @@ echo "#!/bin/sh
 
 # ---------------------------------------------------------------------------------
 export APR_HOME=\"${SERVER_HOME%/}/apr\"
-#export OPENSSL_HOME=\"${SERVER_HOME%/}/openssl\"
+export OPENSSL_HOME=\"${SERVER_HOME%/}/openssl\"
 #export CLASSPATH=\$CLASSPATH
 " > ${CATALINA_BASE}/bin/setenv.sh
 
@@ -577,11 +571,9 @@ fi
 else
     echo "# Library path setting
 if [[ -n \"\$LD_LIBRARY_PATH\" ]]; then
-    #export LD_LIBRARY_PATH=\$APR_HOME/lib:\$OPENSSL_HOME/lib:\$CATALINA_HOME/lib:\$LD_LIBRARY_PATH
-    export LD_LIBRARY_PATH=\$APR_HOME/lib:\$CATALINA_HOME/lib:\$LD_LIBRARY_PATH
+    export LD_LIBRARY_PATH=\$APR_HOME/lib:\$OPENSSL_HOME/lib:\$CATALINA_HOME/lib:\$LD_LIBRARY_PATH
 else
-    #export LD_LIBRARY_PATH=\$APR_HOME/lib:\$OPENSSL_HOME/lib:\$CATALINA_HOME/lib
-    export LD_LIBRARY_PATH=\$APR_HOME/lib:\$CATALINA_HOME/lib
+    export LD_LIBRARY_PATH=\$APR_HOME/lib:\$OPENSSL_HOME/lib:\$CATALINA_HOME/lib
 fi
 " >> ${CATALINA_BASE}/bin/setenv.sh
 fi
@@ -1543,7 +1535,7 @@ echo "<?xml version='1.0' encoding='utf-8'?>
 
     <!-- Define an AJP 1.3 Connector on port ${AJP_PORT} -->
     <Connector acceptCount=\"100\"
-               address=\"::1\"
+               address=\"0.0.0.0\"
                connectionTimeout=\"5000\"
                enableLookups=\"false\"
                maxThreads=\"1024\"

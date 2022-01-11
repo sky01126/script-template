@@ -560,9 +560,8 @@ echo "#!/bin/sh
 
 # ---------------------------------------------------------------------------------
 export APR_HOME=\"${SERVER_HOME%/}/apr\"
-export OPENSSL_HOME=\"${SERVER_HOME%/}/openssl\"
-
-# export CLASSPATH=\$CLASSPATH
+#export OPENSSL_HOME=\"${SERVER_HOME%/}/openssl\"
+#export CLASSPATH=\$CLASSPATH
 " > ${CATALINA_BASE}/bin/setenv.sh
 
 # Mac OS는 java.library.path를 설정하고 Linux는 LD_LIBRARY_PATH를 설정한다.
@@ -578,9 +577,11 @@ fi
 else
     echo "# Library path setting
 if [[ -n \"\$LD_LIBRARY_PATH\" ]]; then
-    export LD_LIBRARY_PATH=\$APR_HOME/lib:\$OPENSSL_HOME/lib:\$CATALINA_HOME/lib:\$LD_LIBRARY_PATH
+    #export LD_LIBRARY_PATH=\$APR_HOME/lib:\$OPENSSL_HOME/lib:\$CATALINA_HOME/lib:\$LD_LIBRARY_PATH
+    export LD_LIBRARY_PATH=\$APR_HOME/lib:\$CATALINA_HOME/lib:\$LD_LIBRARY_PATH
 else
-    export LD_LIBRARY_PATH=\$APR_HOME/lib:\$OPENSSL_HOME/lib:\$CATALINA_HOME/lib
+    #export LD_LIBRARY_PATH=\$APR_HOME/lib:\$OPENSSL_HOME/lib:\$CATALINA_HOME/lib
+    export LD_LIBRARY_PATH=\$APR_HOME/lib:\$CATALINA_HOME/lib
 fi
 " >> ${CATALINA_BASE}/bin/setenv.sh
 fi

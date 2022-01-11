@@ -33,7 +33,7 @@
 #   Apache HTTP Server에서 널 포인터 역참조로 인해 발생하는 서비스거부 취약점(CVE-2021-44224)
 #   Apache HTTP Server에서 입력값 검증이 미흡하여 발생하는 버퍼오버플로우 취약점(CVE-2021-44790)
 
-echo "---------------- Apache - v2022.01.11.002 ----------------"
+echo "---------------- Apache - v2022.01.11.003 ----------------"
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Exit on error
@@ -120,7 +120,7 @@ export PCRE_HOME=${PCRE_NAME%$EXTENSION}
 
 # ----------------------------------------------------------------------------------------------------------------------
 # APR / APR Util
-export APR_VERSION="1.6.5"
+export APR_VERSION="1.7.0"
 export APR_DOWNLOAD_URL="http://archive.apache.org/dist/apr/apr-${APR_VERSION}.tar.gz"
 export APR_NAME=${APR_DOWNLOAD_URL##+(*/)}
 export APR_HOME=${APR_NAME%$EXTENSION}

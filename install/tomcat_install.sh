@@ -10,7 +10,7 @@
 #
 # 멀티 쉘 실행 : bash <(curl -fsSL -H 'Pragma: no-cache' https://raw.githubusercontent.com/sky01126/script-template/master/install/tomcat_install.sh)
 
-echo "---------------- Tomcat - v2022.01.11.002 ----------------"
+echo "---------------- Tomcat - v2022.01.12.001 ----------------"
 
 # ----------------------------------------------------------------------------------------------------------------------
 export SERVER_HOME="/tomcat"
@@ -175,7 +175,7 @@ fi
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-OpenSSL 설치 여부 확인
+# OpenSSL 설치 여부 확인
 if [[ ! -d "${SERVER_HOME}/${PROGRAME_HOME}/${OPENSSL_HOME}" ]]; then
     if [[ ! -f "${PRGDIR}/library/openssl.sh" ]]; then
         curl -f -L -sS  https://raw.githubusercontent.com/sky01126/script-template/master/install/library/openssl.sh -o /tmp/openssl.sh

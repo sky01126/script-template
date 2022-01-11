@@ -1545,7 +1545,7 @@ worker.${INSTALL_WORKER_NAME}01.reference=worker.template
 worker.${INSTALL_WORKER_NAME}01.host=127.0.0.1
 worker.${INSTALL_WORKER_NAME}01.port=8009
 worker.${INSTALL_WORKER_NAME}01.lbfactor=1
-# worker.${INSTALL_WORKER_NAME}01.redirect=cms02
+# worker.${INSTALL_WORKER_NAME}01.redirect=tomcat02
 
 # ${INSTALL_WORKER_NAME}02
 # worker.${INSTALL_WORKER_NAME}02.reference=worker.template
@@ -1631,7 +1631,7 @@ Include conf/extra/sites-enabled/${INSTALL_WORKER_NAME}.conf
 echo "<VirtualHost *:80>
     ServerName  ${DOMAIN_NAME}
     ServerAlias ${DOMAIN_NAME}
-    # ServerAdmin admin@kt.com
+    #ServerAdmin admin@kt.com
 
     Include conf/extra/security.conf
 
@@ -1658,7 +1658,7 @@ echo "<VirtualHost *:80>
     </Location>
 
     # AccessLog.
-    # CustomLog \"|${SERVER_HOME}/${HTTPD_ALIAS}/bin/rotatelogs -L logs/${INSTALL_WORKER_NAME}.access.log logs/archive/${INSTALL_WORKER_NAME}.access.%Y-%m-%d.log 86400 +540\" combined env=!do_not_log
+    #CustomLog \"|${SERVER_HOME}/${HTTPD_ALIAS}/bin/rotatelogs -L logs/${INSTALL_WORKER_NAME}.access.log logs/archive/${INSTALL_WORKER_NAME}.access.%Y-%m-%d.log 86400 +540\" combined env=!do_not_log
 
     RewriteEngine On
     RewriteRule ^/?dummy\.html\$ - [R=404]
@@ -1801,7 +1801,7 @@ Include conf/extra/sites-enabled/${INSTALL_WORKER_NAME}-ssl.conf
 echo "<VirtualHost _default_:443>
     ServerName  ${DOMAIN_NAME}
     ServerAlias ${DOMAIN_NAME}
-    # ServerAdmin admin@kt.com
+    #ServerAdmin admin@kt.com
 
     Include conf/extra/security.conf
 
@@ -1814,10 +1814,10 @@ echo "<VirtualHost _default_:443>
     # -SSLv2 -SSLv3 -TLSv1 제외하고 모두 사용
     #SSLProtocol all -SSLv2 -SSLv3 -TLSv1
     SSLCipherSuite HIGH:MEDIUM:!ADH:!AECDH:!PSK:!RC4:!SRP:!SSLv2
-    # SSLCertificateFile conf/ssl/cert.pem
-    # SSLCertificateKeyFile conf/ssl/newkey.pem
-    # SSLCACertificateFile conf/ssl/TrueBusiness-Chain_sha2.pem
-    # SSLCertificateChainFile conf/ssl/Comodo_Chain.pem
+    #SSLCertificateFile conf/ssl/cert.pem
+    #SSLCertificateKeyFile conf/ssl/newkey.pem
+    #SSLCACertificateFile conf/ssl/TrueBusiness-Chain_sha2.pem
+    #SSLCertificateChainFile conf/ssl/Comodo_Chain.pem
     SSLCertificateFile conf/ssl/${DOMAIN_NAME}.crt
     SSLCertificateKeyFile conf/ssl/${DOMAIN_NAME}.key
 
@@ -1836,7 +1836,7 @@ echo "<VirtualHost _default_:443>
     </Location>
 
     # AccessLog.
-    # CustomLog \"|${SERVER_HOME}/${HTTPD_ALIAS}/bin/rotatelogs -L logs/${INSTALL_WORKER_NAME}.access.log logs/archive/${INSTALL_WORKER_NAME}.access.%Y-%m-%d.log 86400 +540\" combined env=!do_not_log
+    #CustomLog \"|${SERVER_HOME}/${HTTPD_ALIAS}/bin/rotatelogs -L logs/${INSTALL_WORKER_NAME}.access.log logs/archive/${INSTALL_WORKER_NAME}.access.%Y-%m-%d.log 86400 +540\" combined env=!do_not_log
 
     RewriteEngine On
     RewriteRule ^/?dummy\.html\$ - [R=404]

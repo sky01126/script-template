@@ -10,7 +10,7 @@
 #
 # 멀티 쉘 실행 : bash <(curl -fsSL -H 'Pragma: no-cache' https://raw.githubusercontent.com/sky01126/script-template/master/install/tomcat_install.sh)
 
-echo "---------------- Tomcat - v2022.01.11.001 ----------------"
+echo "---------------- Tomcat - v2022.01.11.002 ----------------"
 
 # ----------------------------------------------------------------------------------------------------------------------
 export SERVER_HOME="/tomcat"
@@ -177,17 +177,17 @@ fi
 
 # ----------------------------------------------------------------------------------------------------------------------
 # OpenSSL 설치 여부 확인
-if [[ ! -d "${SERVER_HOME}/${PROGRAME_HOME}/${OPENSSL_HOME}" ]]; then
-    if [[ ! -f "${PRGDIR}/library/openssl.sh" ]]; then
-        curl -f -L -sS  https://raw.githubusercontent.com/sky01126/script-template/master/install/library/openssl.sh -o /tmp/openssl.sh
-        bash   /tmp/openssl.sh
-    else
-        bash  ${PRGDIR}/library/openssl.sh
-    fi
-elif [[ ! -d "${SERVER_HOME}/${OPENSSL_ALIAS}" || ! -L "${SERVER_HOME}/${OPENSSL_ALIAS}" ]]; then
-    cd ${SERVER_HOME}
-    ln -s ./${PROGRAME_HOME}/${OPENSSL_HOME} ${OPENSSL_ALIAS}
-fi
+# if [[ ! -d "${SERVER_HOME}/${PROGRAME_HOME}/${OPENSSL_HOME}" ]]; then
+#     if [[ ! -f "${PRGDIR}/library/openssl.sh" ]]; then
+#         curl -f -L -sS  https://raw.githubusercontent.com/sky01126/script-template/master/install/library/openssl.sh -o /tmp/openssl.sh
+#         bash   /tmp/openssl.sh
+#     else
+#         bash  ${PRGDIR}/library/openssl.sh
+#     fi
+# elif [[ ! -d "${SERVER_HOME}/${OPENSSL_ALIAS}" || ! -L "${SERVER_HOME}/${OPENSSL_ALIAS}" ]]; then
+#     cd ${SERVER_HOME}
+#     ln -s ./${PROGRAME_HOME}/${OPENSSL_HOME} ${OPENSSL_ALIAS}
+# fi
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -1543,8 +1543,11 @@ echo "<?xml version='1.0' encoding='utf-8'?>
                maxThreads=\"1024\"
                minSpareThreads=\"25\"
                port=\"${AJP_PORT}\"
-               protocol=\"AJP/1.3\"
+               protocol=\"org.apache.coyote.ajp.AjpNio2Protocol\"
+               redirectPort=\"8443\"
+               secretRequired=\"false\"
                URIEncoding=\"UTF-8\" />
+
 
     <!-- An Engine represents the entry point (within Catalina) that processes
          every request.  The Engine implementation for Tomcat stand alone

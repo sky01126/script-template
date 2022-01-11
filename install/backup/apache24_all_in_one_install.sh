@@ -9,14 +9,14 @@
 # /_/ |_\___/\__,_/_/ /_/\__, /\__,_/_/ /_/\__, /
 #                       /____/            /____/
 #
-# 멀티 쉘 실행 : bash <(curl -f -L -sS http://shell.pe.kr/document/install/apache24_apr_install.sh)
+# 멀티 쉘 실행 : bash <(curl -fsSL -H 'Pragma: no-cache' https://raw.githubusercontent.com/sky01126/script-template/master/install/apache24_all_in_one_install.sh)
 #
 # - 상용 리눅스
-#   yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+#   yum install -y epel-release
 #   yum install -y libnghttp2
 #
 # - 개발 리눅스
-#   yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+#   yum install -y epel-release
 #   yum install -y libnghttp2 libnghttp2-devel
 #
 # - 참조 사이트
@@ -71,33 +71,74 @@ PRGDIR=`dirname "$PRG"`
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-# 멀티의 setting.sh 읽기
-if [[ ! -f "${PRGDIR}/library/setting.sh" ]]; then
-    curl -f -L -sS  http://shell.pe.kr/document/install/library/setting.sh -o /tmp/setting.sh
-    source /tmp/setting.sh
-    bash   /tmp/setting.sh
-else
-    source ${PRGDIR}/library/setting.sh
-    bash   ${PRGDIR}/library/setting.sh
-fi
+# 현재 사용자의 아이디명과 그룹정보
+# export USERNAME=`id -u -n`
+# export GROUPNAME=`id -g -n`
+export USERNAME="apache"
+export GROUPNAME="apache"
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+# 대문자 변환
+uppercase() {
+    echo $* | tr "[a-z]" "[A-Z]"
+}
+
+# 소문자변환
+lowercase() {
+    echo $* | tr "[A-Z]" "[a-z]"
+}
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+# File Extension
+export EXTENSION='.tar.gz'
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+# 서버 디렉토리 설정.
+export SRC_HOME="/apache/src"
+export LOG_HOME="/ap_log"
+export SERVER_HOME="/apache"
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+# .bashrc 경로 설정.
+export BASH_FILE=${HOME}/.bashrc
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+# PCRE
+export PCRE_VERSION="8.38"
+export PCRE_DOWNLOAD_URL="http://sourceforge.net/projects/pcre/files/pcre/${PCRE_VERSION}/pcre-${PCRE_VERSION}.tar.gz"
+export PCRE_NAME=${PCRE_DOWNLOAD_URL##+(*/)}
+export PCRE_HOME=${PCRE_NAME%$EXTENSION}
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+# APR / APR Util
+export APR_VERSION="1.6.5"
+export APR_DOWNLOAD_URL="http://archive.apache.org/dist/apr/apr-${APR_VERSION}.tar.gz"
+export APR_NAME=${APR_DOWNLOAD_URL##+(*/)}
+export APR_HOME=${APR_NAME%$EXTENSION}
+
+export APR_UTIL_VERSION="1.6.1"
+export APR_UTIL_DOWNLOAD_URL="http://archive.apache.org/dist/apr/apr-util-${APR_UTIL_VERSION}.tar.gz"
+export APR_UTIL_NAME=${APR_UTIL_DOWNLOAD_URL##+(*/)}
+export APR_UTIL_HOME=${APR_UTIL_NAME%$EXTENSION}
 
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Apache 2.4
-HTTPD_ALIAS='httpd'
-
-HTTPD_VERSION="2.4.52"
-HTTPD_DOWNLOAD_URL="http://archive.apache.org/dist/httpd/httpd-${HTTPD_VERSION}.tar.gz"
-HTTPD_NAME=${HTTPD_DOWNLOAD_URL##+(*/)}
-#HTTPD_HOME=${HTTPD_NAME%$EXTENSION}
-HTTPD_HOME='apache_2.4'
-
-PROGRAME_HOME=${SERVER_HOME}
+export HTTPD_VERSION="2.4.52"
+export HTTPD_DOWNLOAD_URL="http://archive.apache.org/dist/httpd/httpd-${HTTPD_VERSION}.tar.gz"
+export HTTPD_NAME=${HTTPD_DOWNLOAD_URL##+(*/)}
+export HTTPD_HOME='apache24'
 
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Apache Tomcat Connector
-MOD_JK_VERSION="1.2.48"
+MOD_JK_VERSION="1.2.46"
 MOD_JK_DOWNLOAD_URL="http://archive.apache.org/dist/tomcat/tomcat-connectors/jk/tomcat-connectors-${MOD_JK_VERSION}-src.tar.gz"
 
 
@@ -105,91 +146,12 @@ MOD_JK_DOWNLOAD_URL="http://archive.apache.org/dist/tomcat/tomcat-connectors/jk/
 printf "\e[00;32m+--------------+----------------------------------------------------------\e[00m\n"
 printf "\e[00;32m| SRC_HOME     |\e[00m ${SRC_HOME}\n"
 printf "\e[00;32m| SERVER_HOME  |\e[00m ${SERVER_HOME}\n"
-printf "\e[00;32m| HTTPD_HOME   |\e[00m ${PROGRAME_HOME}/${HTTPD_HOME}\n"
-printf "\e[00;32m| HTTPD_ALIAS  |\e[00m ${SERVER_HOME}/${HTTPD_HOME}\n"
 printf "\e[00;32m+--------------+------------------------------------------------------------------\e[00m\n"
-
-
-# # ----------------------------------------------------------------------------------------------------------------------
-# # PCRE 설치 여부 확인
-# if [[ ! -d "${PROGRAME_HOME}/${PCRE_HOME}" ]]; then
-#     cd ${SRC_HOME}
-
-#     printf "\e[00;32m| ${PCRE_HOME} install start...\e[00m\n"
-
-#     # delete the compile source
-#     if [[ -d "${SRC_HOME}/${PCRE_HOME}" ]]; then
-#         printf "\e[00;32m| ${SRC_HOME}/${PCRE_HOME} delete...\e[00m\n"
-#         rm -rf ${SRC_HOME}/${PCRE_HOME}
-#     fi
-
-#     # verify that the source exists download
-#     if [ ! -f "${SRC_HOME}/${PCRE_NAME}" ]; then
-#         printf "\e[00;32m| ${PCRE_NAME} download (URL : ${PCRE_DOWNLOAD_URL})\e[00m\n"
-#         curl -L -O ${PCRE_DOWNLOAD_URL}
-#     fi
-
-#     tar xvzf ${PCRE_NAME}
-#     cd ${SRC_HOME}/${PCRE_HOME}
-
-#     ./configure --prefix=${PROGRAME_HOME}/${PCRE_HOME} --enable-pcre16 --enable-pcre32 --enable-utf
-#     make
-#     make install
-
-#     cd ${SERVER_HOME}
-#     ln -s ./${PROGRAME_HOME}/${PCRE_HOME} ${PCRE_ALIAS}
-
-#     # Install source delete
-#     if [[ -d "${SRC_HOME}/${PCRE_HOME}" ]]; then
-#         rm -rf ${SRC_HOME}/${PCRE_HOME}
-#     fi
-
-#     printf "\e[00;32m| ${PCRE_HOME} install success...\e[00m\n"
-#     printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
-#     sleep 0.5
-# elif [[ ! -d "${SERVER_HOME}/${PCRE_ALIAS}" ]]; then
-#     cd ${SERVER_HOME}
-#     ln -s ./${PROGRAME_HOME}/${PCRE_HOME} ${PCRE_ALIAS}
-
-#     printf "\e[00;32m| ${PCRE_ALIAS} link success...\e[00m\n"
-#     printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
-#     sleep 0.5
-# fi
-
-
-# # ----------------------------------------------------------------------------------------------------------------------
-# # OpenSSL 설치 여부 확인
-# if [[ ! -d "${PROGRAME_HOME}/${OPENSSL_HOME}" ]]; then
-#     if [[ ! -f "${PRGDIR}/library/openssl.sh" ]]; then
-#         curl -f -L -sS  http://shell.pe.kr/document/install/library/openssl.sh -o /tmp/openssl.sh
-#         bash   /tmp/openssl.sh
-#     else
-#         bash  ${PRGDIR}/library/openssl.sh
-#     fi
-# elif [[ ! -d "${SERVER_HOME}/${OPENSSL_ALIAS}" || ! -L "${SERVER_HOME}/${OPENSSL_ALIAS}" ]]; then
-#     cd ${SERVER_HOME}
-#     ln -s ./${PROGRAME_HOME}/${OPENSSL_HOME} ${OPENSSL_ALIAS}
-# fi
-
-
-# # ----------------------------------------------------------------------------------------------------------------------
-# # APR / APR Util 설치 여부 확인
-# if [[ ! -d "${PROGRAME_HOME}/${APR_HOME}" ]]; then
-#     if [[ ! -f "${PRGDIR}/library/apr.sh" ]]; then
-#         curl -f -L -sS  http://shell.pe.kr/document/install/library/apr.sh -o /tmp/apr.sh
-#         bash   /tmp/apr.sh
-#     else
-#         bash  ${PRGDIR}/library/apr.sh
-#     fi
-# elif [[ ! -d "${SERVER_HOME}/${APR_ALIAS}" || ! -L "${SERVER_HOME}/${APR_ALIAS}" ]]; then
-#     cd ${SERVER_HOME}
-#     ln -s ./${PROGRAME_HOME}/${APR_HOME} ${APR_ALIAS}
-# fi
 
 
 # ----------------------------------------------------------------------------------------------------------------------
 # 설치 여부 확인
-if [[ -d "${PROGRAME_HOME}/${HTTPD_HOME}" ]]; then
+if [[ -d "${SERVER_HOME}/${HTTPD_HOME}" ]]; then
     printf "\e[00;32m|\e[00m \e[00;31m기존에 설치된 Apache가 있습니다. 삭제하고 다시 설치하려면 \"Y\"를 입력하세요.\e[00m\n"
     printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
     printf "\e[00;32m| Enter whether to install \"${HTTPD_HOME}\" service\e[00m\n"
@@ -232,10 +194,6 @@ fi
 printf "\e[00;32m| \"${HTTPD_HOME}\" install start...\e[00m\n"
 
 # delete the previous home
-if [[ -d "${PROGRAME_HOME}/${HTTPD_HOME}" ]]; then
-    printf "\e[00;32m| \"${HTTPD_HOME}\" delete...\e[00m\n"
-    rm -rf ${PROGRAME_HOME}/${HTTPD_HOME}
-fi
 if [[ -d "${SERVER_HOME}/${HTTPD_HOME}" || -L "${SERVER_HOME}/${HTTPD_HOME}" ]]; then
     printf "\e[00;32m| \"${HTTPD_ALIAS}\" delete...\e[00m\n"
     rm -rf ${SERVER_HOME}/${HTTPD_HOME}
@@ -249,13 +207,26 @@ fi
 
 tar xvzf ${HTTPD_NAME}
 
+
+# ----------------------------------------------------------------------------------------------------------------------
 # APR 추가
 cd ${SRC_HOME}
+if [ ! -f "${SRC_HOME}/${APR_NAME}" ]; then
+    printf "\e[00;32m| ${APR_NAME} download (URL : ${APR_DOWNLOAD_URL})\e[00m\n"
+    curl -L -O ${APR_DOWNLOAD_URL}
+fi
+
 tar xvzf ${APR_NAME} -C ${SRC_HOME}/${HTTPD_NAME%$EXTENSION}/srclib/
 cd ${SRC_HOME}/${HTTPD_NAME%$EXTENSION}/srclib/
 mv ${APR_HOME} apr
 
+
 cd ${SRC_HOME}
+if [ ! -f "${SRC_HOME}/${APR_UTIL_NAME}" ]; then
+    printf "\e[00;32m| ${APR_UTIL_NAME} download (URL : ${APR_UTIL_DOWNLOAD_URL})\e[00m\n"
+    curl -L -O ${APR_UTIL_DOWNLOAD_URL}
+fi
+
 tar xvzf ${APR_UTIL_NAME} -C ${SRC_HOME}/${HTTPD_NAME%$EXTENSION}/srclib/
 cd ${SRC_HOME}/${HTTPD_NAME%$EXTENSION}/srclib/
 mv ${APR_UTIL_HOME} apr-util
@@ -263,7 +234,30 @@ mv ${APR_UTIL_HOME} apr-util
 cd ${SRC_HOME}/${HTTPD_NAME%$EXTENSION}
 
 
-## 특정라인 변경.
+# ----------------------------------------------------------------------------------------------------------------------
+# PCRE 설치
+cd ${SRC_HOME}
+if [ ! -f "${SRC_HOME}/${PCRE_NAME}" ]; then
+    printf "\e[00;32m| ${PCRE_NAME} download (URL : ${PCRE_DOWNLOAD_URL})\e[00m\n"
+    curl -L -O ${PCRE_DOWNLOAD_URL}
+fi
+
+tar xvzf ${PCRE_NAME}
+cd ${SRC_HOME}/${PCRE_HOME}
+
+./configure --prefix=${SRC_HOME}/${HTTPD_NAME%$EXTENSION}/srclib/pcre
+make
+make install
+
+# Install source delete
+if [[ -d "${SRC_HOME}/${PCRE_HOME}" ]]; then
+    printf "\e[00;32m| \"${SRC_HOME}/${PCRE_HOME}\" delete...\e[00m\n"
+    rm -rf ${SRC_HOME}/${PCRE_HOME}
+fi
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+# MPM 모드 설정 변경.
 if [ "$OS" == "linux" ]; then
     sed -i "75s/.*/#define DEFAULT_SERVER_LIMIT 1024/g" ${SRC_HOME}/${HTTPD_NAME%$EXTENSION}/server/mpm/prefork/prefork.c
 
@@ -273,11 +267,12 @@ if [ "$OS" == "linux" ]; then
 
     # ServerLimit과 ThreadsPerChild 값을 변경한다. 서버의 스팩에 따라서 적절하게 수정한다.
     sed -i "115s/.*/#define DEFAULT_SERVER_LIMIT 128/g" ${SRC_HOME}/${HTTPD_NAME%$EXTENSION}/server/mpm/event/event.c
-    sed -i "133s/.*/#define DEFAULT_THREAD_LIMIT 64/g" ${SRC_HOME}/${HTTPD_NAME%$EXTENSION}/server/mpm/event/event.c
+    sed -i "133s/.*/#define DEFAULT_THREAD_LIMIT 64/g"  ${SRC_HOME}/${HTTPD_NAME%$EXTENSION}/server/mpm/event/event.c
 fi
 
 
-INSTALL_CONFIG="--prefix=${PROGRAME_HOME}/${HTTPD_HOME}"
+# ----------------------------------------------------------------------------------------------------------------------
+INSTALL_CONFIG="--prefix=${SERVER_HOME}/${HTTPD_HOME}"
 INSTALL_CONFIG="${INSTALL_CONFIG} --enable-cache"
 INSTALL_CONFIG="${INSTALL_CONFIG} --enable-cache-disk"
 INSTALL_CONFIG="${INSTALL_CONFIG} --enable-deflate"
@@ -298,7 +293,9 @@ INSTALL_CONFIG="${INSTALL_CONFIG} --enable-so"
 INSTALL_CONFIG="${INSTALL_CONFIG} --enable-ssl"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-included-apr"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-mpm=event"
-INSTALL_CONFIG="${INSTALL_CONFIG} --with-pcre=${SERVER_HOME}/${PCRE_ALIAS}"
+INSTALL_CONFIG="${INSTALL_CONFIG} --with-pcre=${SRC_HOME}/${HTTPD_NAME%$EXTENSION}/srclib/pcre"
+
+cd ${SRC_HOME}/${HTTPD_NAME%$EXTENSION}
 
 ./configure ${INSTALL_CONFIG}
 make
@@ -326,11 +323,11 @@ fi
 tar xvzf ${MOD_JK_NAME}
 cd ${SRC_HOME}/${MOD_JK_HOME}/native
 
-./configure --with-apxs=${PROGRAME_HOME}/${HTTPD_HOME}/bin/apxs
+./configure --with-apxs=${SERVER_HOME}/${HTTPD_HOME}/bin/apxs
 make
 make install
 
-cp -rf apache-2.0/mod_jk.so ${PROGRAME_HOME}/${HTTPD_HOME}/modules/
+cp -rf apache-2.0/mod_jk.so ${SERVER_HOME}/${HTTPD_HOME}/modules/
 
 # Install source delete
 if [[ -d "${SRC_HOME}/${MOD_JK_HOME}" ]]; then
@@ -345,19 +342,19 @@ if [[ -d "${SRC_HOME}/${HTTPD_NAME%$EXTENSION}" ]]; then
 fi
 
 # HTTPD 서버에서 필요없는 디렉토리 삭제.
-rm -rf ${PROGRAME_HOME}/${HTTPD_HOME}/build
-rm -rf ${PROGRAME_HOME}/${HTTPD_HOME}/cgi-bin
-rm -rf ${PROGRAME_HOME}/${HTTPD_HOME}/error
-rm -rf ${PROGRAME_HOME}/${HTTPD_HOME}/htdocs
-rm -rf ${PROGRAME_HOME}/${HTTPD_HOME}/icons
-rm -rf ${PROGRAME_HOME}/${HTTPD_HOME}/man
-rm -rf ${PROGRAME_HOME}/${HTTPD_HOME}/manual
+rm -rf ${SERVER_HOME}/${HTTPD_HOME}/build
+rm -rf ${SERVER_HOME}/${HTTPD_HOME}/cgi-bin
+rm -rf ${SERVER_HOME}/${HTTPD_HOME}/error
+rm -rf ${SERVER_HOME}/${HTTPD_HOME}/htdocs
+rm -rf ${SERVER_HOME}/${HTTPD_HOME}/icons
+rm -rf ${SERVER_HOME}/${HTTPD_HOME}/man
+rm -rf ${SERVER_HOME}/${HTTPD_HOME}/manual
 
 # 필요 디렉토리 생성.
-mkdir -p ${PROGRAME_HOME}/${HTTPD_HOME}/conf/extra/uriworkermaps
-mkdir -p ${PROGRAME_HOME}/${HTTPD_HOME}/conf/extra/vhosts
-mkdir -p ${PROGRAME_HOME}/${HTTPD_HOME}/logs/archive
-mkdir -p ${PROGRAME_HOME}/${HTTPD_HOME}/work
+mkdir -p ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/uriworkermaps
+mkdir -p ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/vhosts
+mkdir -p ${SERVER_HOME}/${HTTPD_HOME}/logs/archive
+mkdir -p ${SERVER_HOME}/${HTTPD_HOME}/work
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -419,14 +416,14 @@ export HTTPD_HOME=\`cd \"\$PRGDIR/..\" >/dev/null; pwd\`
 \$HTTPD_HOME/bin/apachectl start
 
 if [[ ! -f \"${SERVER_HOME}/${HTTPD_HOME}/work/httpd.pid\" ]]; then
-    printf \"httpd 시작 중:\"
+    printf \"Apache Starting:\"
 
     sleep 0.5
     retval=\$?
     if [[ \$retval = 0 ]]; then
-        printf \"                                           [  \e[00;32mOK\e[00m  ]\\\\n\"
+        printf \"                           [  \e[00;32mOK\e[00m  ]\\\\n\"
     else
-        printf \"                                           [\e[00;32mFAILED\e[00m]\\\\n\"
+        printf \"                           [\e[00;32mFAILED\e[00m]\\\\n\"
     fi
 fi
 
@@ -479,14 +476,14 @@ fi
 \$HTTPD_HOME/bin/apachectl stop
 
 if [[ -n \"\$STOPD\" ]]; then
-    printf \"httpd 중지 중:\"
+    printf \"Apache Stopping:\"
 
     sleep 0.5
     retval=\$?
     if [[ \$retval = 0 ]]; then
-        printf \"                                           [  \e[00;32mOK\e[00m  ]\\\\n\"
+        printf \"                           [  \e[00;32mOK\e[00m  ]\\\\n\"
     else
-        printf \"                                           [\e[00;32mFAILED\e[00m]\\\\n\"
+        printf \"                           [\e[00;32mFAILED\e[00m]\\\\n\"
     fi
 fi
 " > ${SERVER_HOME}/${HTTPD_HOME}/bin/stop.sh
@@ -680,110 +677,57 @@ fi
 " > ${SERVER_HOME}/${HTTPD_HOME}/bin/check-run-thread.sh
 
 
-# ----------------------------------------------------------------------------------------------------------------------
-echo "#!/bin/sh
-# ------------------------------------------------------------------------------
-#     ___                     __
-#    /   |  ____  ____ ______/ /_  ___
-#   / /| | / __ \/ __ \`/ ___/ __ \/ _ \
-#  / ___ |/ /_/ / /_/ / /__/ / / /  __/
-# /_/  |_/ .___/\__,_/\___/_/ /_/\___/
-#       /_/
-#  :: Apache ::              (v${HTTPD_VERSION})
-#
-# ------------------------------------------------------------------------------
-# Exit on error
-set -e
+# # ----------------------------------------------------------------------------------------------------------------------
+# echo "#!/bin/sh
+# # ------------------------------------------------------------------------------
+# #     ___                     __
+# #    /   |  ____  ____ ______/ /_  ___
+# #   / /| | / __ \/ __ \`/ ___/ __ \/ _ \
+# #  / ___ |/ /_/ / /_/ / /__/ / / /  __/
+# # /_/  |_/ .___/\__,_/\___/_/ /_/\___/
+# #       /_/
+# #  :: Apache ::              (v${HTTPD_VERSION})
+# #
+# # ------------------------------------------------------------------------------
+# # Exit on error
+# set -e
 
-# ------------------------------------------------------------------------------
-# shopt은 shell option의 약자로 유틸이다.
-# 사용 하는 extglob 쉘 옵션 shopt 내장 명령을 사용 하 여 같은 확장된 패턴 일치 연산자를 사용
-shopt -s extglob
+# # ------------------------------------------------------------------------------
+# # shopt은 shell option의 약자로 유틸이다.
+# # 사용 하는 extglob 쉘 옵션 shopt 내장 명령을 사용 하 여 같은 확장된 패턴 일치 연산자를 사용
+# shopt -s extglob
 
-# resolve links - \$0 may be a softlink
-PRG=\"\$0\"
-while [ -h \"\$PRG\" ]; do
-    ls=\`ls -ld \"\$PRG\"\`
-    link=\`expr \"\$ls\" : '.*-> \(.*\)\$'\`
-    if expr \"\$link\" : '/.*' > /dev/null; then
-        PRG=\"\$link\"
-    else
-        PRG=\`dirname \"\$PRG\"\`/\"\$link\"
-    fi
-done
+# # resolve links - \$0 may be a softlink
+# PRG=\"\$0\"
+# while [ -h \"\$PRG\" ]; do
+#     ls=\`ls -ld \"\$PRG\"\`
+#     link=\`expr \"\$ls\" : '.*-> \(.*\)\$'\`
+#     if expr \"\$link\" : '/.*' > /dev/null; then
+#         PRG=\"\$link\"
+#     else
+#         PRG=\`dirname \"\$PRG\"\`/\"\$link\"
+#     fi
+# done
 
-# ------------------------------------------------------------------------------
-# 현재 사용자의 아이디명과 그룹정보
-USERNAME=\`id -u -n\`
-GROUPNAME=\`id -g -n\`
+# # ------------------------------------------------------------------------------
+# # 현재 사용자의 아이디명과 그룹정보
+# USERNAME=\`id -u -n\`
+# GROUPNAME=\`id -g -n\`
 
-# ------------------------------------------------------------------------------
-# check-run-thread.sh
-sed -i \"s/for pid in.*/for pid in \`ps aux | grep httpd | grep \${USERNAME} | grep -v grep | grep -v status | grep -v rotatelogs | awk '{print \$2}'\`; do/g\" \${PRGDIR}/bin/check-run-thread.sh
+# # ------------------------------------------------------------------------------
+# # check-run-thread.sh
+# sed -i \"s/for pid in.*/for pid in \`ps aux | grep httpd | grep \${USERNAME} | grep -v grep | grep -v status | grep -v rotatelogs | awk '{print \$2}'\`; do/g\" \${PRGDIR}/bin/check-run-thread.sh
 
-# ------------------------------------------------------------------------------
-# delete-log.sh
-sed -i \"s/USER=.*/USER=\${USERNAME}/g\"       \${PRGDIR}/bin/*.sh
-sed -i \"s/GROUP=.*/GROUP=\${GROUPNAME}/g\"    \${PRGDIR}/bin/*.sh
+# # ------------------------------------------------------------------------------
+# # delete-log.sh
+# sed -i \"s/USER=.*/USER=\${USERNAME}/g\"       \${PRGDIR}/bin/*.sh
+# sed -i \"s/GROUP=.*/GROUP=\${GROUPNAME}/g\"    \${PRGDIR}/bin/*.sh
 
-# ------------------------------------------------------------------------------
-# Apache Config 수정.
-sed -i \"s/User.*/User \${USERNAME}/g\"        \${PRGDIR}/conf/httpd.conf
-sed -i \"s/Group.*/Group \${GROUPNAME}/g\"     \${PRGDIR}/conf/httpd.conf
-" > ${SERVER_HOME}/${HTTPD_HOME}/bin/change-user.sh
-
-
-# ----------------------------------------------------------------------------------------------------------------------
-echo "#!/bin/bash
-# ------------------------------------------------------------------------------
-#     ___                     __
-#    /   |  ____  ____ ______/ /_  ___
-#   / /| | / __ \\/ __ \`/ ___/ __ \\/ _ \\
-#  / ___ |/ /_/ / /_/ / /__/ / / /  __/
-# /_/  |_/ .___/\\__,_/\\___/_/ /_/\\___/
-#       /_/
-#  :: Apache ::              (v${HTTPD_VERSION})
-
-#-----------------------------------------------
-# 시스템에 맞게 계정과 그룹을 변경한다.
-#-----------------------------------------------
-USER=${USERNAME}
-GROUP=${GROUPNAME}
-
-# crontab 에 등록
-# 10 0 * * * ${SERVER_HOME}/${HTTPD_HOME}/bin/delete-log.sh
-
-# 파일 경로와 파일명 분리.
-MAX_HISTORYS='30'
-FILE_PATH='${SERVER_HOME}/${HTTPD_HOME}/logs/archive'
-FILE_NAME=\`basename \"\${FILE_PATH}\"\`
-EXTENSION='${EXTENSION}'
-
-DELETE_LOG_NAME=\"delete-\$(date -d \"1 day ago\" +\"%Y-%m\").log\"
-
-# 백업 디렉토리 생성 및 사용자, 그룹을 변경.
-if [[ ! -d \"\${FILE_PATH}\" ]]; then
-    mkdir -p \${FILE_PATH}
-    chown -R \${USER}:\${GROUP} \${FILE_PATH}
-fi
-
-echo \"-----------------------------------------------------------------------------------------------------------------\" | tee -a \${FILE_PATH}/\${DELETE_LOG_NAME}
-echo \"- 파일 삭제 : \$(date +\"%Y:%m:%d %H-%M-%S\")\" | tee -a \${FILE_PATH}/\${DELETE_LOG_NAME}
-
-# 파일의 디렉토리로 이동.
-pushd \${FILE_PATH} > /dev/null
-
-# 보관주기가 지난 백업 파일은 삭제한다.
-OLD_BACKUP_FILES=\`find . -mtime +\$((MAX_HISTORYS - 1)) -name \"*\${EXTENSION}\" -type f\`
-if [[ -n \${OLD_BACKUP_FILES} ]]; then
-    rm -rf \${OLD_BACKUP_FILES}
-    echo \"  . 로그 파일 삭제 : \${OLD_BACKUP_FILES}\" | tee -a \${FILE_PATH}/\${DELETE_LOG_NAME}
-else
-    echo \"  . 삭제 대상 로그 파일이 없습니다.\" | tee -a \${FILE_PATH}/\${DELETE_LOG_NAME}
-fi
-
-chown \${USER}:\${GROUP} \${FILE_PATH}/\${DELETE_LOG_NAME}
-" > ${SERVER_HOME}/${HTTPD_HOME}/bin/delete-log.sh
+# # ------------------------------------------------------------------------------
+# # Apache Config 수정.
+# sed -i \"s/User.*/User \${USERNAME}/g\"        \${PRGDIR}/conf/httpd.conf
+# sed -i \"s/Group.*/Group \${GROUPNAME}/g\"     \${PRGDIR}/conf/httpd.conf
+# " > ${SERVER_HOME}/${HTTPD_HOME}/bin/change-user.sh
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -792,6 +736,8 @@ chmod +x ${SERVER_HOME}/${HTTPD_HOME}/bin/*.sh
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Apache Config 수정.
+cp ${SERVER_HOME}/${HTTPD_HOME}/conf/httpd.conf ${SERVER_HOME}/${HTTPD_HOME}/conf/httpd.conf.org
+
 echo "#
 # This is the main Apache HTTP server configuration file.  It contains the
 # configuration directives that give the server its instructions.
@@ -1318,7 +1264,7 @@ PidFile work/httpd.pid
 # Apache Tomcat JK Connect setting
 Include conf/extra/httpd-jk.conf
 
-# mod_deflate 설정
+# Setting MOD Default
 <IfModule mod_deflate>
     # 특별한 MIME type만 압축
     AddOutputFilterByType DEFLATE text/plain text/html text/xml
@@ -1342,21 +1288,21 @@ Include conf/extra/httpd-jk.conf
     SetEnvIfNoCase Request_URI \\.(?:gif|jpe?g|png|bmp|zip|tar|rar|alz|a00|ace|mp3|mp4|mpe?g|wav|asf|wma|wmv|swf|exe|pdf|doc|xsl|hwp|java|t?gz|bz2|7z)$ no-gzip dont-vary
 </IfModule>
 
-# Expire 설정
+# Setting Expire
 <IfModule expires_module>
     ExpiresActive On
-    ExpiresByType text/css \"modification plus 1 years\"
-    ExpiresByType text/javascript \"modification plus 1 years\"
     ExpiresByType application/javascript \"modification plus 1 years\"
     ExpiresByType application/x-javascript \"modification plus 1 years\"
-    ExpiresByType text/xml \"modification plus 1 years\"
     ExpiresByType application/x-shockwave-flash \"modification plus 1 years\"
-    ExpiresByType image/jpeg \"modification plus 1 years\"
     ExpiresByType image/gif \"modification plus 1 years\"
+    ExpiresByType image/jpeg \"modification plus 1 years\"
     ExpiresByType image/png \"modification plus 1 years\"
+    ExpiresByType text/css \"modification plus 1 years\"
+    ExpiresByType text/javascript \"modification plus 1 years\"
+    ExpiresByType text/xml \"modification plus 1 years\"
 </IfModule>
 
-# The HTTP/2 protocol - worker / event 모드에서는 정상 동작 확인.
+# The HTTP/2 protocol - Check normal operation in worker / event mode.
 #<IfModule http2_module>
 #    ProtocolsHonorOrder On
 #
@@ -1375,8 +1321,8 @@ Include conf/extra/httpd-jk.conf
 #    Header set Strict-Transport-Security \"max-age=31536000; includeSubDomains; preload\"
 #</IfModule>
 
-# 지정된 Method\"HEAD GET POST PUT DELETE OPTIONS\"만 접속 허용
-# 만약 정상 동작하지 않는 경우 \"ErrorDocument 403\" 부분을 주석 처리 후 테스트 진행.
+# Allow access only to the specified Method\"HEAD GET POST PUT DELETE OPTIONS\"
+# If it does not work properly, comment out the \"ErrorDocument 403\" part and proceed with the test.
 <Location />
     Order allow,deny
     Allow from all
@@ -1862,103 +1808,21 @@ echo "<VirtualHost _default_:443>
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
-printf "\e[00;32m| 사설 인증키를 생성하려면 도메인을 입력주세요.\e[00m\n"
-printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
-printf "\e[00;32m| Enter whether to ssl setting?\e[00m"
-read -e -p ' [Y / n](enter)] (default. n) > ' CHECK_SSL
-if [[ ! -z ${CHECK_SSL}  ]] && [[ "$(uppercase ${CHECK_SSL})" == "Y" ]]; then
-    # 사설 인증키 생성
-    mkdir ${PROGRAME_HOME}/${HTTPD_HOME}/conf/ssl
-
-    echo "[ req ]
-    default_bits                    = 2048
-    default_md                      = sha1
-    default_keyfile                 = lesstif-rootca.key
-    distinguished_name              = req_distinguished_name
-    extensions                      = v3_user
-    # 인증서 요청시에도 extension 이 들어가면 authorityKeyIdentifier 를 찾지 못해 에러가 나므로 막아둔다.
-    #req_extensions                  = v3_user
-
-    [ v3_user ]
-    # Extensions to add to a certificate request
-    basicConstraints                = CA:FALSE
-    authorityKeyIdentifier          = keyid,issuer
-    subjectKeyIdentifier            = hash
-    keyUsage                        = nonRepudiation, digitalSignature, keyEncipherment
-
-    ## SSL 용 확장키 필드
-    extendedKeyUsage                = serverAuth,clientAuth
-    subjectAltName                  = @alt_names
-
-    [ alt_names]
-    # Subject AltName의 DNSName field에 SSL Host 의 도메인 이름을 적어준다.
-    # 멀티 도메인일 경우 *.lesstif.com 처럼 쓸 수 있다.
-    DNS.1                           = ${DOMAIN_NAME}
-
-    [req_distinguished_name ]
-    countryName                     = Seoul
-    countryName_default             = KR
-    countryName_min                 = 2
-    countryName_max                 = 2
-
-    # 회사명 입력
-    organizationName                = KTH
-    organizationName_default        = KTH Inc.
-
-    # 부서 입력
-    #organizationalUnitName          = Organizational Unit Name (eg, section)
-    #organizationalUnitName_default  = lesstif SSL Project
-
-    # SSL 서비스할 domain 명 입력
-    commonName                      = ${DOMAIN_NAME}
-    commonName_default              = ${DOMAIN_NAME}
-    commonName_max                  = 64
-    " > ${PROGRAME_HOME}/${HTTPD_HOME}/conf/ssl/${INSTALL_WORKER_NAME}.conf
-
-    ${SERVER_HOME}/${OPENSSL_ALIAS}/bin/openssl genpkey                                                                 \
-        -algorithm RSA                                                                                                  \
-        -pkeyopt rsa_keygen_bits:4096                                                                                   \
-        -out ${SERVER_HOME}/${HTTPD_HOME}/conf/ssl/${INSTALL_WORKER_NAME}.key
-
-    chmod 400 ${SERVER_HOME}/${HTTPD_HOME}/conf/ssl/${INSTALL_WORKER_NAME}.key
-
-    ${SERVER_HOME}/${OPENSSL_ALIAS}/bin/openssl req                                                                     \
-        -new                                                                                                            \
-        -sha256                                                                                                         \
-        -key ${SERVER_HOME}/${HTTPD_HOME}/conf/ssl/${INSTALL_WORKER_NAME}.key                                          \
-        -out ${SERVER_HOME}/${HTTPD_HOME}/conf/ssl/${INSTALL_WORKER_NAME}.csr                                          \
-        -config ${SERVER_HOME}/${HTTPD_HOME}/conf/ssl/${INSTALL_WORKER_NAME}.conf
-
-    ${SERVER_HOME}/${OPENSSL_ALIAS}/bin/openssl x509 -req                                                               \
-        -days 3650                                                                                                      \
-        -extensions v3_user                                                                                             \
-        -in      ${SERVER_HOME}/${HTTPD_HOME}/conf/ssl/${INSTALL_WORKER_NAME}.csr                                      \
-        -signkey ${SERVER_HOME}/${HTTPD_HOME}/conf/ssl/${INSTALL_WORKER_NAME}.key                                      \
-        -out     ${SERVER_HOME}/${HTTPD_HOME}/conf/ssl/${INSTALL_WORKER_NAME}.crt                                      \
-        -extfile ${SERVER_HOME}/${HTTPD_HOME}/conf/ssl/${INSTALL_WORKER_NAME}.conf
-
-    rm -rf ${PROGRAME_HOME}/${HTTPD_HOME}/conf/ssl/${INSTALL_WORKER_NAME}.conf
-fi
-
-
-# ----------------------------------------------------------------------------------------------------------------------
-if [[ -f ${BASH_FILE} ]]; then
-    SET_HTTPD_HOME=`awk "/# Apache Start \/ Restart \/ Stop script/" ${BASH_FILE}`
-    if [[ ! -n ${SET_HTTPD_HOME} ]]; then
-        echo "# Apache Start / Restart / Stop script
-# Apache Start / Stop Aliases
-alias httpd-start='sudo   ${SERVER_HOME}/${HTTPD_HOME}/bin/start.sh'
-alias httpd-stop='sudo    ${SERVER_HOME}/${HTTPD_HOME}/bin/stop.sh'
-alias httpd-restart='sudo ${SERVER_HOME}/${HTTPD_HOME}/bin/restart.sh'
-alias httpd-status='sudo  ${SERVER_HOME}/${HTTPD_HOME}/bin/status.sh'
-" >> ${BASH_FILE}
-    fi
-fi
+# if [[ -f ${BASH_FILE} ]]; then
+#     SET_HTTPD_HOME=`awk "/# Apache Start \/ Restart \/ Stop script/" ${BASH_FILE}`
+#     if [[ ! -n ${SET_HTTPD_HOME} ]]; then
+#         echo "# Apache Start / Restart / Stop script
+# # Apache Start / Stop Aliases
+# alias httpd-start='sudo   ${SERVER_HOME}/${HTTPD_HOME}/bin/start.sh'
+# alias httpd-stop='sudo    ${SERVER_HOME}/${HTTPD_HOME}/bin/stop.sh'
+# alias httpd-restart='sudo ${SERVER_HOME}/${HTTPD_HOME}/bin/restart.sh'
+# alias httpd-status='sudo  ${SERVER_HOME}/${HTTPD_HOME}/bin/status.sh'
+# " >> ${BASH_FILE}
+#     fi
+# fi
 
 
 # ----------------------------------------------------------------------------------------------------------------------
 printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
-printf "\e[00;32m| \"${HTTPD_ALIAS}\" install success...\e[00m\n"
+printf "\e[00;32m| \"${HTTPD_HOME}\" install success...\e[00m\n"
 printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
-

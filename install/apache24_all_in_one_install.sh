@@ -24,10 +24,16 @@
 #                   https://httpd.apache.org/docs/trunk/mod/mod_ratelimit.html
 #   mod_cache : https://httpd.apache.org/docs/2.4/ko/mod/mod_cache.html
 #   아파치 성능향상 : https://httpd.apache.org/docs/2.4/misc/perf-tuning.html
+#
 # - SSL 1.1.1 사용 시 아래 2개 파일 복사
 #   cp /home/server/openssl/lib/libcrypto.so.1.1 /usr/lib64/
 #   cp /home/server/openssl/lib/libssl.so.1.1 /usr/lib64/
+#
+# - [2022.01.04] 보안 업데이트 - Apache HTTP Server 2.4.51 및 이전 버전
+#   Apache HTTP Server에서 널 포인터 역참조로 인해 발생하는 서비스거부 취약점(CVE-2021-44224)
+#   Apache HTTP Server에서 입력값 검증이 미흡하여 발생하는 버퍼오버플로우 취약점(CVE-2021-44790)
 
+echo "---------------- Apache - v2022.01.11.001 ----------------"
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Exit on error
@@ -66,8 +72,10 @@ PRGDIR=`dirname "$PRG"`
 
 # ----------------------------------------------------------------------------------------------------------------------
 # 현재 사용자의 아이디명과 그룹정보
-export USERNAME=`id -u -n`
-export GROUPNAME=`id -g -n`
+# export USERNAME=`id -u -n`
+# export GROUPNAME=`id -g -n`
+export USERNAME="apache"
+export GROUPNAME="apache"
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -90,6 +98,7 @@ export EXTENSION='.tar.gz'
 # ----------------------------------------------------------------------------------------------------------------------
 # 서버 디렉토리 설정.
 export SRC_HOME="/apache/src"
+export LOG_HOME="/ap_log"
 export SERVER_HOME="/apache"
 
 
@@ -121,7 +130,7 @@ export APR_UTIL_HOME=${APR_UTIL_NAME%$EXTENSION}
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Apache 2.4
-export HTTPD_VERSION="2.4.41"
+export HTTPD_VERSION="2.4.52"
 export HTTPD_DOWNLOAD_URL="http://archive.apache.org/dist/httpd/httpd-${HTTPD_VERSION}.tar.gz"
 export HTTPD_NAME=${HTTPD_DOWNLOAD_URL##+(*/)}
 export HTTPD_HOME='apache24'
@@ -344,7 +353,6 @@ rm -rf ${SERVER_HOME}/${HTTPD_HOME}/manual
 # 필요 디렉토리 생성.
 mkdir -p ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/uriworkermaps
 mkdir -p ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/vhosts
-mkdir -p ${SERVER_HOME}/${HTTPD_HOME}/logs/archive
 mkdir -p ${SERVER_HOME}/${HTTPD_HOME}/work
 
 
@@ -668,57 +676,57 @@ fi
 " > ${SERVER_HOME}/${HTTPD_HOME}/bin/check-run-thread.sh
 
 
-# ----------------------------------------------------------------------------------------------------------------------
-echo "#!/bin/sh
-# ------------------------------------------------------------------------------
-#     ___                     __
-#    /   |  ____  ____ ______/ /_  ___
-#   / /| | / __ \/ __ \`/ ___/ __ \/ _ \
-#  / ___ |/ /_/ / /_/ / /__/ / / /  __/
-# /_/  |_/ .___/\__,_/\___/_/ /_/\___/
-#       /_/
-#  :: Apache ::              (v${HTTPD_VERSION})
-#
-# ------------------------------------------------------------------------------
-# Exit on error
-set -e
+# # ----------------------------------------------------------------------------------------------------------------------
+# echo "#!/bin/sh
+# # ------------------------------------------------------------------------------
+# #     ___                     __
+# #    /   |  ____  ____ ______/ /_  ___
+# #   / /| | / __ \/ __ \`/ ___/ __ \/ _ \
+# #  / ___ |/ /_/ / /_/ / /__/ / / /  __/
+# # /_/  |_/ .___/\__,_/\___/_/ /_/\___/
+# #       /_/
+# #  :: Apache ::              (v${HTTPD_VERSION})
+# #
+# # ------------------------------------------------------------------------------
+# # Exit on error
+# set -e
 
-# ------------------------------------------------------------------------------
-# shopt은 shell option의 약자로 유틸이다.
-# 사용 하는 extglob 쉘 옵션 shopt 내장 명령을 사용 하 여 같은 확장된 패턴 일치 연산자를 사용
-shopt -s extglob
+# # ------------------------------------------------------------------------------
+# # shopt은 shell option의 약자로 유틸이다.
+# # 사용 하는 extglob 쉘 옵션 shopt 내장 명령을 사용 하 여 같은 확장된 패턴 일치 연산자를 사용
+# shopt -s extglob
 
-# resolve links - \$0 may be a softlink
-PRG=\"\$0\"
-while [ -h \"\$PRG\" ]; do
-    ls=\`ls -ld \"\$PRG\"\`
-    link=\`expr \"\$ls\" : '.*-> \(.*\)\$'\`
-    if expr \"\$link\" : '/.*' > /dev/null; then
-        PRG=\"\$link\"
-    else
-        PRG=\`dirname \"\$PRG\"\`/\"\$link\"
-    fi
-done
+# # resolve links - \$0 may be a softlink
+# PRG=\"\$0\"
+# while [ -h \"\$PRG\" ]; do
+#     ls=\`ls -ld \"\$PRG\"\`
+#     link=\`expr \"\$ls\" : '.*-> \(.*\)\$'\`
+#     if expr \"\$link\" : '/.*' > /dev/null; then
+#         PRG=\"\$link\"
+#     else
+#         PRG=\`dirname \"\$PRG\"\`/\"\$link\"
+#     fi
+# done
 
-# ------------------------------------------------------------------------------
-# 현재 사용자의 아이디명과 그룹정보
-USERNAME=\`id -u -n\`
-GROUPNAME=\`id -g -n\`
+# # ------------------------------------------------------------------------------
+# # 현재 사용자의 아이디명과 그룹정보
+# USERNAME=\`id -u -n\`
+# GROUPNAME=\`id -g -n\`
 
-# ------------------------------------------------------------------------------
-# check-run-thread.sh
-sed -i \"s/for pid in.*/for pid in \`ps aux | grep httpd | grep \${USERNAME} | grep -v grep | grep -v status | grep -v rotatelogs | awk '{print \$2}'\`; do/g\" \${PRGDIR}/bin/check-run-thread.sh
+# # ------------------------------------------------------------------------------
+# # check-run-thread.sh
+# sed -i \"s/for pid in.*/for pid in \`ps aux | grep httpd | grep \${USERNAME} | grep -v grep | grep -v status | grep -v rotatelogs | awk '{print \$2}'\`; do/g\" \${PRGDIR}/bin/check-run-thread.sh
 
-# ------------------------------------------------------------------------------
-# delete-log.sh
-sed -i \"s/USER=.*/USER=\${USERNAME}/g\"       \${PRGDIR}/bin/*.sh
-sed -i \"s/GROUP=.*/GROUP=\${GROUPNAME}/g\"    \${PRGDIR}/bin/*.sh
+# # ------------------------------------------------------------------------------
+# # delete-log.sh
+# sed -i \"s/USER=.*/USER=\${USERNAME}/g\"       \${PRGDIR}/bin/*.sh
+# sed -i \"s/GROUP=.*/GROUP=\${GROUPNAME}/g\"    \${PRGDIR}/bin/*.sh
 
-# ------------------------------------------------------------------------------
-# Apache Config 수정.
-sed -i \"s/User.*/User \${USERNAME}/g\"        \${PRGDIR}/conf/httpd.conf
-sed -i \"s/Group.*/Group \${GROUPNAME}/g\"     \${PRGDIR}/conf/httpd.conf
-" > ${SERVER_HOME}/${HTTPD_HOME}/bin/change-user.sh
+# # ------------------------------------------------------------------------------
+# # Apache Config 수정.
+# sed -i \"s/User.*/User \${USERNAME}/g\"        \${PRGDIR}/conf/httpd.conf
+# sed -i \"s/Group.*/Group \${GROUPNAME}/g\"     \${PRGDIR}/conf/httpd.conf
+# " > ${SERVER_HOME}/${HTTPD_HOME}/bin/change-user.sh
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -727,72 +735,15 @@ chmod +x ${SERVER_HOME}/${HTTPD_HOME}/bin/*.sh
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Apache Config 수정.
-echo "#
-# This is the main Apache HTTP server configuration file.  It contains the
-# configuration directives that give the server its instructions.
-# See <URL:http://httpd.apache.org/docs/2.4/> for detailed information.
-# In particular, see
-# <URL:http://httpd.apache.org/docs/2.4/mod/directives.html>
-# for a discussion of each configuration directive.
-#
-# Do NOT simply read the instructions in here without understanding
-# what they do.  They're here only as hints or reminders.  If you are unsure
-# consult the online docs. You have been warned.
-#
-# Configuration and logfile names: If the filenames you specify for many
-# of the server's control files begin with \"/\" (or \"drive:/\" for Win32), the
-# server will use that explicit path.  If the filenames do *not* begin
-# with \"/\", the value of ServerRoot is prepended -- so \"logs/access_log\"
-# with ServerRoot set to \"/usr/local/apache2\" will be interpreted by the
-# server as \"/usr/local/apache2/logs/access_log\", whereas \"/logs/access_log\"
-# will be interpreted as '/logs/access_log'.
+cp ${SERVER_HOME}/${HTTPD_HOME}/conf/httpd.conf ${SERVER_HOME}/${HTTPD_HOME}/conf/httpd.conf.org
 
-#
-# ServerRoot: The top of the directory tree under which the server's
-# configuration, error, and log files are kept.
-#
-# Do not add a slash at the end of the directory path.  If you point
-# ServerRoot at a non-local disk, be sure to specify a local disk on the
-# Mutex directive, if file-based mutexes are used.  If you wish to share the
-# same ServerRoot for multiple httpd daemons, you will need to change at
-# least PidFile.
-#
-ServerRoot \"${SERVER_HOME}/${HTTPD_HOME}\"
+echo "ServerRoot \"${SERVER_HOME}/${HTTPD_HOME}\"
 
-#
-# Mutex: Allows you to set the mutex mechanism and mutex file directory
-# for individual mutexes, or change the global defaults
-#
-# Uncomment and change the directory if mutexes are file-based and the default
-# mutex file directory is not on a local disk or is not appropriate for some
-# other reason.
-#
-# Mutex default:logs
-
-#
-# Listen: Allows you to bind Apache to specific IP addresses and/or
-# ports, instead of the default. See also the <VirtualHost>
-# directive.
-#
-# Change this to Listen on specific IP addresses as shown below to
-# prevent Apache from glomming onto all bound IP addresses.
-#
 #Listen 12.34.56.78:80
 Listen 80
 
 #
 # Dynamic Shared Object (DSO) Support
-#
-# To be able to use the functionality of a module which was built as a DSO you
-# have to place corresponding \`LoadModule' lines at this location so the
-# directives contained in it are actually available _before_ they are used.
-# Statically compiled modules (those listed by \`httpd -l') do not need
-
-# to be loaded here.
-#
-# Example:
-# LoadModule foo_module modules/mod_foo.so
-#
 LoadModule mpm_event_module modules/mod_mpm_event.so
 #LoadModule mpm_prefork_module modules/mod_mpm_prefork.so
 #LoadModule mpm_worker_module modules/mod_mpm_worker.so
@@ -887,30 +838,9 @@ LoadModule alias_module modules/mod_alias.so
 LoadModule rewrite_module modules/mod_rewrite.so
 
 <IfModule unixd_module>
-#
-# If you wish httpd to run as a different user or group, you must run
-# httpd as root initially and it will switch.
-#
-# User/Group: The name (or #number) of the user/group to run httpd as.
-# It is usually good practice to create a dedicated user and group for
-# running httpd, as with most system services.
-#
-User daemon
-Group daemon
-
+    User ${USERNAME}
+    Group ${GROUPNAME}
 </IfModule>
-
-# 'Main' server configuration
-#
-# The directives in this section set up the values used by the 'main'
-# server, which responds to any requests that aren't handled by a
-# <VirtualHost> definition.  These values also provide defaults for
-# any <VirtualHost> containers you may define later in the file.
-#
-# All of these directives may appear inside <VirtualHost> containers,
-# in which case these default settings will be overridden for the
-# virtual host being defined.
-#
 
 #
 # ServerAdmin: Your address, where problems with the server should be
@@ -943,47 +873,6 @@ ServerName ${DOMAIN_NAME}:80
 </Directory>
 
 #
-# Note that from this point forward you must specifically allow
-# particular features to be enabled - so if something's not working as
-# you might expect, make sure that you have specifically enabled it
-# below.
-#
-
-#
-# DocumentRoot: The directory out of which you will serve your
-# documents. By default, all requests are taken from this directory, but
-# symbolic links and aliases may be used to point to other locations.
-#
-#DocumentRoot \"${SERVER_HOME}/${HTTPD_HOME}/htdocs\"
-#<Directory \"${SERVER_HOME}/${HTTPD_HOME}/htdocs\">
-#    #
-#    # Possible values for the Options directive are \"None\", \"All\",
-#    # or any combination of:
-#    #   Indexes Includes FollowSymLinks SymLinksifOwnerMatch ExecCGI MultiViews
-#    #
-#    # Note that \"MultiViews\" must be named *explicitly* --- \"Options All\"
-#    # doesn't give it to you.
-#    #
-#    # The Options directive is both complicated and important.  Please see
-#    # http://httpd.apache.org/docs/2.4/mod/core.html#options
-#    # for more information.
-#    #
-#    Options Indexes FollowSymLinks
-#
-#    #
-#    # AllowOverride controls what directives may be placed in .htaccess files.
-#    # It can be \"All\", \"None\", or any combination of the keywords:
-#    #   AllowOverride FileInfo AuthConfig Limit
-#    #
-#    AllowOverride None
-#
-#    #
-#    # Controls who can get stuff from this server.
-#    #
-#    Require all granted
-#</Directory>
-
-#
 # DirectoryIndex: sets the file that Apache will serve if a directory
 # is requested.
 #
@@ -1006,7 +895,8 @@ ServerName ${DOMAIN_NAME}:80
 # logged here.  If you *do* define an error logfile for a <VirtualHost>
 # container, that host's errors will be logged there and not here.
 #
-ErrorLog \"|${SERVER_HOME}/${HTTPD_HOME}/bin/rotatelogs -L logs/error.log logs/archive/error.%Y-%m-%d.log 86400 +540
+# ErrorLog \"|${SERVER_HOME}/${HTTPD_HOME}/bin/rotatelogs -L logs/error.log logs/archive/error.%Y-%m-%d.log 86400 +540
+ErrorLog \"|${SERVER_HOME}/${HTTPD_HOME}/bin/rotatelogs ${LOG_HOME}/error.%Y-%m-%d.log 86400 +540
 
 #
 # LogLevel: Control the number of messages logged to the error_log.
@@ -1021,8 +911,8 @@ LogLevel warn
     # a CustomLog directive (see below).
     #
     SetEnvIf REQUEST_URI \"favicon.ico\" do_not_log
-    #LogFormat \"%h %l %u %t \\\"%{Host}i\\\" \\\"%r\\\" %>s %b \\\"%{Referer}i\\\" \\\"%{User-Agent}i\\\" TIME:%T\" combined
-    LogFormat \"%h %{NS-CLIENT-IP}i %l %u %t \\\"%{Host}i\\\" \\\"%r\\\" %>s %b \\\"%{Referer}i\\\" \\\"%{User-Agent}i\\\" TIME:%T\" combined
+    LogFormat \"%h %l %u %t \\\"%{Host}i\\\" \\\"%r\\\" %>s %b \\\"%{Referer}i\\\" \\\"%{User-Agent}i\\\" TIME:%T\" combined
+    #LogFormat \"%h %{NS-CLIENT-IP}i %l %u %t \\\"%{Host}i\\\" \\\"%r\\\" %>s %b \\\"%{Referer}i\\\" \\\"%{User-Agent}i\\\" TIME:%T\" combined
 
     #<IfModule logio_module>
     #  # You need to enable mod_logio.c to use %I and %O
@@ -1036,8 +926,9 @@ LogLevel warn
     # define per-<VirtualHost> access logfiles, transactions will be
     # logged therein and *not* in this file.
     #
-    #CustomLog \"logs/access_log\" common
-    CustomLog \"|${SERVER_HOME}/${HTTPD_HOME}/bin/rotatelogs -L logs/access.log logs/archive/access.%Y-%m-%d.log 86400 +540\" combined env=!do_not_log
+    # CustomLog \"logs/access_log\" common
+    # CustomLog \"|${SERVER_HOME}/${HTTPD_HOME}/bin/rotatelogs -L logs/access.log logs/archive/access.%Y-%m-%d.log 86400 +540\" combined env=!do_not_log
+    CustomLog \"|${SERVER_HOME}/${HTTPD_HOME}/bin/rotatelogs ${LOG_HOME}/access.%Y-%m-%d.log 86400 +540\" combined env=!do_not_log
 
     #
     # If you prefer a logfile with access, agent, and referer information
@@ -1045,54 +936,6 @@ LogLevel warn
     #
     #CustomLog \"logs/access_log\" combined
 </IfModule>
-
-<IfModule alias_module>
-    #
-    # Redirect: Allows you to tell clients about documents that used to
-    # exist in your server's namespace, but do not anymore. The client
-    # will make a new request for the document at its new location.
-    # Example:
-    # Redirect permanent /foo http://www.example.com/bar
-
-    #
-    # Alias: Maps web paths into filesystem paths and is used to
-    # access content that does not live under the DocumentRoot.
-    # Example:
-    # Alias /webpath /full/filesystem/path
-    #
-    # If you include a trailing / on /webpath then the server will
-    # require it to be present in the URL.  You will also likely
-    # need to provide a <Directory> section to allow access to
-    # the filesystem path.
-
-    #
-    # ScriptAlias: This controls which directories contain server scripts.
-    # ScriptAliases are essentially the same as Aliases, except that
-    # documents in the target directory are treated as applications and
-    # run by the server when requested rather than as documents sent to the
-    # client.  The same rules about trailing \"/\" apply to ScriptAlias
-    # directives as to Alias.
-    #
-    #ScriptAlias /cgi-bin/ \"${SERVER_HOME}/${HTTPD_HOME}/cgi-bin/\"
-</IfModule>
-
-<IfModule cgid_module>
-    #
-    # ScriptSock: On threaded servers, designate the path to the UNIX
-    # socket used to communicate with the CGI daemon of mod_cgid.
-    #
-    #Scriptsock cgisock
-</IfModule>
-
-#
-# \"${SERVER_HOME}/${HTTPD_HOME}/cgi-bin\" should be changed to whatever your ScriptAliased
-# CGI directory exists, if you have that configured.
-#
-#<Directory \"${SERVER_HOME}/${HTTPD_HOME}/cgi-bin\">
-#    AllowOverride None
-#    Options None
-#    Require all granted
-#</Directory>
 
 <IfModule headers_module>
     #
@@ -1152,13 +995,6 @@ LogLevel warn
 </IfModule>
 
 #
-# The mod_mime_magic module allows the server to use various hints from the
-# contents of the file itself to determine its type.  The MIMEMagicFile
-# directive tells the module where the hint definitions are located.
-#
-#MIMEMagicFile conf/magic
-
-#
 # Customizable error responses come in three flavors:
 # 1) plain text 2) local redirects 3) external redirects
 #
@@ -1173,25 +1009,6 @@ ErrorDocument 402 /error/402
 ErrorDocument 403 /error/403
 ErrorDocument 404 /error/404
 ErrorDocument 500 /error/500
-
-#
-# MaxRanges: Maximum number of Ranges in a request before
-# returning the entire resource, or one of the special
-# values 'default', 'none' or 'unlimited'.
-# Default setting is to accept 200 Ranges.
-#MaxRanges unlimited
-
-#
-# EnableMMAP and EnableSendfile: On systems that support it,
-# memory-mapping or the sendfile syscall may be used to deliver
-# files.  This usually improves server performance, but must
-# be turned off when serving from networked-mounted
-# filesystems or if support for these functions is otherwise
-# broken on your system.
-# Defaults: EnableMMAP On, EnableSendfile Off
-#
-#EnableMMAP off
-#EnableSendfile on
 
 # Supplemental configuration
 #
@@ -1351,7 +1168,7 @@ LoadModule jk_module modules/mod_jk.so
 
     # Our JK error log
     # You can (and should) use rotatelogs here
-    JkLogFile \"|${SERVER_HOME}/${HTTPD_HOME}/bin/rotatelogs -L logs/mod_jk.log logs/archive/mod_jk.%Y-%m-%d.log 86400 +540\"
+    JkLogFile \"|${SERVER_HOME}/${HTTPD_HOME}/bin/rotatelogs ${LOG_HOME}/mod_jk.%Y-%m-%d.log 86400 +540\"
 
     # Our JK log level (trace,debug,info,warn,error)
     JkLogLevel info
@@ -1383,7 +1200,8 @@ LoadModule jk_module modules/mod_jk.so
 
 # ----------------------------------------------------------------------------------------------------------------------
 # securety settings
-echo "<Location /jkmanager>
+echo "# securety settings
+<Location /jkmanager>
     JkMount jkstatus
     Order deny,allow
     AllowOverride all
@@ -1548,6 +1366,8 @@ echo "# This file provides sample mappings for example wlb
 
 # ----------------------------------------------------------------------------------------------------------------------
 # httpd-vhosts settings
+${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-vhosts.conf ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-vhosts.conf.org
+
 echo "# Virtual Hosts
 #
 # Required modules: mod_log_config
@@ -1606,7 +1426,7 @@ echo "<VirtualHost *:80>
     </Location>
 
     # AccessLog.
-    # CustomLog \"|${SERVER_HOME}/${HTTPD_HOME}/bin/rotatelogs -L logs/${INSTALL_WORKER_NAME}.access.log logs/archive/${INSTALL_WORKER_NAME}.access.%Y-%m-%d.log 86400 +540\" combined env=!do_not_log
+    # CustomLog \"|${SERVER_HOME}/${HTTPD_HOME}/bin/rotatelogs ${LOG_HOME}/${INSTALL_WORKER_NAME}.access.%Y-%m-%d.log 86400 +540\" combined env=!do_not_log
 
     RewriteEngine On
     RewriteRule ^/?dummy\.html\$ - [R=404]
@@ -1620,6 +1440,8 @@ echo "<VirtualHost *:80>
 
 # ----------------------------------------------------------------------------------------------------------------------
 # httpd-vhosts settings
+cp ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-ssl.conf ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-ssl.conf.org
+
 echo "
 #
 # This is the Apache server configuration file providing SSL support.
@@ -1784,7 +1606,7 @@ echo "<VirtualHost _default_:443>
     </Location>
 
     # AccessLog.
-    # CustomLog \"|${SERVER_HOME}/${HTTPD_HOME}/bin/rotatelogs -L logs/${INSTALL_WORKER_NAME}.access.log logs/archive/${INSTALL_WORKER_NAME}.access.%Y-%m-%d.log 86400 +540\" combined env=!do_not_log
+    # CustomLog \"|${SERVER_HOME}/${HTTPD_HOME}/bin/rotatelogs ${LOG_HOME}/${INSTALL_WORKER_NAME}.access.%Y-%m-%d.log 86400 +540\" combined env=!do_not_log
 
     RewriteEngine On
     RewriteRule ^/?dummy\.html\$ - [R=404]

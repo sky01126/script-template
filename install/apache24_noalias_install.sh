@@ -26,8 +26,12 @@
 # - SSL 1.1.1 사용 시 아래 2개 파일 복사
 #   cp /home/server/openssl/lib/libssl.so.1.1 /usr/lib64/
 #   cp /home/server/openssl/lib/libcrypto.so.1.1 /usr/lib64/
+#
+# - [2022.01.04] 보안 업데이트 - Apache HTTP Server 2.4.51 및 이전 버전
+#   Apache HTTP Server에서 널 포인터 역참조로 인해 발생하는 서비스거부 취약점(CVE-2021-44224)
+#   Apache HTTP Server에서 입력값 검증이 미흡하여 발생하는 버퍼오버플로우 취약점(CVE-2021-44790)
 
-export SERVER_HOME=/nkapps/nkshop
+echo "---------------- Apache - v2022.01.11.001 ----------------"
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Exit on error
@@ -82,7 +86,7 @@ fi
 # Apache 2.4
 SERVER_HTTPD_HOME='apache24'
 
-HTTPD_VERSION="2.4.51"
+HTTPD_VERSION="2.4.52"
 HTTPD_DOWNLOAD_URL="http://archive.apache.org/dist/httpd/httpd-${HTTPD_VERSION}.tar.gz"
 HTTPD_NAME=${HTTPD_DOWNLOAD_URL##+(*/)}
 HTTPD_HOME=${HTTPD_NAME%$EXTENSION}
@@ -1447,11 +1451,11 @@ echo "<Location /jkmanager>
 </Location>
 
 <LocationMatch \"/WEB-INF\">
-    deny from all
+    Require all denied
 </LocationMatch>
 
 <LocationMatch \"/META-INF\">
-    deny from all
+    Require all denied
 </LocationMatch>
 " > ${SERVER_HOME}${PROGRAME_HOME}/${SERVER_HTTPD_HOME}/conf/extra/security.conf
 

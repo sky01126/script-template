@@ -10,7 +10,18 @@
 #
 # 멀티 쉘 실행 : bash <(curl -fsSL -H 'Pragma: no-cache' https://raw.githubusercontent.com/sky01126/script-template/master/install/tomcat_install.sh)
 
-echo "---------------- Tomcat - v2022.01.10.003 ----------------"
+echo "---------------- Tomcat - v2022.01.11.001 ----------------"
+
+# ----------------------------------------------------------------------------------------------------------------------
+export SERVER_HOME="/tomcat"
+#export SRC_HOME="$SERVER_HOME/src"
+#export CHECK_TOMCAT="Tomcat8"
+#export TOMCAT_BASE="master"
+#export MIN_MEMORY="1024"
+#export MAX_MEMORY="2048"
+#export HTTP_PORT="8080"
+# export LOG_HOME='${catalina.base}/logs'
+export LOG_HOME='/tc_log'
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Exit on error
@@ -43,15 +54,6 @@ while [[ -h "$PRG" ]]; do
 done
 PRGDIR=`dirname "$PRG"`
 
-
-# ----------------------------------------------------------------------------------------------------------------------
-#export SERVER_HOME="/Volumes/Development/server"
-#export SRC_HOME="$SERVER_HOME/src"
-#export CHECK_TOMCAT="Tomcat8"
-#export TOMCAT_BASE="master"
-#export MIN_MEMORY="1024"
-#export MAX_MEMORY="2048"
-#export HTTP_PORT="8080"
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -1356,7 +1358,7 @@ source \$PRGDIR/appenv.sh
 # ----------------------------------------------------------------------------------------------------------------------
 # 실행 권한 설정
 chmod +x ${CATALINA_BASE}/bin/*.sh
-chmod +x ${CATALINA_BASE}/bin/${TOMCAT_BASE}
+#chmod +x ${CATALINA_BASE}/bin/${TOMCAT_BASE}
 
 # 실행 권한 삭제
 chmod -x ${CATALINA_BASE}/bin/appenv.sh
@@ -1595,7 +1597,7 @@ echo "<?xml version='1.0' encoding='utf-8'?>
 echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 <configuration>
     <property name=\"max.historys\" value=\"30\" />
-    <property name=\"catalina_logs\" value=\"\${catalina.base}/logs \"/>
+    <property name=\"catalina_logs\" value=\"${LOG_HOME}\" />
 
     <appender name=\"CONSOLE\" class=\"org.apache.juli.logging.ch.qos.logback.core.ConsoleAppender\">
         <encoder>
@@ -1679,7 +1681,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 echo "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>
 <configuration>
     <property name=\"max.historys\" value=\"30\" />
-    <property name=\"catalina_logs\" value=\"\${catalina.base}/logs\" />
+    <property name=\"catalina_logs\" value=\"${LOG_HOME}\" />
 
     <!-- always a good activate OnConsoleStatusListener -->
     <statusListener class=\"ch.qos.logback.core.status.OnConsoleStatusListener\" />

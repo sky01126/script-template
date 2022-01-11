@@ -56,7 +56,7 @@ make install
 
 if [[ ! -z ${OPENSSL_ALIAS} ]]; then
     cd ${SERVER_HOME}
-    ln -s .${PROGRAME_HOME}/${OPENSSL_HOME} ${OPENSSL_ALIAS}
+    ln -s ./${PROGRAME_HOME}/${OPENSSL_HOME} ${OPENSSL_ALIAS}
 
     if [[ -f ${BASH_FILE} ]]; then
         SET_OPENSSL_HOME=`awk "/# OpenSSL Home/" ${BASH_FILE}`

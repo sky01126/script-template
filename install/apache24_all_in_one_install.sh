@@ -33,7 +33,7 @@
 #   Apache HTTP Server에서 널 포인터 역참조로 인해 발생하는 서비스거부 취약점(CVE-2021-44224)
 #   Apache HTTP Server에서 입력값 검증이 미흡하여 발생하는 버퍼오버플로우 취약점(CVE-2021-44790)
 
-echo "---------------- Apache - v2022.01.11.005 ----------------"
+echo "---------------- Apache - v2022.01.11.006 ----------------"
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Exit on error
@@ -912,8 +912,8 @@ ServerName ${DOMAIN_NAME}:80
 # logged here.  If you *do* define an error logfile for a <VirtualHost>
 # container, that host's errors will be logged there and not here.
 #
-# ErrorLog \"|${SERVER_HOME}/${HTTPD_HOME}/bin/rotatelogs -L logs/error.log logs/archive/error.%Y-%m-%d.log 86400 +540
-ErrorLog \"|${SERVER_HOME}/${HTTPD_HOME}/bin/rotatelogs ${LOG_HOME}/error.%Y-%m-%d.log 86400 +540
+# ErrorLog \"|${SERVER_HOME}/${HTTPD_HOME}/bin/rotatelogs -L ${LOG_HOME}/error.log ${LOG_HOME}/archive/error.%Y-%m-%d.log 86400 +540\"
+ErrorLog \"|${SERVER_HOME}/${HTTPD_HOME}/bin/rotatelogs ${LOG_HOME}/error.%Y-%m-%d.log 86400 +540\"
 
 #
 # LogLevel: Control the number of messages logged to the error_log.
@@ -943,15 +943,8 @@ LogLevel warn
     # define per-<VirtualHost> access logfiles, transactions will be
     # logged therein and *not* in this file.
     #
-    # CustomLog \"logs/access_log\" common
-    # CustomLog \"|${SERVER_HOME}/${HTTPD_HOME}/bin/rotatelogs -L logs/access.log logs/archive/access.%Y-%m-%d.log 86400 +540\" combined env=!do_not_log
+    # CustomLog \"|${SERVER_HOME}/${HTTPD_HOME}/bin/rotatelogs -L ${LOG_HOME}/access.log ${LOG_HOME}/archive/access.%Y-%m-%d.log 86400 +540\" combined env=!do_not_log
     CustomLog \"|${SERVER_HOME}/${HTTPD_HOME}/bin/rotatelogs ${LOG_HOME}/access.%Y-%m-%d.log 86400 +540\" combined env=!do_not_log
-
-    #
-    # If you prefer a logfile with access, agent, and referer information
-    # (Combined Logfile Format) you can use the following directive.
-    #
-    #CustomLog \"logs/access_log\" combined
 </IfModule>
 
 <IfModule headers_module>
@@ -1550,8 +1543,8 @@ SSLPassPhraseDialog  builtin
 #   Inter-Process Session Cache:
 #   Configure the SSL Session Cache: First the mechanism
 #   to use and second the expiring timeout (in seconds).
-#SSLSessionCache         \"dbm:/home/server/opt/local/httpd-2.4.29/logs/ssl_scache\"
-SSLSessionCache        \"shmcb:/home/server/opt/local/httpd-2.4.29/logs/ssl_scache(512000)\"
+#SSLSessionCache         \"dbm:${LOG_HOME}/ssl_scache\"
+SSLSessionCache        \"shmcb:${LOG_HOME}/ssl_scache(512000)\"
 SSLSessionCacheTimeout  300
 
 #   OCSP Stapling (requires OpenSSL 0.9.8h or later)
@@ -1568,7 +1561,7 @@ SSLSessionCacheTimeout  300
 #   the same mechanism that is used for the SSL session cache
 #   above.  If stapling is used with more than a few certificates,
 #   the size may need to be increased.  (AH01929 will be logged.)
-#SSLStaplingCache \"shmcb:/home/server/opt/local/httpd-2.4.29/logs/ssl_stapling(32768)\"
+#SSLStaplingCache \"shmcb:${LOG_HOME}/ssl_stapling(32768)\"
 
 #   Seconds before valid OCSP responses are expired from the cache
 #SSLStaplingStandardCacheTimeout 3600

@@ -31,7 +31,7 @@
 #   Apache HTTP Server에서 널 포인터 역참조로 인해 발생하는 서비스거부 취약점(CVE-2021-44224)
 #   Apache HTTP Server에서 입력값 검증이 미흡하여 발생하는 버퍼오버플로우 취약점(CVE-2021-44790)
 
-echo "---------------- Apache - v2022.01.11.001 ----------------"
+echo "---------------- Apache - v2022.01.11.006 ----------------"
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Exit on error
@@ -1055,8 +1055,8 @@ ServerName ${DOMAIN_NAME}:80
 # logged here.  If you *do* define an error logfile for a <VirtualHost>
 # container, that host's errors will be logged there and not here.
 #
-ErrorLog \"|${SERVER_HOME}/${HTTPD_ALIAS}/bin/rotatelogs logs/error.%Y-%m-%d.log 86400 +540
-# ErrorLog \"|${SERVER_HOME}/${HTTPD_ALIAS}/bin/rotatelogs -L logs/error.log logs/archive/error.%Y-%m-%d.log 86400 +540
+# ErrorLog \"|${SERVER_HOME}/${HTTPD_ALIAS}/bin/rotatelogs -L logs/error.log logs/archive/error.%Y-%m-%d.log 86400 +540\"
+ErrorLog \"|${SERVER_HOME}/${HTTPD_ALIAS}/bin/rotatelogs logs/error.%Y-%m-%d.log 86400 +540\"
 
 #
 # LogLevel: Control the number of messages logged to the error_log.
@@ -1763,8 +1763,8 @@ SSLPassPhraseDialog  builtin
 #   Inter-Process Session Cache:
 #   Configure the SSL Session Cache: First the mechanism
 #   to use and second the expiring timeout (in seconds).
-#SSLSessionCache         \"dbm:/home/server/opt/local/httpd-2.4.29/logs/ssl_scache\"
-SSLSessionCache        \"shmcb:/home/server/opt/local/httpd-2.4.29/logs/ssl_scache(512000)\"
+#SSLSessionCache         \"dbm:${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/logs/ssl_scache\"
+SSLSessionCache        \"shmcb:${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/logs/ssl_scache(512000)\"
 SSLSessionCacheTimeout  300
 
 #   OCSP Stapling (requires OpenSSL 0.9.8h or later)
@@ -1781,7 +1781,7 @@ SSLSessionCacheTimeout  300
 #   the same mechanism that is used for the SSL session cache
 #   above.  If stapling is used with more than a few certificates,
 #   the size may need to be increased.  (AH01929 will be logged.)
-#SSLStaplingCache \"shmcb:/home/server/opt/local/httpd-2.4.29/logs/ssl_stapling(32768)\"
+#SSLStaplingCache \"shmcb:${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/logs/ssl_stapling(32768)\"
 
 #   Seconds before valid OCSP responses are expired from the cache
 #SSLStaplingStandardCacheTimeout 3600

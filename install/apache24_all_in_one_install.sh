@@ -1312,6 +1312,8 @@ worker.${INSTALL_WORKER_NAME}01.host=127.0.0.1
 worker.${INSTALL_WORKER_NAME}01.port=8009
 worker.${INSTALL_WORKER_NAME}01.lbfactor=1
 # worker.${INSTALL_WORKER_NAME}01.redirect=tomcat02
+# Setting Tomcat APR Secret
+# worker.${INSTALL_WORKER_NAME}01.secret=${INSTALL_WORKER_NAME}
 
 # ${INSTALL_WORKER_NAME}02
 # worker.${INSTALL_WORKER_NAME}02.reference=worker.template

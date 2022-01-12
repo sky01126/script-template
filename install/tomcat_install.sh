@@ -131,7 +131,8 @@ elif [[ "${CHECK_TOMCAT}" == "Tomcat9" ]]; then
 else
     # ------------------------------------------------------------------------------------------------------------------
     # Tomcat 8,5.x
-    TOMCAT_VERSION='8.5.56'
+    # TOMCAT_VERSION='8.5.56'
+    TOMCAT_VERSION='8.5.73'
     TOMCAT_DOWNLOAD_URL="http://archive.apache.org/dist/tomcat/tomcat-8/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz"
     TOMCAT_NATIVE_HOME='tomcat-native-*-src'
 
@@ -281,6 +282,9 @@ if [[ ! -d "${SERVER_HOME}/${PROGRAME_HOME}/${TOMCAT_HOME}" ]]; then
     rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${TOMCAT_HOME}/temp
     rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${TOMCAT_HOME}/webapps
     rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${TOMCAT_HOME}/work
+    rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${TOMCAT_HOME}/BUILDING.txt
+    rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${TOMCAT_HOME}/CONTRIBUTING.md
+    rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${TOMCAT_HOME}/README.md
 
     cd ${SRC_HOME}
 
@@ -1465,7 +1469,7 @@ echo "<?xml version='1.0' encoding='utf-8'?>
                maxThreads=\"1024\"
                minSpareThreads=\"25\"
                port=\"${AJP_PORT}\"
-               protocol=\"org.apache.coyote.ajp.AjpNio2Protocol\"
+               protocol=\"AJP/1.3\"
                redirectPort=\"8443\"
                secretRequired=\"false\"
                URIEncoding=\"UTF-8\" />
@@ -1479,7 +1483,7 @@ echo "<?xml version='1.0' encoding='utf-8'?>
                maxThreads=\"1024\"
                minSpareThreads=\"25\"
                port=\"${AJP_PORT}\"
-               protocol=\"org.apache.coyote.ajp.AjpNio2Protocol\"
+               protocol=\"AJP/1.3\"
                redirectPort=\"8443\"
                secret=\"${TOMCAT_BASE}\"
                URIEncoding=\"UTF-8\" />

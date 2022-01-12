@@ -10,7 +10,7 @@
 #
 # 멀티 쉘 실행 : bash <(curl -fsSL https://raw.githubusercontent.com/sky01126/script-template/master/install/tomcat_install.sh)
 
-echo "---------------- Tomcat - v2022.01.12.003 ----------------"
+echo "---------------- Tomcat - v2022.01.12.004 ----------------"
 
 # ----------------------------------------------------------------------------------------------------------------------
 export SERVER_HOME="/tomcat"
@@ -294,7 +294,8 @@ fi
 
 # ----------------------------------------------------------------------------------------------------------------------
 CATALINA_HOME="${SERVER_HOME}/${PROGRAME_HOME}/${TOMCAT_HOME}"
-CATALINA_BASE="${SERVER_HOME%/}/tomcat"
+# CATALINA_BASE="${SERVER_HOME%/}/tomcat"
+CATALINA_BASE="${SERVER_HOME%/}"
 
 # Logback Level - DEBUG, INFO, WARN, ERROR
 LOG_LEVEL="INFO"
@@ -492,7 +493,7 @@ mkdir -p ${CATALINA_BASE}/work
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-# appenv.sh
+# config.sh
 echo "#!/bin/sh
 # ---------------------------------------------------------------------------------
 #   ______                           __
@@ -534,10 +535,13 @@ export CATALINA_HOME=\""${CATALINA_HOME}"\"
 # CATALINA_BASE is the location of the configuration files of this instance of Tomcat
 export CATALINA_BASE=\`cd \"\$PRGDIR/..\" >/dev/null; pwd\`
 
+# Full path to a file where stdout and stderr will be redirected.
+export CATALINA_OUT=\""${LOG_HOME}"\"
+
 # CATALINA_USER is the default user of tomcat
 export CATALINA_USER=\""${USERNAME}"\"
 export CATALINA_GROUP=\""${GROUPNAME}"\"
-" > ${CATALINA_BASE}/bin/appenv.sh
+" > ${CATALINA_BASE}/bin/config.sh
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -703,7 +707,7 @@ echo "#!/bin/sh
 PRG=\`realpath \$0\`
 PRGDIR=\`dirname \"\$PRG\"\`
 
-source \$PRGDIR/appenv.sh
+source \$PRGDIR/config.sh
 
 # ---------------------------------------------------------------------------------
 export HOSTNAME=\`hostname\`
@@ -1041,7 +1045,7 @@ echo "#!/bin/sh
 PRG=\`realpath \$0\`
 PRGDIR=\`dirname \"\$PRG\"\`
 
-source \$PRGDIR/appenv.sh
+source \$PRGDIR/config.sh
 
 # Tomcat Start...
 if [[ \"\$USER\" == \"root\" ]]; then
@@ -1067,7 +1071,7 @@ echo "#!/bin/sh
 PRG=\`realpath \$0\`
 PRGDIR=\`dirname \"\$PRG\"\`
 
-source \$PRGDIR/appenv.sh
+source \$PRGDIR/config.sh
 
 # ---------------------------------------------------------------------------------
 # Tomcat Stop...
@@ -1094,7 +1098,7 @@ echo "#!/bin/sh
 PRG=\`realpath \$0\`
 PRGDIR=\`dirname \"\$PRG\"\`
 
-source \$PRGDIR/appenv.sh
+source \$PRGDIR/config.sh
 
 # ---------------------------------------------------------------------------------
 # Tomcat Stop / Start...
@@ -1121,7 +1125,7 @@ echo "#!/bin/sh
 PRG=\`realpath \$0\`
 PRGDIR=\`dirname \"\$PRG\"\`
 
-source \$PRGDIR/appenv.sh
+source \$PRGDIR/config.sh
 
 # ---------------------------------------------------------------------------------
 \$CATALINA_BASE/bin/tomcat.sh status
@@ -1178,7 +1182,7 @@ source \$PRGDIR/appenv.sh
 # done
 # PRGDIR=\`dirname \"\$PRG\"\`
 
-# source \$PRGDIR/appenv.sh
+# source \$PRGDIR/config.sh
 
 # # crontab 에 등록
 # # 0 0 * * * ${CATALINA_BASE}/bin/rotatelog.sh
@@ -1284,7 +1288,7 @@ source \$PRGDIR/appenv.sh
 # done
 # PRGDIR=\`dirname \"\$PRG\"\`
 
-# source \$PRGDIR/appenv.sh
+# source \$PRGDIR/config.sh
 
 # # crontab 에 등록
 # # 10 0 * * * ${CATALINA_BASE}/bin/log_delete.sh
@@ -1348,7 +1352,7 @@ chmod +x ${CATALINA_BASE}/bin/*.sh
 #chmod +x ${CATALINA_BASE}/bin/${TOMCAT_BASE}
 
 # 실행 권한 삭제
-chmod -x ${CATALINA_BASE}/bin/appenv.sh
+chmod -x ${CATALINA_BASE}/bin/config.sh
 chmod -x ${CATALINA_BASE}/bin/setenv.sh
 
 # 환경 설정 파일 복사
@@ -1379,27 +1383,8 @@ rm -rf ${CATALINA_BASE}/conf/logging.properties
 
 # ----------------------------------------------------------------------------------------------------------------------
 # server.xml
+mv ${CATALINA_BASE}/conf/server.xml ${CATALINA_BASE}/conf/server.xml.org
 echo "<?xml version='1.0' encoding='utf-8'?>
-<!--
-  Licensed to the Apache Software Foundation (ASF) under one or more
-  contributor license agreements.  See the NOTICE file distributed with
-  this work for additional information regarding copyright ownership.
-  The ASF licenses this file to You under the Apache License, Version 2.0
-  (the \"License\"); you may not use this file except in compliance with
-  the License.  You may obtain a copy of the License at
-
-      http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an \"AS IS\" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
--->
-<!-- Note:  A \"Server\" is not itself a \"Container\", so you may not
-     define subcomponents such as \"Valves\" at this level.
-     Documentation at /docs/config/server.html
- -->
 <Server port=\"${SHUTDOWN_PORT}\" shutdown=\"SHUTDOWN\">
   <Listener className=\"org.apache.catalina.startup.VersionLoggerListener\" />
   <!-- Security listener. Documentation at /docs/config/listeners.html
@@ -1412,18 +1397,7 @@ echo "<?xml version='1.0' encoding='utf-8'?>
   <Listener className=\"org.apache.catalina.mbeans.GlobalResourcesLifecycleListener\" />
   <Listener className=\"org.apache.catalina.core.ThreadLocalLeakPreventionListener\" />
 
-  <!-- Prevent memory leaks due to use of particular java/javax APIs -->
-  <!--
-  <Listener className=\"org.apache.catalina.core.JreMemoryLeakPreventionListener\"
-            classesToInitialize=\"com.mysql.jdbc.NonRegisteringDriver\" />
-  -->
-  <!-- Global JNDI resources
-       Documentation at /docs/jndi-resources-howto.html
-  -->
   <GlobalNamingResources>
-    <!-- Editable user database that can also be used by
-         UserDatabaseRealm to authenticate users
-    -->
     <Resource name=\"UserDatabase\" auth=\"Container\"
               type=\"org.apache.catalina.UserDatabase\"
               description=\"User database that can be updated and saved\"
@@ -1431,39 +1405,7 @@ echo "<?xml version='1.0' encoding='utf-8'?>
               pathname=\"conf/tomcat-users.xml\" />
   </GlobalNamingResources>
 
-  <!-- A \"Service\" is a collection of one or more \"Connectors\" that share
-       a single \"Container\" Note:  A \"Service\" is not itself a \"Container\",
-       so you may not define subcomponents such as \"Valves\" at this level.
-       Documentation at /docs/config/service.html
-   -->
   <Service name=\"Catalina\">
-
-    <!--The connectors can use a shared executor, you can define one or more named thread pools-->
-    <!--
-    <Executor name=\"tomcatThreadPool\" namePrefix=\"catalina-exec-\"
-        maxThreads=\"150\" minSpareThreads=\"4\"/>
-    -->
-
-    <!-- A \"Connector\" represents an endpoint by which requests are received
-         and responses are returned. Documentation at :
-         Java HTTP Connector: /docs/config/http.html (blocking & non-blocking)
-         Java AJP  Connector: /docs/config/ajp.html
-         APR (HTTP/AJP) Connector: /docs/apr.html
-         Define a non-SSL/TLS HTTP/1.1 Connector on port ${HTTP_PORT}
-    -->
-
-    <!--
-    <Connector port=\"${HTTP_PORT}\" protocol=\"HTTP/1.1\"
-               acceptCount=\"100\"
-               connectionTimeout=\"5000\"
-               enableLookups=\"false\"
-               maxThreads=\"400\"
-               redirectPort=\"8443\"
-               relaxedQueryChars=\"[\\\\]^\`{|}\"
-               URIEncoding=\"UTF-8\" />
-    -->
-    <!-- Apache APR Protocol HTTP Connector -->
-    <!-- <Connector address=\"127.0.0.1\" port=\"${HTTP_PORT}\" protocol=\"org.apache.coyote.http11.Http11AprProtocol\" -->
     <Connector port=\"${HTTP_PORT}\" protocol=\"org.apache.coyote.http11.Http11AprProtocol\"
                acceptCount=\"100\"
                address=\"0.0.0.0\"
@@ -1485,16 +1427,7 @@ echo "<?xml version='1.0' encoding='utf-8'?>
                useBodyEncodingForURI=\"true\" />
 
     <!-- Define a SSL/TLS HTTP/1.1 Connector on port 8443
-         This connector uses the NIO implementation that requires the JSSE
-         style configuration. When using the APR/native implementation, the
-         OpenSSL style configuration is required as described in the APR/native
-         documentation -->
-    <!--
-    <Connector port=\"8443\" protocol=\"org.apache.coyote.http11.Http11NioProtocol\"
-               maxThreads=\"150\" SSLEnabled=\"true\" scheme=\"https\" secure=\"true\"
-               clientAuth=\"false\" sslProtocol=\"TLS\" />
-    -->
-    <!-- Apache APR Protocol HTTPS Connector - Apache 인증서를 사용한다. -->
+         Apache APR Protocol HTTPS Connector - Use Apache Certificates -->
     <!--
     <Connector address=\"127.0.0.1\" port=\"443\" protocol=\"org.apache.coyote.http11.Http11AprProtocol\"
                acceptCount=\"100\"
@@ -1537,17 +1470,23 @@ echo "<?xml version='1.0' encoding='utf-8'?>
                secretRequired=\"false\"
                URIEncoding=\"UTF-8\" />
 
-
-    <!-- An Engine represents the entry point (within Catalina) that processes
-         every request.  The Engine implementation for Tomcat stand alone
-         analyzes the HTTP headers included with the request, and passes them
-         on to the appropriate Host (virtual host).
-         Documentation at /docs/config/engine.html -->
+    <!-- Define an AJP 1.3 Connector on port ${AJP_PORT} -->
+    <!--
+    <Connector acceptCount=\"100\"
+               address=\"0.0.0.0\"
+               connectionTimeout=\"5000\"
+               enableLookups=\"false\"
+               maxThreads=\"1024\"
+               minSpareThreads=\"25\"
+               port=\"${AJP_PORT}\"
+               protocol=\"org.apache.coyote.ajp.AjpNio2Protocol\"
+               redirectPort=\"8443\"
+               secret=\"${TOMCAT_BASE}\"
+               URIEncoding=\"UTF-8\" />
+    -->
 
     <!-- You should set jvmRoute to support load-balancing via AJP ie : -->
-    <!--
-    <Engine name=\"Catalina\" defaultHost=\"localhost\" jvmRoute=\"${TOMCAT_BASE}01\">
-    -->
+    <!-- <Engine name=\"Catalina\" defaultHost=\"localhost\" jvmRoute=\"${TOMCAT_BASE}01\"> -->
     <Engine name=\"Catalina\" defaultHost=\"localhost\">
 
       <!--For clustering, please take a look at documentation at:
@@ -1560,10 +1499,6 @@ echo "<?xml version='1.0' encoding='utf-8'?>
       <!-- Use the LockOutRealm to prevent attempts to guess user passwords
            via a brute-force attack -->
       <Realm className=\"org.apache.catalina.realm.LockOutRealm\">
-        <!-- This Realm uses the UserDatabase configured in the global JNDI
-             resources under the key \"UserDatabase\".  Any edits
-             that are performed against this UserDatabase are immediately
-             available for use by the Realm.  -->
         <Realm className=\"org.apache.catalina.realm.UserDatabaseRealm\"
                resourceName=\"UserDatabase\"/>
       </Realm>
@@ -1576,7 +1511,6 @@ echo "<?xml version='1.0' encoding='utf-8'?>
 
         <!-- Error Report Valve (Tomcat 7.0.55 and later versions) -->
         <Valve className=\"org.apache.catalina.valves.ErrorReportValve\" showReport=\"false\" showServerInfo=\"false\" />
-
       </Host>
     </Engine>
   </Service>

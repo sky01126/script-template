@@ -10,7 +10,7 @@
 #
 # 멀티 쉘 실행 : bash <(curl -fsSL https://raw.githubusercontent.com/sky01126/script-template/master/install/tomcat_install.sh)
 
-echo "---------------- Tomcat - v2022.01.12.004 ----------------"
+echo "---------------- Tomcat - v2022.01.12.005 ----------------"
 
 # ----------------------------------------------------------------------------------------------------------------------
 export SERVER_HOME="/tomcat"
@@ -524,7 +524,7 @@ export SERVER_HOME=\""${SERVER_HOME%/}"\"
 
 # JAVA_HOME is the location of the bin files of Java
 if [[ -z \"\$JAVA_HOME\" ]]; then
-    export JAVA_HOME=\"${SERVER_HOME%/}/java\"
+    export JAVA_HOME=\""${SERVER_HOME%/}/java"\"
 else
     export JAVA_HOME=\$JAVA_HOME
 fi
@@ -536,7 +536,7 @@ export CATALINA_HOME=\""${CATALINA_HOME}"\"
 export CATALINA_BASE=\`cd \"\$PRGDIR/..\" >/dev/null; pwd\`
 
 # Full path to a file where stdout and stderr will be redirected.
-export CATALINA_OUT=\""${LOG_HOME}"\"
+export CATALINA_OUT=\""${LOG_HOME}/catalina.out"\"
 
 # CATALINA_USER is the default user of tomcat
 export CATALINA_USER=\""${USERNAME}"\"

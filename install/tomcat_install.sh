@@ -560,8 +560,6 @@ echo "#!/bin/sh
 # :: Version ::              (v${TOMCAT_VERSION})
 # ---------------------------------------------------------------------------------
 export JAVA_HOME=\"${SERVER_HOME%/}/java\"
-
-# ---------------------------------------------------------------------------------
 export APR_HOME=\"${SERVER_HOME%/}/apr\"
 export OPENSSL_HOME=\"${SERVER_HOME%/}/openssl\"
 #export CLASSPATH=\$CLASSPATH
@@ -779,7 +777,7 @@ logo() {
     if [ ! -z \"\$CATALINA_PID\" ]; then
         printf \"Using CATALINA_PID:    \$CATALINA_PID\\\\n\"
     fi
-    printf \"Using CATALINA_TMPDIR: \$CATALINA_BASE/temp\\\\n\"
+    printf \"Using CATALINA_TMP:    \$CATALINA_BASE/temp\\\\n\"
     printf \"Using JAVA_HOME:       \$JAVA_HOME\\\\n\"
     echo
 }
@@ -807,8 +805,8 @@ fi
 logo
 
 # ---------------------------------------------------------------------------------
-# shutdown wait is wait time in seconds for java proccess to stop (120 sec)
-SHUTDOWN_WAIT=120
+# shutdown wait is wait time in seconds for java proccess to stop (60 sec)
+SHUTDOWN_WAIT=60
 
 # ---------------------------------------------------------------------------------
 ## [중요] OS 계정이 8자가 넘어가면 프로세스 정보에서 계정명으로 보이지 않고 PID 번호로 보여주는 문제가 있음.
@@ -1608,7 +1606,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 
 # ----------------------------------------------------------------------------------------------------------------------
 # logback-access.xml
-echo "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>
+echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 <configuration>
     <property name=\"max.historys\" value=\"30\" />
     <property name=\"catalina_logs\" value=\"${LOG_HOME}\" />
@@ -1621,8 +1619,11 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>
         <append>true</append>
         <encoder>
             <charset>UTF-8</charset>
+            <!-- %D - Time taken to process the request, in millis -->
+            <!-- %T - Time taken to process the request, in seconds -->
             <!-- <pattern>%h %i{NS-CLIENT-IP} %l %u [%t] \"%i{Host}\" \"%r\" %s %b \"%i{Referer}\" \"%i{User-Agent}\" TIME:%T</pattern> -->
-            <pattern>%h %i{X-Forwarded-For} [%i{X-B3-TraceId},%i{X-B3-SpanId},%i{X-B3-ParentSpanId}] %l %u [%t{yyyy-MM-dd HH:mm:ss}] \"%i{Host}\" \"%r\" %s %b \"%i{Referer}\" \"%i{User-Agent}\" %D</pattern>
+            <!-- <pattern>%h %i{X-Forwarded-For} [%i{X-B3-TraceId},%i{X-B3-SpanId},%i{X-B3-ParentSpanId}] %l %u [%t{yyyy-MM-dd HH:mm:ss}] \"%i{Host}\" \"%r\" %s %b \"%i{Referer}\" \"%i{User-Agent}\" TIME:%D</pattern> -->
+            <pattern>%h %i{X-Forwarded-For} %l [%t{yyyy-MM-dd HH:mm:ss}] \"%i{Host}\" \"%r\" %s %b \"%i{Referer}\" \"%i{User-Agent}\" TIME:%D</pattern>
         </encoder>
         <rollingPolicy class=\"ch.qos.logback.core.rolling.TimeBasedRollingPolicy\">
             <fileNamePattern>\${catalina_logs}/archive/access.%d{yyyy-MM-dd}.log</fileNamePattern>

@@ -918,8 +918,11 @@ LogLevel warn
     # a CustomLog directive (see below).
     #
     SetEnvIf REQUEST_URI \"favicon.ico\" do_not_log
+
+    # %T : Time taken to process the request, in seconds
+    # %D : Time taken to process the request, inmicroseconds
     LogFormat \"%h %l %u %t \\\"%{Host}i\\\" \\\"%r\\\" %>s %b \\\"%{Referer}i\\\" \\\"%{User-Agent}i\\\" TIME:%T\" combined
-    #LogFormat \"%h %{NS-CLIENT-IP}i %l %u %t \\\"%{Host}i\\\" \\\"%r\\\" %>s %b \\\"%{Referer}i\\\" \\\"%{User-Agent}i\\\" TIME:%T\" combined
+    #LogFormat \"%h %{NS-CLIENT-IP}i %l %u %t \\\"%{Host}i\\\" \\\"%r\\\" %>s %b \\\"%{Referer}i\\\" \\\"%{User-Agent}i\\\" TIME:%D\" combined
 
     #<IfModule logio_module>
     #  # You need to enable mod_logio.c to use %I and %O
@@ -1233,18 +1236,19 @@ echo "# securety settings
 
 
 # ------------------------------------------------------------------------------
-# StartServers * ThreadsPerChild = MaxSpareThreads
+# StartServers * ThreadsPerChild = MinSpareThreads
+# StartServers * MinSpareThreads = MaxSpareThreads
 # ServerLimit  * ThreadsPerChild = MaxRequestWorkers
 # +---------------------+-----------------------------------------------------
-# | StartServers        | 처음 시작시 생성할 쓰레드 개수
+# | StartServers        | 처음 시작시 생성할 프로세스 수
 # |---------------------|-----------------------------------------------------
-# | ServerLimit         | MaxRequestWorkers 가 생성할 수 있는 최대 쓰레드 개수
+# | ServerLimit         | 최대 생성할 프로세스 수
 # |---------------------|-----------------------------------------------------
 # | MinSpareThreads     | 여유분으로 최소 유지하는 쓰레드 개수
 # |---------------------|-----------------------------------------------------
 # | MaxSpareThreads     | 여유분으로 최대 유지하는 쓰레드 개수
 # |---------------------|-----------------------------------------------------
-# | ThreadsPerChild     |  프로세스당 쓰레드 개수
+# | ThreadsPerChild     | 프로세스 당 쓰레드 개수
 # |---------------------|-----------------------------------------------------
 # | MaxRequestWorkers   | 요청을 동시에 처리할 수 있는 쓰레드 개수
 # +---------------------+-----------------------------------------------------
@@ -1258,12 +1262,12 @@ echo "# securety settings
 #sed -i "68s/.*/    MaxConnectionsPerChild    0/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
 #sed -i "69s/.*/<\/IfModule>\\n/g"                   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
 sed -i "61s/.*/<IfModule mpm_event_module>/g"       ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
-sed -i "62s/.*/    StartServers              8/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
-sed -i "63s/.*/    ServerLimit              16/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
-sed -i "64s/.*/    MinSpareThreads          75/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
-sed -i "65s/.*/    MaxSpareThreads         200/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
-sed -i "66s/.*/    ThreadsPerChild          25/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
-sed -i "67s/.*/    MaxRequestWorkers       400/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
+sed -i "62s/.*/    StartServers              4/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
+sed -i "63s/.*/    ServerLimit              32/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
+sed -i "64s/.*/    MinSpareThreads         256/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
+sed -i "65s/.*/    MaxSpareThreads        1024/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
+sed -i "66s/.*/    ThreadsPerChild          64/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
+sed -i "67s/.*/    MaxRequestWorkers      2048/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
 sed -i "68s/.*/    MaxConnectionsPerChild    0/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
 sed -i "69s/.*/<\/IfModule>\\n/g"                   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
 

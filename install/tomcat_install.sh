@@ -10,7 +10,7 @@
 #
 # 멀티 쉘 실행 : bash <(curl -fsSL https://raw.githubusercontent.com/sky01126/script-template/master/install/tomcat_install.sh)
 
-echo "---------------- Tomcat - v2022.01.13.001 ----------------"
+echo "---------------- Tomcat - v2022.01.14.001 ----------------"
 
 # ----------------------------------------------------------------------------------------------------------------------
 export SERVER_HOME="/tomcat"
@@ -1419,7 +1419,7 @@ echo "<?xml version='1.0' encoding='utf-8'?>
                maxHttpHeaderSize=\"8192\"
                maxKeepAliveRequests=\"10\"
                maxThreads=\"2048\"
-               minSpareThreads=\"25\"
+               minSpareThreads=\"256\"
                processorCache=\"1024\"
                scheme=\"http\"
                secure=\"false\"
@@ -1442,7 +1442,7 @@ echo "<?xml version='1.0' encoding='utf-8'?>
                maxHttpHeaderSize=\"8192\"
                maxKeepAliveRequests=\"10\"
                maxThreads=\"2048\"
-               minSpareThreads=\"25\"
+               minSpareThreads=\"256\"
                processorCache=\"1024\"
                scheme=\"https\"
                secure=\"false\"
@@ -1464,8 +1464,8 @@ echo "<?xml version='1.0' encoding='utf-8'?>
                address=\"0.0.0.0\"
                connectionTimeout=\"5000\"
                enableLookups=\"false\"
-               maxThreads=\"1024\"
-               minSpareThreads=\"25\"
+               maxThreads=\"2048\"
+               minSpareThreads=\"256\"
                port=\"${AJP_PORT}\"
                protocol=\"AJP/1.3\"
                redirectPort=\"8443\"
@@ -1478,8 +1478,8 @@ echo "<?xml version='1.0' encoding='utf-8'?>
                address=\"0.0.0.0\"
                connectionTimeout=\"5000\"
                enableLookups=\"false\"
-               maxThreads=\"1024\"
-               minSpareThreads=\"25\"
+               maxThreads=\"2048\"
+               minSpareThreads=\"256\"
                port=\"${AJP_PORT}\"
                protocol=\"AJP/1.3\"
                redirectPort=\"8443\"

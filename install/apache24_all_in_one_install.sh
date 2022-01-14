@@ -33,7 +33,7 @@
 #   Apache HTTP Server에서 널 포인터 역참조로 인해 발생하는 서비스거부 취약점(CVE-2021-44224)
 #   Apache HTTP Server에서 입력값 검증이 미흡하여 발생하는 버퍼오버플로우 취약점(CVE-2021-44790)
 
-echo "---------------- Apache - v2022.01.13.001 ----------------"
+echo "---------------- Apache - v2022.01.14.001 ----------------"
 
 # ------------------------------------------------------------------------------
 # Exit on error
@@ -1262,7 +1262,7 @@ echo "# securety settings
 #sed -i "68s/.*/    MaxConnectionsPerChild    0/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
 #sed -i "69s/.*/<\/IfModule>\\n/g"                   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
 sed -i "61s/.*/<IfModule mpm_event_module>/g"       ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
-sed -i "62s/.*/    StartServers              4/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
+sed -i "62s/.*/    StartServers              8/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
 sed -i "63s/.*/    ServerLimit              32/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
 sed -i "64s/.*/    MinSpareThreads         256/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
 sed -i "65s/.*/    MaxSpareThreads        1024/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf

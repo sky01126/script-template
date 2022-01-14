@@ -42,7 +42,7 @@
 #   Apache HTTP Server에서 입력값 검증이 미흡하여 발생하는 버퍼오버플로우 취약점(CVE-2021-44790)111
 #
 
-echo "---------------- Apache - v2022.01.14.003 ----------------"
+echo "---------------- Apache - v2022.01.15.005 ----------------"
 
 # ------------------------------------------------------------------------------
 # Exit on error
@@ -821,6 +821,7 @@ chmod +x ${SERVER_HOME}/${HTTPD_HOME}/bin/*.sh
 echo "ServerRoot \"${SERVER_HOME}/${HTTPD_HOME}\"
 
 #Listen 12.34.56.78:80
+#Listen 0.0.0.0:80
 Listen 80
 
 #
@@ -1147,7 +1148,7 @@ PidFile work/httpd.pid
 # Apache Tomcat JK Connect setting
 Include conf/extra/httpd-jk.conf
 
-# Setting MOD Default
+# Setting MOD Default.
 <IfModule mod_deflate>
     # 특별한 MIME type만 압축
     AddOutputFilterByType DEFLATE text/plain text/html text/xml
@@ -1171,21 +1172,29 @@ Include conf/extra/httpd-jk.conf
     SetEnvIfNoCase Request_URI \\.(?:gif|jpe?g|png|bmp|zip|tar|rar|alz|a00|ace|mp3|mp4|mpe?g|wav|asf|wma|wmv|swf|exe|pdf|doc|xsl|hwp|java|t?gz|bz2|7z)$ no-gzip dont-vary
 </IfModule>
 
-# Setting Expire
-<IfModule expires_module>
-    ExpiresActive On
-    ExpiresByType application/javascript \"modification plus 1 years\"
-    ExpiresByType application/x-javascript \"modification plus 1 years\"
-    ExpiresByType application/x-shockwave-flash \"modification plus 1 years\"
-    ExpiresByType image/gif \"modification plus 1 years\"
-    ExpiresByType image/jpeg \"modification plus 1 years\"
-    ExpiresByType image/png \"modification plus 1 years\"
-    ExpiresByType text/css \"modification plus 1 years\"
-    ExpiresByType text/javascript \"modification plus 1 years\"
-    ExpiresByType text/xml \"modification plus 1 years\"
-</IfModule>
+## Setting Expire
+#<IfModule expires_module>
+#    ExpiresActive On
+#    ExpiresByType application/javascript \"modification plus 1 years\"
+#    ExpiresByType application/x-javascript \"modification plus 1 years\"
+#    ExpiresByType application/x-shockwave-flash \"modification plus 1 years\"
+#    ExpiresByType image/gif \"modification plus 1 years\"
+#    ExpiresByType image/jpeg \"modification plus 1 years\"
+#    ExpiresByType image/png \"modification plus 1 years\"
+#    ExpiresByType text/css \"modification plus 1 years\"
+#    ExpiresByType text/javascript \"modification plus 1 years\"
+#    ExpiresByType text/xml \"modification plus 1 years\"
+#</IfModule>
 
-# The HTTP/2 protocol - Check normal operation in worker / event mode.
+##  Setting header \"Content-Security-Policy\", \"X-Content-Type-Options\", \"X-XSS-Protection\", \"Strict-Transport-Security\"
+#<IfModule headers_module>
+#    Header set Content-Security-Policy \"policy\"
+#    Header set X-Content-Type-Options \"nosniff\"
+#    Header set X-XSS-Protection \"1; mode=block\"
+#    Header set Strict-Transport-Security \"max-age=31536000; includeSubDomains; preload\"
+#</IfModule>
+
+# The HTTP/2 protocol - Check normal operation in worker / event mode
 #<IfModule http2_module>
 #    ProtocolsHonorOrder On
 #
@@ -1194,14 +1203,6 @@ Include conf/extra/httpd-jk.conf
 #
 #    # HTTP/2 in a Server context (TLS and cleartext)
 #    #Protocols h2 h2c http/1.1
-#</IfModule>
-
-## \"Content-Security-Policy\", \"X-Content-Type-Options\", \"X-XSS-Protection\", \"Strict-Transport-Security\" 헤더 추가
-#<IfModule headers_module>
-#    Header set Content-Security-Policy \"policy\"
-#    Header set X-Content-Type-Options \"nosniff\"
-#    Header set X-XSS-Protection \"1; mode=block\"
-#    Header set Strict-Transport-Security \"max-age=31536000; includeSubDomains; preload\"
 #</IfModule>
 
 # Allow access only to the specified Method\"HEAD GET POST PUT DELETE OPTIONS\"

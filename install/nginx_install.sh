@@ -31,13 +31,18 @@
 # ./configure && make && sudo make install
 #
 # ----------------------- Alias 등록 ------------------------
-# echo "# Nginx Start / Stop Script.
-# alias nginx-start=\"sudo   /home/server/nginx/bin/start.sh\"
-# alias nginx-stop=\"sudo    /home/server/nginx/bin/stop.sh\"
-# alias nginx-restart=\"sudo /home/server/nginx/bin/restart.sh\"
-# alias nginx-conf=\"sudo /home/server/nginx/bin/configtest.sh\"
+# echo "# Nginx start / stop script.
+# alias nginx-start=\"sudo /nginx/nginx116/bin/start.sh\"
+# alias nginx-stop=\"sudo /nginx/nginx116/bin/stop.sh\"
+# alias nginx-restart=\"sudo /nginx/nginx116/bin/restart.sh\"
+# alias nginx-configtest=\"sudo /nginx/nginx116/bin/configtest.sh\"
 # " >> $HOME/.bash_aliases && source $HOME/.bashrc
+#
+# ----------------------- Nginx 계정 생성 ------------------------
+# groupadd -g 981 -r nginx && useradd -r -u 981 -g nginx -s /sbin/nologin -d /nginx -c "Nginx" nginx
+#
 
+echo "---------------- Nginx - v2022.01.14.001 ----------------"
 
 # ------------------------------------------------------------------------------
 # Exit on error

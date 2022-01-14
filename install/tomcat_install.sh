@@ -9,6 +9,14 @@
 #                       /____/            /____/
 #
 # 멀티 쉘 실행 : bash <(curl -fsSL https://raw.githubusercontent.com/sky01126/script-template/master/install/tomcat_install.sh)
+#
+# ----------------------- Alias 등록 ------------------------
+# echo "# Tomcat start / stop script.
+# alias tomcat-start=\"/tomcat/tomcat85/bin/start.sh\"
+# alias tomcat-stop=\"/tomcat/tomcat85/bin/stop.sh\"
+# alias tomcat-restart=\"/tomcat/tomcat85/bin/restart.sh\"
+# " >> $HOME/.bash_aliases && source $HOME/.bashrc
+#
 
 echo "---------------- Tomcat - v2022.01.14.001 ----------------"
 

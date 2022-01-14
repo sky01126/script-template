@@ -11,27 +11,36 @@
 #
 # 멀티 쉘 실행 : bash <(curl -fsSL -H "Cache-Control: no-cache" -H 'Pragma: no-cache' https://raw.githubusercontent.com/sky01126/script-template/master/install/apache24_all_in_one_install.sh)
 #
-# - 상용 리눅스
-#   yum install -y epel-release
-#   yum install -y libnghttp2
+# ----------------------- 상용 서버 ------------------------
+# yum install -y epel-release
+# yum install -y libnghttp2
 #
-# - 개발 리눅스
-#   yum install -y epel-release
-#   yum install -y libnghttp2 libnghttp2-devel
+# ----------------------- 개발 서버 ------------------------
+# yum install -y epel-release
+# yum install -y libnghttp2 libnghttp2-devel
 #
-# - 참조 사이트
-#   mod_ratelimit : http://elkha.kr/xe/misc/166663
-#                   https://httpd.apache.org/docs/trunk/mod/mod_ratelimit.html
-#   mod_cache : https://httpd.apache.org/docs/2.4/ko/mod/mod_cache.html
-#   아파치 성능향상 : https://httpd.apache.org/docs/2.4/misc/perf-tuning.html
+# ----------------------- 참조 사이트 ------------------------
+# mod_ratelimit : http://elkha.kr/xe/misc/166663
+#                 https://httpd.apache.org/docs/trunk/mod/mod_ratelimit.html
+# mod_cache : https://httpd.apache.org/docs/2.4/ko/mod/mod_cache.html
+# 아파치 성능향상 : https://httpd.apache.org/docs/2.4/misc/perf-tuning.html
 #
-# - SSL 1.1.1 사용 시 아래 2개 파일 복사
-#   cp /home/server/openssl/lib/libcrypto.so.1.1 /usr/lib64/
-#   cp /home/server/openssl/lib/libssl.so.1.1 /usr/lib64/
+# ----------------------- Apache 계정 생성 ------------------------
+# groupadd -g 48 -r apache && useradd -r -u 48 -g apache -s /sbin/nologin -d /apache -c "Apache" apache
 #
+# ----------------------- Alias 등록 ------------------------
+# echo "# Apache start / stop script.
+# alias apache-start=\"sudo /apache/apache24/bin/start.sh\"
+# alias apache-stop=\"sudo /apache/apache24/bin/stop.sh\"
+# alias apache-restart=\"sudo /apache/apache24/bin/restart.sh\"
+# alias apache-configtest=\"/apache/apache24/bin/configtest.sh\"
+# " >> $HOME/.bash_aliases && source $HOME/.bashrc
+#
+# ----------------------- 보안 업데이트 ------------------------
 # - [2022.01.04] 보안 업데이트 - Apache HTTP Server 2.4.51 및 이전 버전
 #   Apache HTTP Server에서 널 포인터 역참조로 인해 발생하는 서비스거부 취약점(CVE-2021-44224)
-#   Apache HTTP Server에서 입력값 검증이 미흡하여 발생하는 버퍼오버플로우 취약점(CVE-2021-44790)
+#   Apache HTTP Server에서 입력값 검증이 미흡하여 발생하는 버퍼오버플로우 취약점(CVE-2021-44790)111
+#
 
 echo "---------------- Apache - v2022.01.14.001 ----------------"
 
@@ -742,8 +751,6 @@ chmod +x ${SERVER_HOME}/${HTTPD_HOME}/bin/*.sh
 
 # ------------------------------------------------------------------------------
 # Apache Config 수정.
-mv ${SERVER_HOME}/${HTTPD_HOME}/conf/httpd.conf ${SERVER_HOME}/${HTTPD_HOME}/conf/httpd.conf.org
-
 echo "ServerRoot \"${SERVER_HOME}/${HTTPD_HOME}\"
 
 #Listen 12.34.56.78:80
@@ -1372,8 +1379,6 @@ echo "# This file provides sample mappings for example wlb
 
 # ------------------------------------------------------------------------------
 # httpd-vhosts settings
-mv ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-vhosts.conf ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-vhosts.conf.org
-
 echo "# Virtual Hosts
 #
 # Required modules: mod_log_config
@@ -1446,8 +1451,6 @@ echo "<VirtualHost *:80>
 
 # ------------------------------------------------------------------------------
 # httpd-vhosts settings
-mv ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-ssl.conf ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-ssl.conf.org
-
 echo "
 #
 # This is the Apache server configuration file providing SSL support.

@@ -42,7 +42,7 @@
 #   Apache HTTP Server에서 입력값 검증이 미흡하여 발생하는 버퍼오버플로우 취약점(CVE-2021-44790)111
 #
 
-echo "---------------- Apache - v2022.01.14.001 ----------------"
+echo "---------------- Apache - v2022.01.14.002 ----------------"
 
 # ------------------------------------------------------------------------------
 # Exit on error
@@ -690,6 +690,73 @@ else
     exit 1
 fi
 " > ${SERVER_HOME}/${HTTPD_HOME}/bin/check-run-thread.sh
+
+
+# ------------------------------------------------------------------------------
+echo "#!bin/sh
+total_request=1000
+concurrency=100
+times=1
+
+cmd_idx=1
+param_count=\$#
+while [ \$cmd_idx -lt \$param_count ]
+do
+    cmd=\$1
+    shift 1
+    case \$cmd in
+        -n)
+            total_request=\$1
+            shift 1;;
+        -c)
+            concurrency=\$1
+            shift 1;;
+        -t)
+            times=\$1
+            shift 1;;
+        *)
+            echo \"\$cmd, support parameter: -n, -c, -t\"
+            ;;
+    esac
+    cmd_idx=\`expr \$cmd_idx + 2\`
+done
+
+url=\$1
+if [[ \$url = '' ]]; then
+    echo \"the test url must be provided...\"
+    exit 2
+fi
+
+echo \"Total Request: \$total_request, Concurrency: \$concurrency, URL: \$url, Times: \$times\"
+
+ab_dir="${SERVER_HOME}/${HTTPD_HOME}"
+ab_cmd=\"\$ab_dir/ab -n \$total_request -c \$concurrency \$url\"
+
+echo \$ab_cmd
+idx=1
+rps_sum=0
+max=-1
+min=99999999
+while [ \$idx -le \$times ]
+do
+    echo \"start loop \$idx\"
+    result=\`\$ab_cmd | grep 'Requests per second:'\`
+    result=\`echo \$result | awk -F ' ' '{ print \$4 }' | awk -F '.' '{ print \$1 }'\`
+
+    rps_sum=\`expr \$result + \$rps_sum\`
+    if [[ \$result -gt \$max ]]; then
+        max=\$result
+    fi
+    if [[ \$result -lt \$min ]]; then
+        min=\$result
+    fi
+    idx=\`expr \$idx + 1\`
+done
+
+echo \"avg rps: \"\`expr \$rps_sum / \$times\`
+echo \"min rps: \$min\"
+echo \"max rps: \$max\"
+" > ${SERVER_HOME}/${HTTPD_HOME}/bin/stress.sh
 
 
 # # ------------------------------------------------------------------------------

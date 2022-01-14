@@ -1237,7 +1237,7 @@ echo "# securety settings
 
 # ------------------------------------------------------------------------------
 # StartServers * ThreadsPerChild = MinSpareThreads
-# StartServers * MinSpareThreads = MaxSpareThreads
+# MinSpareThreads * 2 = MaxSpareThreads
 # ServerLimit  * ThreadsPerChild = MaxRequestWorkers
 # +---------------------+-----------------------------------------------------
 # | StartServers        | 처음 시작시 생성할 프로세스 수
@@ -1264,7 +1264,7 @@ echo "# securety settings
 sed -i "61s/.*/<IfModule mpm_event_module>/g"       ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
 sed -i "62s/.*/    StartServers              8/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
 sed -i "63s/.*/    ServerLimit              32/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
-sed -i "64s/.*/    MinSpareThreads         256/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
+sed -i "64s/.*/    MinSpareThreads         512/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
 sed -i "65s/.*/    MaxSpareThreads        1024/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
 sed -i "66s/.*/    ThreadsPerChild          64/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
 sed -i "67s/.*/    MaxRequestWorkers      2048/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf

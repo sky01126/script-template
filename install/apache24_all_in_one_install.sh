@@ -42,7 +42,7 @@
 #   Apache HTTP Server에서 입력값 검증이 미흡하여 발생하는 버퍼오버플로우 취약점(CVE-2021-44790)111
 #
 
-echo "---------------- Apache - v2022.01.14.002 ----------------"
+echo "---------------- Apache - v2022.01.14.003 ----------------"
 
 # ------------------------------------------------------------------------------
 # Exit on error
@@ -693,7 +693,7 @@ fi
 
 
 # ------------------------------------------------------------------------------
-echo "#!bin/sh
+echo "#!/bin/sh
 total_request=1000
 concurrency=100
 times=1
@@ -729,7 +729,7 @@ fi
 
 echo \"Total Request: \$total_request, Concurrency: \$concurrency, URL: \$url, Times: \$times\"
 
-ab_dir="${SERVER_HOME}/${HTTPD_HOME}"
+ab_dir=\""${SERVER_HOME}/${HTTPD_HOME}/bin"\"
 ab_cmd=\"\$ab_dir/ab -n \$total_request -c \$concurrency \$url\"
 
 echo \$ab_cmd

@@ -1,7 +1,7 @@
 #!/bin/bash
 # APR을 Apache 소스에 넣어서 설치하는 버전.
 # OpenSSL은 OS 설치 버전을 사용.
-# ----------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 #     __ __
 #    / //_/__  __  ______  __  ______ _____  ____ _
 #   / ,< / _ \/ / / / __ \/ / / / __ `/ __ \/ __ `/
@@ -9,33 +9,42 @@
 # /_/ |_\___/\__,_/_/ /_/\__, /\__,_/_/ /_/\__, /
 #                       /____/            /____/
 #
-# 멀티 쉘 실행 : bash <(curl -fsSL -H 'Pragma: no-cache' https://raw.githubusercontent.com/sky01126/script-template/master/install/apache24_all_in_one_install.sh)
+# 멀티 쉘 실행 : bash <(curl -fsSL -H "Cache-Control: no-cache" -H 'Pragma: no-cache' https://raw.githubusercontent.com/sky01126/script-template/master/install/apache24_all_in_one_install.sh)
 #
-# - 상용 리눅스
-#   yum install -y epel-release
-#   yum install -y libnghttp2
+# ----------------------- 상용 서버 ------------------------
+# yum install -y epel-release
+# yum install -y libnghttp2
 #
-# - 개발 리눅스
-#   yum install -y epel-release
-#   yum install -y libnghttp2 libnghttp2-devel
+# ----------------------- 개발 서버 ------------------------
+# yum install -y epel-release
+# yum install -y libnghttp2 libnghttp2-devel
 #
-# - 참조 사이트
-#   mod_ratelimit : http://elkha.kr/xe/misc/166663
-#                   https://httpd.apache.org/docs/trunk/mod/mod_ratelimit.html
-#   mod_cache : https://httpd.apache.org/docs/2.4/ko/mod/mod_cache.html
-#   아파치 성능향상 : https://httpd.apache.org/docs/2.4/misc/perf-tuning.html
+# ----------------------- 참조 사이트 ------------------------
+# mod_ratelimit : http://elkha.kr/xe/misc/166663
+#                 https://httpd.apache.org/docs/trunk/mod/mod_ratelimit.html
+# mod_cache : https://httpd.apache.org/docs/2.4/ko/mod/mod_cache.html
+# 아파치 성능향상 : https://httpd.apache.org/docs/2.4/misc/perf-tuning.html
 #
-# - SSL 1.1.1 사용 시 아래 2개 파일 복사
-#   cp /home/server/openssl/lib/libcrypto.so.1.1 /usr/lib64/
-#   cp /home/server/openssl/lib/libssl.so.1.1 /usr/lib64/
+# ----------------------- Apache 계정 생성 ------------------------
+# groupadd -g 48 -r apache && useradd -r -u 48 -g apache -s /sbin/nologin -d /apache -c "Apache" apache
 #
+# ----------------------- Alias 등록 ------------------------
+# echo "# Apache start / stop script.
+# alias apache-start=\"sudo /apache/apache24/bin/start.sh\"
+# alias apache-stop=\"sudo /apache/apache24/bin/stop.sh\"
+# alias apache-restart=\"sudo /apache/apache24/bin/restart.sh\"
+# alias apache-configtest=\"/apache/apache24/bin/configtest.sh\"
+# " >> $HOME/.bash_aliases && source $HOME/.bashrc
+#
+# ----------------------- 보안 업데이트 ------------------------
 # - [2022.01.04] 보안 업데이트 - Apache HTTP Server 2.4.51 및 이전 버전
 #   Apache HTTP Server에서 널 포인터 역참조로 인해 발생하는 서비스거부 취약점(CVE-2021-44224)
-#   Apache HTTP Server에서 입력값 검증이 미흡하여 발생하는 버퍼오버플로우 취약점(CVE-2021-44790)
+#   Apache HTTP Server에서 입력값 검증이 미흡하여 발생하는 버퍼오버플로우 취약점(CVE-2021-44790)111
+#
 
-echo "---------------- Apache - v2022.01.11.001 ----------------"
+echo "---------------- Apache - v2022.01.15.005 ----------------"
 
-# ----------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Exit on error
 set -e
 
@@ -54,7 +63,7 @@ fi
 unset TMOUT
 
 
-# ----------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 PRG="$0"
 while [[ -h "$PRG" ]]; do
     ls=`ls -ld "$PRG"`
@@ -70,7 +79,7 @@ done
 PRGDIR=`dirname "$PRG"`
 
 
-# ----------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # 현재 사용자의 아이디명과 그룹정보
 # export USERNAME=`id -u -n`
 # export GROUPNAME=`id -g -n`
@@ -78,7 +87,7 @@ export USERNAME="apache"
 export GROUPNAME="apache"
 
 
-# ----------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # 대문자 변환
 uppercase() {
     echo $* | tr "[a-z]" "[A-Z]"
@@ -90,34 +99,43 @@ lowercase() {
 }
 
 
-# ----------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # File Extension
 export EXTENSION='.tar.gz'
 
 
-# ----------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # 서버 디렉토리 설정.
 export SRC_HOME="/apache/src"
 export LOG_HOME="/ap_log"
 export SERVER_HOME="/apache"
+if [[ ! -d "${SRC_HOME}" ]]; then
+    mkdir -p ${SRC_HOME}
+fi
+if [[ ! -d "${LOG_HOME}" ]]; then
+    mkdir -p ${LOG_HOME}
+fi
+if [[ ! -d "${SERVER_HOME}" ]]; then
+    mkdir -p ${SERVER_HOME}
+fi
 
 
-# ----------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # .bashrc 경로 설정.
 export BASH_FILE=${HOME}/.bashrc
 
 
-# ----------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # PCRE
-export PCRE_VERSION="8.38"
+export PCRE_VERSION="8.45"
 export PCRE_DOWNLOAD_URL="http://sourceforge.net/projects/pcre/files/pcre/${PCRE_VERSION}/pcre-${PCRE_VERSION}.tar.gz"
 export PCRE_NAME=${PCRE_DOWNLOAD_URL##+(*/)}
 export PCRE_HOME=${PCRE_NAME%$EXTENSION}
 
 
-# ----------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # APR / APR Util
-export APR_VERSION="1.6.5"
+export APR_VERSION="1.7.0"
 export APR_DOWNLOAD_URL="http://archive.apache.org/dist/apr/apr-${APR_VERSION}.tar.gz"
 export APR_NAME=${APR_DOWNLOAD_URL##+(*/)}
 export APR_HOME=${APR_NAME%$EXTENSION}
@@ -128,7 +146,7 @@ export APR_UTIL_NAME=${APR_UTIL_DOWNLOAD_URL##+(*/)}
 export APR_UTIL_HOME=${APR_UTIL_NAME%$EXTENSION}
 
 
-# ----------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Apache 2.4
 export HTTPD_VERSION="2.4.52"
 export HTTPD_DOWNLOAD_URL="http://archive.apache.org/dist/httpd/httpd-${HTTPD_VERSION}.tar.gz"
@@ -136,13 +154,13 @@ export HTTPD_NAME=${HTTPD_DOWNLOAD_URL##+(*/)}
 export HTTPD_HOME='apache24'
 
 
-# ----------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Apache Tomcat Connector
-MOD_JK_VERSION="1.2.46"
+MOD_JK_VERSION="1.2.48"
 MOD_JK_DOWNLOAD_URL="http://archive.apache.org/dist/tomcat/tomcat-connectors/jk/tomcat-connectors-${MOD_JK_VERSION}-src.tar.gz"
 
 
-# ----------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 printf "\e[00;32m+--------------+----------------------------------------------------------\e[00m\n"
 printf "\e[00;32m| SRC_HOME     |\e[00m ${SRC_HOME}\n"
 printf "\e[00;32m| SERVER_HOME  |\e[00m ${SERVER_HOME}\n"
@@ -170,7 +188,7 @@ if [[ -d "${SERVER_HOME}/${HTTPD_HOME}" ]]; then
 fi
 
 
-# ----------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Domain Name 설정.
 if [[ -z ${DOMAIN_NAME} ]]; then
     printf "\e[00;32m| Enter the domain name\e[00m"
@@ -208,7 +226,7 @@ fi
 tar xvzf ${HTTPD_NAME}
 
 
-# ----------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # APR 추가
 cd ${SRC_HOME}
 if [ ! -f "${SRC_HOME}/${APR_NAME}" ]; then
@@ -220,7 +238,7 @@ tar xvzf ${APR_NAME} -C ${SRC_HOME}/${HTTPD_NAME%$EXTENSION}/srclib/
 cd ${SRC_HOME}/${HTTPD_NAME%$EXTENSION}/srclib/
 mv ${APR_HOME} apr
 
-
+# APR Util
 cd ${SRC_HOME}
 if [ ! -f "${SRC_HOME}/${APR_UTIL_NAME}" ]; then
     printf "\e[00;32m| ${APR_UTIL_NAME} download (URL : ${APR_UTIL_DOWNLOAD_URL})\e[00m\n"
@@ -231,10 +249,8 @@ tar xvzf ${APR_UTIL_NAME} -C ${SRC_HOME}/${HTTPD_NAME%$EXTENSION}/srclib/
 cd ${SRC_HOME}/${HTTPD_NAME%$EXTENSION}/srclib/
 mv ${APR_UTIL_HOME} apr-util
 
-cd ${SRC_HOME}/${HTTPD_NAME%$EXTENSION}
 
-
-# ----------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # PCRE 설치
 cd ${SRC_HOME}
 if [ ! -f "${SRC_HOME}/${PCRE_NAME}" ]; then
@@ -256,7 +272,7 @@ if [[ -d "${SRC_HOME}/${PCRE_HOME}" ]]; then
 fi
 
 
-# ----------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # MPM 모드 설정 변경.
 if [ "$OS" == "linux" ]; then
     sed -i "75s/.*/#define DEFAULT_SERVER_LIMIT 1024/g" ${SRC_HOME}/${HTTPD_NAME%$EXTENSION}/server/mpm/prefork/prefork.c
@@ -271,7 +287,7 @@ if [ "$OS" == "linux" ]; then
 fi
 
 
-# ----------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 INSTALL_CONFIG="--prefix=${SERVER_HOME}/${HTTPD_HOME}"
 INSTALL_CONFIG="${INSTALL_CONFIG} --enable-cache"
 INSTALL_CONFIG="${INSTALL_CONFIG} --enable-cache-disk"
@@ -353,11 +369,10 @@ rm -rf ${SERVER_HOME}/${HTTPD_HOME}/manual
 # 필요 디렉토리 생성.
 mkdir -p ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/uriworkermaps
 mkdir -p ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/vhosts
-mkdir -p ${SERVER_HOME}/${HTTPD_HOME}/logs/archive
 mkdir -p ${SERVER_HOME}/${HTTPD_HOME}/work
 
 
-# ----------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 ## Tomcat Worker Name 설정.
 printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
 printf "\e[00;32m|   ______                           __  \e[00m\n"
@@ -375,7 +390,7 @@ if [[ -z ${INSTALL_WORKER_NAME} ]]; then
 fi
 
 
-# ----------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 echo "#!/bin/sh
 # ------------------------------------------------------------------------------
 #     ___                     __
@@ -430,7 +445,7 @@ fi
 " > ${SERVER_HOME}/${HTTPD_HOME}/bin/start.sh
 
 
-# ----------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 echo "#!/bin/sh
 # ------------------------------------------------------------------------------
 #     ___                     __
@@ -489,7 +504,7 @@ fi
 " > ${SERVER_HOME}/${HTTPD_HOME}/bin/stop.sh
 
 
-# ----------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 echo "#!/bin/sh
 # ------------------------------------------------------------------------------
 #     ___                     __
@@ -558,7 +573,7 @@ fi
 " > ${SERVER_HOME}/${HTTPD_HOME}/bin/restart.sh
 
 
-# ----------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 echo "#!/bin/sh
 # ------------------------------------------------------------------------------
 #     ___                     __
@@ -593,7 +608,7 @@ fi
 " > ${SERVER_HOME}/${HTTPD_HOME}/bin/status.sh
 
 
-# ----------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 echo "#!/bin/sh
 # ------------------------------------------------------------------------------
 #     ___                     __
@@ -635,7 +650,7 @@ export HTTPD_HOME=\`cd \"\$PRGDIR/..\" >/dev/null; pwd\`
 " > ${SERVER_HOME}/${HTTPD_HOME}/bin/configtest.sh
 
 
-# ----------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 echo "#!/bin/sh
 # ------------------------------------------------------------------------------
 #     ___                     __
@@ -677,7 +692,74 @@ fi
 " > ${SERVER_HOME}/${HTTPD_HOME}/bin/check-run-thread.sh
 
 
-# # ----------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+echo "#!/bin/sh
+total_request=1000
+concurrency=100
+times=1
+
+cmd_idx=1
+param_count=\$#
+while [ \$cmd_idx -lt \$param_count ]
+do
+    cmd=\$1
+    shift 1
+    case \$cmd in
+        -n)
+            total_request=\$1
+            shift 1;;
+        -c)
+            concurrency=\$1
+            shift 1;;
+        -t)
+            times=\$1
+            shift 1;;
+        *)
+            echo \"\$cmd, support parameter: -n, -c, -t\"
+            ;;
+    esac
+    cmd_idx=\`expr \$cmd_idx + 2\`
+done
+
+url=\$1
+if [[ \$url = '' ]]; then
+    echo \"the test url must be provided...\"
+    exit 2
+fi
+
+echo \"Total Request: \$total_request, Concurrency: \$concurrency, URL: \$url, Times: \$times\"
+
+ab_dir=\""${SERVER_HOME}/${HTTPD_HOME}/bin"\"
+ab_cmd=\"\$ab_dir/ab -n \$total_request -c \$concurrency \$url\"
+
+echo \$ab_cmd
+idx=1
+rps_sum=0
+max=-1
+min=99999999
+while [ \$idx -le \$times ]
+do
+    echo \"start loop \$idx\"
+    result=\`\$ab_cmd | grep 'Requests per second:'\`
+    result=\`echo \$result | awk -F ' ' '{ print \$4 }' | awk -F '.' '{ print \$1 }'\`
+
+    rps_sum=\`expr \$result + \$rps_sum\`
+    if [[ \$result -gt \$max ]]; then
+        max=\$result
+    fi
+    if [[ \$result -lt \$min ]]; then
+        min=\$result
+    fi
+    idx=\`expr \$idx + 1\`
+done
+
+echo \"avg rps: \"\`expr \$rps_sum / \$times\`
+echo \"min rps: \$min\"
+echo \"max rps: \$max\"
+" > ${SERVER_HOME}/${HTTPD_HOME}/bin/stress.sh
+
+
+# # ------------------------------------------------------------------------------
 # echo "#!/bin/sh
 # # ------------------------------------------------------------------------------
 # #     ___                     __
@@ -730,80 +812,20 @@ fi
 # " > ${SERVER_HOME}/${HTTPD_HOME}/bin/change-user.sh
 
 
-# ----------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 chmod +x ${SERVER_HOME}/${HTTPD_HOME}/bin/*.sh
 
 
-# ----------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Apache Config 수정.
-cp ${SERVER_HOME}/${HTTPD_HOME}/conf/httpd.conf ${SERVER_HOME}/${HTTPD_HOME}/conf/httpd.conf.org
+echo "ServerRoot \"${SERVER_HOME}/${HTTPD_HOME}\"
 
-echo "#
-# This is the main Apache HTTP server configuration file.  It contains the
-# configuration directives that give the server its instructions.
-# See <URL:http://httpd.apache.org/docs/2.4/> for detailed information.
-# In particular, see
-# <URL:http://httpd.apache.org/docs/2.4/mod/directives.html>
-# for a discussion of each configuration directive.
-#
-# Do NOT simply read the instructions in here without understanding
-# what they do.  They're here only as hints or reminders.  If you are unsure
-# consult the online docs. You have been warned.
-#
-# Configuration and logfile names: If the filenames you specify for many
-# of the server's control files begin with \"/\" (or \"drive:/\" for Win32), the
-# server will use that explicit path.  If the filenames do *not* begin
-# with \"/\", the value of ServerRoot is prepended -- so \"logs/access_log\"
-# with ServerRoot set to \"/usr/local/apache2\" will be interpreted by the
-# server as \"/usr/local/apache2/logs/access_log\", whereas \"/logs/access_log\"
-# will be interpreted as '/logs/access_log'.
-
-#
-# ServerRoot: The top of the directory tree under which the server's
-# configuration, error, and log files are kept.
-#
-# Do not add a slash at the end of the directory path.  If you point
-# ServerRoot at a non-local disk, be sure to specify a local disk on the
-# Mutex directive, if file-based mutexes are used.  If you wish to share the
-# same ServerRoot for multiple httpd daemons, you will need to change at
-# least PidFile.
-#
-ServerRoot \"${SERVER_HOME}/${HTTPD_HOME}\"
-
-#
-# Mutex: Allows you to set the mutex mechanism and mutex file directory
-# for individual mutexes, or change the global defaults
-#
-# Uncomment and change the directory if mutexes are file-based and the default
-# mutex file directory is not on a local disk or is not appropriate for some
-# other reason.
-#
-# Mutex default:logs
-
-#
-# Listen: Allows you to bind Apache to specific IP addresses and/or
-# ports, instead of the default. See also the <VirtualHost>
-# directive.
-#
-# Change this to Listen on specific IP addresses as shown below to
-# prevent Apache from glomming onto all bound IP addresses.
-#
 #Listen 12.34.56.78:80
+#Listen 0.0.0.0:80
 Listen 80
 
 #
 # Dynamic Shared Object (DSO) Support
-#
-# To be able to use the functionality of a module which was built as a DSO you
-# have to place corresponding \`LoadModule' lines at this location so the
-# directives contained in it are actually available _before_ they are used.
-# Statically compiled modules (those listed by \`httpd -l') do not need
-
-# to be loaded here.
-#
-# Example:
-# LoadModule foo_module modules/mod_foo.so
-#
 LoadModule mpm_event_module modules/mod_mpm_event.so
 #LoadModule mpm_prefork_module modules/mod_mpm_prefork.so
 #LoadModule mpm_worker_module modules/mod_mpm_worker.so
@@ -898,30 +920,9 @@ LoadModule alias_module modules/mod_alias.so
 LoadModule rewrite_module modules/mod_rewrite.so
 
 <IfModule unixd_module>
-#
-# If you wish httpd to run as a different user or group, you must run
-# httpd as root initially and it will switch.
-#
-# User/Group: The name (or #number) of the user/group to run httpd as.
-# It is usually good practice to create a dedicated user and group for
-# running httpd, as with most system services.
-#
-User daemon
-Group daemon
-
+    User ${USERNAME}
+    Group ${GROUPNAME}
 </IfModule>
-
-# 'Main' server configuration
-#
-# The directives in this section set up the values used by the 'main'
-# server, which responds to any requests that aren't handled by a
-# <VirtualHost> definition.  These values also provide defaults for
-# any <VirtualHost> containers you may define later in the file.
-#
-# All of these directives may appear inside <VirtualHost> containers,
-# in which case these default settings will be overridden for the
-# virtual host being defined.
-#
 
 #
 # ServerAdmin: Your address, where problems with the server should be
@@ -954,47 +955,6 @@ ServerName ${DOMAIN_NAME}:80
 </Directory>
 
 #
-# Note that from this point forward you must specifically allow
-# particular features to be enabled - so if something's not working as
-# you might expect, make sure that you have specifically enabled it
-# below.
-#
-
-#
-# DocumentRoot: The directory out of which you will serve your
-# documents. By default, all requests are taken from this directory, but
-# symbolic links and aliases may be used to point to other locations.
-#
-#DocumentRoot \"${SERVER_HOME}/${HTTPD_HOME}/htdocs\"
-#<Directory \"${SERVER_HOME}/${HTTPD_HOME}/htdocs\">
-#    #
-#    # Possible values for the Options directive are \"None\", \"All\",
-#    # or any combination of:
-#    #   Indexes Includes FollowSymLinks SymLinksifOwnerMatch ExecCGI MultiViews
-#    #
-#    # Note that \"MultiViews\" must be named *explicitly* --- \"Options All\"
-#    # doesn't give it to you.
-#    #
-#    # The Options directive is both complicated and important.  Please see
-#    # http://httpd.apache.org/docs/2.4/mod/core.html#options
-#    # for more information.
-#    #
-#    Options Indexes FollowSymLinks
-#
-#    #
-#    # AllowOverride controls what directives may be placed in .htaccess files.
-#    # It can be \"All\", \"None\", or any combination of the keywords:
-#    #   AllowOverride FileInfo AuthConfig Limit
-#    #
-#    AllowOverride None
-#
-#    #
-#    # Controls who can get stuff from this server.
-#    #
-#    Require all granted
-#</Directory>
-
-#
 # DirectoryIndex: sets the file that Apache will serve if a directory
 # is requested.
 #
@@ -1017,7 +977,8 @@ ServerName ${DOMAIN_NAME}:80
 # logged here.  If you *do* define an error logfile for a <VirtualHost>
 # container, that host's errors will be logged there and not here.
 #
-ErrorLog \"|${SERVER_HOME}/${HTTPD_HOME}/bin/rotatelogs -L logs/error.log logs/archive/error.%Y-%m-%d.log 86400 +540
+# ErrorLog \"|${SERVER_HOME}/${HTTPD_HOME}/bin/rotatelogs -L ${LOG_HOME}/error.log ${LOG_HOME}/archive/error.%Y-%m-%d.log 86400 +540\"
+ErrorLog \"|${SERVER_HOME}/${HTTPD_HOME}/bin/rotatelogs ${LOG_HOME}/error.%Y-%m-%d.log 86400 +540\"
 
 #
 # LogLevel: Control the number of messages logged to the error_log.
@@ -1032,8 +993,11 @@ LogLevel warn
     # a CustomLog directive (see below).
     #
     SetEnvIf REQUEST_URI \"favicon.ico\" do_not_log
-    #LogFormat \"%h %l %u %t \\\"%{Host}i\\\" \\\"%r\\\" %>s %b \\\"%{Referer}i\\\" \\\"%{User-Agent}i\\\" TIME:%T\" combined
-    LogFormat \"%h %{NS-CLIENT-IP}i %l %u %t \\\"%{Host}i\\\" \\\"%r\\\" %>s %b \\\"%{Referer}i\\\" \\\"%{User-Agent}i\\\" TIME:%T\" combined
+
+    # %T : Time taken to process the request, in seconds
+    # %D : Time taken to process the request, inmicroseconds
+    LogFormat \"%h %l %u %t \\\"%{Host}i\\\" \\\"%r\\\" %>s %b \\\"%{Referer}i\\\" \\\"%{User-Agent}i\\\" TIME:%T\" combined
+    #LogFormat \"%h %{NS-CLIENT-IP}i %l %u %t \\\"%{Host}i\\\" \\\"%r\\\" %>s %b \\\"%{Referer}i\\\" \\\"%{User-Agent}i\\\" TIME:%D\" combined
 
     #<IfModule logio_module>
     #  # You need to enable mod_logio.c to use %I and %O
@@ -1047,63 +1011,9 @@ LogLevel warn
     # define per-<VirtualHost> access logfiles, transactions will be
     # logged therein and *not* in this file.
     #
-    #CustomLog \"logs/access_log\" common
-    CustomLog \"|${SERVER_HOME}/${HTTPD_HOME}/bin/rotatelogs -L logs/access.log logs/archive/access.%Y-%m-%d.log 86400 +540\" combined env=!do_not_log
-
-    #
-    # If you prefer a logfile with access, agent, and referer information
-    # (Combined Logfile Format) you can use the following directive.
-    #
-    #CustomLog \"logs/access_log\" combined
+    # CustomLog \"|${SERVER_HOME}/${HTTPD_HOME}/bin/rotatelogs -L ${LOG_HOME}/access.log ${LOG_HOME}/archive/access.%Y-%m-%d.log 86400 +540\" combined env=!do_not_log
+    CustomLog \"|${SERVER_HOME}/${HTTPD_HOME}/bin/rotatelogs ${LOG_HOME}/access.%Y-%m-%d.log 86400 +540\" combined env=!do_not_log
 </IfModule>
-
-<IfModule alias_module>
-    #
-    # Redirect: Allows you to tell clients about documents that used to
-    # exist in your server's namespace, but do not anymore. The client
-    # will make a new request for the document at its new location.
-    # Example:
-    # Redirect permanent /foo http://www.example.com/bar
-
-    #
-    # Alias: Maps web paths into filesystem paths and is used to
-    # access content that does not live under the DocumentRoot.
-    # Example:
-    # Alias /webpath /full/filesystem/path
-    #
-    # If you include a trailing / on /webpath then the server will
-    # require it to be present in the URL.  You will also likely
-    # need to provide a <Directory> section to allow access to
-    # the filesystem path.
-
-    #
-    # ScriptAlias: This controls which directories contain server scripts.
-    # ScriptAliases are essentially the same as Aliases, except that
-    # documents in the target directory are treated as applications and
-    # run by the server when requested rather than as documents sent to the
-    # client.  The same rules about trailing \"/\" apply to ScriptAlias
-    # directives as to Alias.
-    #
-    #ScriptAlias /cgi-bin/ \"${SERVER_HOME}/${HTTPD_HOME}/cgi-bin/\"
-</IfModule>
-
-<IfModule cgid_module>
-    #
-    # ScriptSock: On threaded servers, designate the path to the UNIX
-    # socket used to communicate with the CGI daemon of mod_cgid.
-    #
-    #Scriptsock cgisock
-</IfModule>
-
-#
-# \"${SERVER_HOME}/${HTTPD_HOME}/cgi-bin\" should be changed to whatever your ScriptAliased
-# CGI directory exists, if you have that configured.
-#
-#<Directory \"${SERVER_HOME}/${HTTPD_HOME}/cgi-bin\">
-#    AllowOverride None
-#    Options None
-#    Require all granted
-#</Directory>
 
 <IfModule headers_module>
     #
@@ -1163,13 +1073,6 @@ LogLevel warn
 </IfModule>
 
 #
-# The mod_mime_magic module allows the server to use various hints from the
-# contents of the file itself to determine its type.  The MIMEMagicFile
-# directive tells the module where the hint definitions are located.
-#
-#MIMEMagicFile conf/magic
-
-#
 # Customizable error responses come in three flavors:
 # 1) plain text 2) local redirects 3) external redirects
 #
@@ -1184,25 +1087,6 @@ ErrorDocument 402 /error/402
 ErrorDocument 403 /error/403
 ErrorDocument 404 /error/404
 ErrorDocument 500 /error/500
-
-#
-# MaxRanges: Maximum number of Ranges in a request before
-# returning the entire resource, or one of the special
-# values 'default', 'none' or 'unlimited'.
-# Default setting is to accept 200 Ranges.
-#MaxRanges unlimited
-
-#
-# EnableMMAP and EnableSendfile: On systems that support it,
-# memory-mapping or the sendfile syscall may be used to deliver
-# files.  This usually improves server performance, but must
-# be turned off when serving from networked-mounted
-# filesystems or if support for these functions is otherwise
-# broken on your system.
-# Defaults: EnableMMAP On, EnableSendfile Off
-#
-#EnableMMAP off
-#EnableSendfile on
 
 # Supplemental configuration
 #
@@ -1264,7 +1148,7 @@ PidFile work/httpd.pid
 # Apache Tomcat JK Connect setting
 Include conf/extra/httpd-jk.conf
 
-# Setting MOD Default
+# Setting MOD Default.
 <IfModule mod_deflate>
     # 특별한 MIME type만 압축
     AddOutputFilterByType DEFLATE text/plain text/html text/xml
@@ -1288,21 +1172,29 @@ Include conf/extra/httpd-jk.conf
     SetEnvIfNoCase Request_URI \\.(?:gif|jpe?g|png|bmp|zip|tar|rar|alz|a00|ace|mp3|mp4|mpe?g|wav|asf|wma|wmv|swf|exe|pdf|doc|xsl|hwp|java|t?gz|bz2|7z)$ no-gzip dont-vary
 </IfModule>
 
-# Setting Expire
-<IfModule expires_module>
-    ExpiresActive On
-    ExpiresByType application/javascript \"modification plus 1 years\"
-    ExpiresByType application/x-javascript \"modification plus 1 years\"
-    ExpiresByType application/x-shockwave-flash \"modification plus 1 years\"
-    ExpiresByType image/gif \"modification plus 1 years\"
-    ExpiresByType image/jpeg \"modification plus 1 years\"
-    ExpiresByType image/png \"modification plus 1 years\"
-    ExpiresByType text/css \"modification plus 1 years\"
-    ExpiresByType text/javascript \"modification plus 1 years\"
-    ExpiresByType text/xml \"modification plus 1 years\"
-</IfModule>
+## Setting Expire
+#<IfModule expires_module>
+#    ExpiresActive On
+#    ExpiresByType application/javascript \"modification plus 1 years\"
+#    ExpiresByType application/x-javascript \"modification plus 1 years\"
+#    ExpiresByType application/x-shockwave-flash \"modification plus 1 years\"
+#    ExpiresByType image/gif \"modification plus 1 years\"
+#    ExpiresByType image/jpeg \"modification plus 1 years\"
+#    ExpiresByType image/png \"modification plus 1 years\"
+#    ExpiresByType text/css \"modification plus 1 years\"
+#    ExpiresByType text/javascript \"modification plus 1 years\"
+#    ExpiresByType text/xml \"modification plus 1 years\"
+#</IfModule>
 
-# The HTTP/2 protocol - Check normal operation in worker / event mode.
+##  Setting header \"Content-Security-Policy\", \"X-Content-Type-Options\", \"X-XSS-Protection\", \"Strict-Transport-Security\"
+#<IfModule headers_module>
+#    Header set Content-Security-Policy \"policy\"
+#    Header set X-Content-Type-Options \"nosniff\"
+#    Header set X-XSS-Protection \"1; mode=block\"
+#    Header set Strict-Transport-Security \"max-age=31536000; includeSubDomains; preload\"
+#</IfModule>
+
+# The HTTP/2 protocol - Check normal operation in worker / event mode
 #<IfModule http2_module>
 #    ProtocolsHonorOrder On
 #
@@ -1311,14 +1203,6 @@ Include conf/extra/httpd-jk.conf
 #
 #    # HTTP/2 in a Server context (TLS and cleartext)
 #    #Protocols h2 h2c http/1.1
-#</IfModule>
-
-## \"Content-Security-Policy\", \"X-Content-Type-Options\", \"X-XSS-Protection\", \"Strict-Transport-Security\" 헤더 추가
-#<IfModule headers_module>
-#    Header set Content-Security-Policy \"policy\"
-#    Header set X-Content-Type-Options \"nosniff\"
-#    Header set X-XSS-Protection \"1; mode=block\"
-#    Header set Strict-Transport-Security \"max-age=31536000; includeSubDomains; preload\"
 #</IfModule>
 
 # Allow access only to the specified Method\"HEAD GET POST PUT DELETE OPTIONS\"
@@ -1333,12 +1217,12 @@ Include conf/extra/httpd-jk.conf
 " > ${SERVER_HOME}/${HTTPD_HOME}/conf/httpd.conf
 
 
-# ----------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # httpd-default.conf에서 ServerTokens 설정 변경
 sed -i "55s/.*/ServerTokens Prod/g" ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-default.conf
 
 
-# ----------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Apache Tomcat Connecter Config 추가.
 echo "# Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
@@ -1362,7 +1246,7 @@ LoadModule jk_module modules/mod_jk.so
 
     # Our JK error log
     # You can (and should) use rotatelogs here
-    JkLogFile \"|${SERVER_HOME}/${HTTPD_HOME}/bin/rotatelogs -L logs/mod_jk.log logs/archive/mod_jk.%Y-%m-%d.log 86400 +540\"
+    JkLogFile \"|${SERVER_HOME}/${HTTPD_HOME}/bin/rotatelogs ${LOG_HOME}/mod_jk.%Y-%m-%d.log 86400 +540\"
 
     # Our JK log level (trace,debug,info,warn,error)
     JkLogLevel info
@@ -1394,7 +1278,8 @@ LoadModule jk_module modules/mod_jk.so
 
 # ----------------------------------------------------------------------------------------------------------------------
 # securety settings
-echo "<Location /jkmanager>
+echo "# securety settings
+<Location /jkmanager>
     JkMount jkstatus
     Order deny,allow
     AllowOverride all
@@ -1425,19 +1310,20 @@ echo "<Location /jkmanager>
 " > ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/security.conf
 
 
-# ----------------------------------------------------------------------------------------------------------------------
-# StartServers * ThreadsPerChild = MaxSpareThreads
+# ------------------------------------------------------------------------------
+# StartServers * ThreadsPerChild = MinSpareThreads
+# MinSpareThreads * 2 = MaxSpareThreads
 # ServerLimit  * ThreadsPerChild = MaxRequestWorkers
 # +---------------------+-----------------------------------------------------
-# | StartServers        | 처음 시작시 생성할 쓰레드 개수
+# | StartServers        | 처음 시작시 생성할 프로세스 수
 # |---------------------|-----------------------------------------------------
-# | ServerLimit         | MaxRequestWorkers 가 생성할 수 있는 최대 쓰레드 개수
+# | ServerLimit         | 최대 생성할 프로세스 수
 # |---------------------|-----------------------------------------------------
 # | MinSpareThreads     | 여유분으로 최소 유지하는 쓰레드 개수
 # |---------------------|-----------------------------------------------------
 # | MaxSpareThreads     | 여유분으로 최대 유지하는 쓰레드 개수
 # |---------------------|-----------------------------------------------------
-# | ThreadsPerChild     |  프로세스당 쓰레드 개수
+# | ThreadsPerChild     | 프로세스 당 쓰레드 개수
 # |---------------------|-----------------------------------------------------
 # | MaxRequestWorkers   | 요청을 동시에 처리할 수 있는 쓰레드 개수
 # +---------------------+-----------------------------------------------------
@@ -1452,16 +1338,16 @@ echo "<Location /jkmanager>
 #sed -i "69s/.*/<\/IfModule>\\n/g"                   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
 sed -i "61s/.*/<IfModule mpm_event_module>/g"       ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
 sed -i "62s/.*/    StartServers              8/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
-sed -i "63s/.*/    ServerLimit              16/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
-sed -i "64s/.*/    MinSpareThreads          75/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
-sed -i "65s/.*/    MaxSpareThreads         200/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
-sed -i "66s/.*/    ThreadsPerChild          25/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
-sed -i "67s/.*/    MaxRequestWorkers       400/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
+sed -i "63s/.*/    ServerLimit              32/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
+sed -i "64s/.*/    MinSpareThreads         512/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
+sed -i "65s/.*/    MaxSpareThreads        1024/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
+sed -i "66s/.*/    ThreadsPerChild          64/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
+sed -i "67s/.*/    MaxRequestWorkers      2048/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
 sed -i "68s/.*/    MaxConnectionsPerChild    0/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
 sed -i "69s/.*/<\/IfModule>\\n/g"                   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
 
 
-# ----------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 #  worker settings
 echo "# Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
@@ -1504,7 +1390,9 @@ worker.${INSTALL_WORKER_NAME}01.reference=worker.template
 worker.${INSTALL_WORKER_NAME}01.host=127.0.0.1
 worker.${INSTALL_WORKER_NAME}01.port=8009
 worker.${INSTALL_WORKER_NAME}01.lbfactor=1
-# worker.${INSTALL_WORKER_NAME}01.redirect=cms02
+# worker.${INSTALL_WORKER_NAME}01.redirect=tomcat02
+# Setting Tomcat APR Secret
+# worker.${INSTALL_WORKER_NAME}01.secret=${INSTALL_WORKER_NAME}
 
 # ${INSTALL_WORKER_NAME}02
 # worker.${INSTALL_WORKER_NAME}02.reference=worker.template
@@ -1529,7 +1417,7 @@ worker.jkstatus.type=status
 " > ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/workers.properties
 
 
-# ----------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # uriworkermap settings
 echo "# This file provides sample mappings for example wlb
 # worker defined in workermap.properties.minimal
@@ -1557,7 +1445,7 @@ echo "# This file provides sample mappings for example wlb
 " > ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/uriworkermaps/${INSTALL_WORKER_NAME}.properties
 
 
-# ----------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # httpd-vhosts settings
 echo "# Virtual Hosts
 #
@@ -1585,12 +1473,12 @@ Include conf/extra/vhosts/${INSTALL_WORKER_NAME}.conf
 " > ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-vhosts.conf
 
 
-# ----------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # ${INSTALL_WORKER_NAME}.conf settings
 echo "<VirtualHost *:80>
     ServerName  ${DOMAIN_NAME}
     ServerAlias ${DOMAIN_NAME}
-    # ServerAdmin admin@kt.com
+    #ServerAdmin admin@kt.com
 
     Include conf/extra/security.conf
 
@@ -1617,7 +1505,7 @@ echo "<VirtualHost *:80>
     </Location>
 
     # AccessLog.
-    # CustomLog \"|${SERVER_HOME}/${HTTPD_HOME}/bin/rotatelogs -L logs/${INSTALL_WORKER_NAME}.access.log logs/archive/${INSTALL_WORKER_NAME}.access.%Y-%m-%d.log 86400 +540\" combined env=!do_not_log
+    #CustomLog \"|${SERVER_HOME}/${HTTPD_HOME}/bin/rotatelogs ${LOG_HOME}/${INSTALL_WORKER_NAME}.access.%Y-%m-%d.log 86400 +540\" combined env=!do_not_log
 
     RewriteEngine On
     RewriteRule ^/?dummy\.html\$ - [R=404]
@@ -1629,7 +1517,7 @@ echo "<VirtualHost *:80>
 " > ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/vhosts/${INSTALL_WORKER_NAME}.conf
 
 
-# ----------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # httpd-vhosts settings
 echo "
 #
@@ -1722,8 +1610,8 @@ SSLPassPhraseDialog  builtin
 #   Inter-Process Session Cache:
 #   Configure the SSL Session Cache: First the mechanism
 #   to use and second the expiring timeout (in seconds).
-#SSLSessionCache         \"dbm:/home/server/opt/local/httpd-2.4.29/logs/ssl_scache\"
-SSLSessionCache        \"shmcb:/home/server/opt/local/httpd-2.4.29/logs/ssl_scache(512000)\"
+#SSLSessionCache         \"dbm:${LOG_HOME}/ssl_scache\"
+SSLSessionCache        \"shmcb:${LOG_HOME}/ssl_scache(512000)\"
 SSLSessionCacheTimeout  300
 
 #   OCSP Stapling (requires OpenSSL 0.9.8h or later)
@@ -1740,7 +1628,7 @@ SSLSessionCacheTimeout  300
 #   the same mechanism that is used for the SSL session cache
 #   above.  If stapling is used with more than a few certificates,
 #   the size may need to be increased.  (AH01929 will be logged.)
-#SSLStaplingCache \"shmcb:/home/server/opt/local/httpd-2.4.29/logs/ssl_stapling(32768)\"
+#SSLStaplingCache \"shmcb:${LOG_HOME}/ssl_stapling(32768)\"
 
 #   Seconds before valid OCSP responses are expired from the cache
 #SSLStaplingStandardCacheTimeout 3600
@@ -1755,12 +1643,12 @@ Include conf/extra/vhosts/${INSTALL_WORKER_NAME}-ssl.conf
 " > ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-ssl.conf
 
 
-# ----------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # ${INSTALL_WORKER_NAME}-ssl.conf settings
 echo "<VirtualHost _default_:443>
     ServerName  ${DOMAIN_NAME}
     ServerAlias ${DOMAIN_NAME}
-    # ServerAdmin admin@kt.com
+    #ServerAdmin admin@kt.com
 
     Include conf/extra/security.conf
 
@@ -1773,10 +1661,10 @@ echo "<VirtualHost _default_:443>
     # -SSLv2 -SSLv3 -TLSv1 제외하고 모두 사용
     #SSLProtocol all -SSLv2 -SSLv3 -TLSv1
     SSLCipherSuite HIGH:MEDIUM:!ADH:!AECDH:!PSK:!RC4:!SRP:!SSLv2
-    # SSLCertificateFile conf/ssl/cert.pem
-    # SSLCertificateKeyFile conf/ssl/newkey.pem
-    # SSLCACertificateFile conf/ssl/TrueBusiness-Chain_sha2.pem
-    # SSLCertificateChainFile conf/ssl/Comodo_Chain.pem
+    #SSLCertificateFile conf/ssl/cert.pem
+    #SSLCertificateKeyFile conf/ssl/newkey.pem
+    #SSLCACertificateFile conf/ssl/TrueBusiness-Chain_sha2.pem
+    #SSLCertificateChainFile conf/ssl/Comodo_Chain.pem
     SSLCertificateFile conf/ssl/${INSTALL_WORKER_NAME}.crt
     SSLCertificateKeyFile conf/ssl/${INSTALL_WORKER_NAME}.key
 
@@ -1795,7 +1683,7 @@ echo "<VirtualHost _default_:443>
     </Location>
 
     # AccessLog.
-    # CustomLog \"|${SERVER_HOME}/${HTTPD_HOME}/bin/rotatelogs -L logs/${INSTALL_WORKER_NAME}.access.log logs/archive/${INSTALL_WORKER_NAME}.access.%Y-%m-%d.log 86400 +540\" combined env=!do_not_log
+    #CustomLog \"|${SERVER_HOME}/${HTTPD_HOME}/bin/rotatelogs ${LOG_HOME}/${INSTALL_WORKER_NAME}.access.%Y-%m-%d.log 86400 +540\" combined env=!do_not_log
 
     RewriteEngine On
     RewriteRule ^/?dummy\.html\$ - [R=404]
@@ -1807,22 +1695,21 @@ echo "<VirtualHost _default_:443>
 " > ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/vhosts/${INSTALL_WORKER_NAME}-ssl.conf
 
 
-# ----------------------------------------------------------------------------------------------------------------------
-# if [[ -f ${BASH_FILE} ]]; then
-#     SET_HTTPD_HOME=`awk "/# Apache Start \/ Restart \/ Stop script/" ${BASH_FILE}`
-#     if [[ ! -n ${SET_HTTPD_HOME} ]]; then
-#         echo "# Apache Start / Restart / Stop script
-# # Apache Start / Stop Aliases
-# alias httpd-start='sudo   ${SERVER_HOME}/${HTTPD_HOME}/bin/start.sh'
-# alias httpd-stop='sudo    ${SERVER_HOME}/${HTTPD_HOME}/bin/stop.sh'
-# alias httpd-restart='sudo ${SERVER_HOME}/${HTTPD_HOME}/bin/restart.sh'
-# alias httpd-status='sudo  ${SERVER_HOME}/${HTTPD_HOME}/bin/status.sh'
-# " >> ${BASH_FILE}
-#     fi
-# fi
+#------------------------------------------------------------------------------
+#if [[ -f ${BASH_FILE} ]]; then
+#    SET_HTTPD_HOME=`awk "/# Apache Start \/ Restart \/ Stop script/" ${BASH_FILE}`
+#    if [[ ! -n ${SET_HTTPD_HOME} ]]; then
+#        echo "# Apache Start / Restart / Stop script
+## Apache Start / Stop Aliases
+#alias httpd-start='sudo   ${SERVER_HOME}/${HTTPD_HOME}/bin/start.sh'
+#alias httpd-stop='sudo    ${SERVER_HOME}/${HTTPD_HOME}/bin/stop.sh'
+#alias httpd-restart='sudo ${SERVER_HOME}/${HTTPD_HOME}/bin/restart.sh'
+#alias httpd-status='sudo  ${SERVER_HOME}/${HTTPD_HOME}/bin/status.sh'
+#" >> ${BASH_FILE}
+#    fi
+#fi
 
 
-# ----------------------------------------------------------------------------------------------------------------------
 printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
 printf "\e[00;32m| \"${HTTPD_HOME}\" install success...\e[00m\n"
 printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"

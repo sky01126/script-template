@@ -42,7 +42,7 @@
 #   Apache HTTP Server에서 입력값 검증이 미흡하여 발생하는 버퍼오버플로우 취약점(CVE-2021-44790)111
 #
 
-echo "---------------- Apache - v2022.01.15.005 ----------------"
+echo "---------------- Apache - v2022.01.19.001 ----------------"
 
 # ------------------------------------------------------------------------------
 # Exit on error
@@ -126,6 +126,14 @@ export BASH_FILE=${HOME}/.bashrc
 
 
 # ------------------------------------------------------------------------------
+# Apache 2.4
+export HTTPD_VERSION="2.4.52"
+export HTTPD_DOWNLOAD_URL="http://archive.apache.org/dist/httpd/httpd-${HTTPD_VERSION}.tar.gz"
+export HTTPD_NAME=${HTTPD_DOWNLOAD_URL##+(*/)}
+export HTTPD_HOME='apache24'
+
+
+# ------------------------------------------------------------------------------
 # PCRE
 export PCRE_VERSION="8.45"
 export PCRE_DOWNLOAD_URL="http://sourceforge.net/projects/pcre/files/pcre/${PCRE_VERSION}/pcre-${PCRE_VERSION}.tar.gz"
@@ -144,14 +152,6 @@ export APR_UTIL_VERSION="1.6.1"
 export APR_UTIL_DOWNLOAD_URL="http://archive.apache.org/dist/apr/apr-util-${APR_UTIL_VERSION}.tar.gz"
 export APR_UTIL_NAME=${APR_UTIL_DOWNLOAD_URL##+(*/)}
 export APR_UTIL_HOME=${APR_UTIL_NAME%$EXTENSION}
-
-
-# ------------------------------------------------------------------------------
-# Apache 2.4
-export HTTPD_VERSION="2.4.52"
-export HTTPD_DOWNLOAD_URL="http://archive.apache.org/dist/httpd/httpd-${HTTPD_VERSION}.tar.gz"
-export HTTPD_NAME=${HTTPD_DOWNLOAD_URL##+(*/)}
-export HTTPD_HOME='apache24'
 
 
 # ------------------------------------------------------------------------------
@@ -369,7 +369,7 @@ rm -rf ${SERVER_HOME}/${HTTPD_HOME}/manual
 # 필요 디렉토리 생성.
 mkdir -p ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/uriworkermaps
 mkdir -p ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/vhosts
-mkdir -p ${SERVER_HOME}/${HTTPD_HOME}/work
+#mkdir -p ${SERVER_HOME}/${HTTPD_HOME}/work
 
 
 # ------------------------------------------------------------------------------
@@ -430,7 +430,7 @@ export HTTPD_HOME=\`cd \"\$PRGDIR/..\" >/dev/null; pwd\`
 
 \$HTTPD_HOME/bin/apachectl start
 
-if [[ ! -f \"${SERVER_HOME}/${HTTPD_HOME}/work/httpd.pid\" ]]; then
+if [[ ! -f \"${LOG_HOME}/httpd.pid\" ]]; then
     printf \"Apache Starting:\"
 
     sleep 0.5
@@ -484,7 +484,7 @@ PRGDIR=\`dirname \"\$PRG\"\`
 export HTTPD_HOME=\`cd \"\$PRGDIR/..\" >/dev/null; pwd\`
 
 STOPD=
-if [[ -f \"${SERVER_HOME}/${HTTPD_HOME}/work/httpd.pid\" ]]; then
+if [[ -f \"${LOG_HOME}/httpd.pid\" ]]; then
     STOPD='true'
 fi
 
@@ -543,7 +543,7 @@ PRGDIR=\`dirname \"\$PRG\"\`
 export HTTPD_HOME=\`cd \"\$PRGDIR/..\" >/dev/null; pwd\`
 
 STOPD=
-if [[ -f \"${SERVER_HOME}/${HTTPD_HOME}/work/httpd.pid\" ]]; then
+if [[ -f \"${LOG_HOME}/httpd.pid\" ]]; then
     STOPD='true'
 fi
 
@@ -598,7 +598,7 @@ server_pid() {
 }
 
 if [[ -n \"\$(server_pid)\" ]]; then
-    pid=\`cat ${SERVER_HOME}/${HTTPD_HOME}/work/httpd.pid\`
+    pid=\`cat ${LOG_HOME}/httpd.pid\`
     echo \"httpd (pid \$pid) is running.\"
     exit 0
 else
@@ -1143,7 +1143,7 @@ Include conf/extra/httpd-default.conf
 </IfModule>
 
 # PID File Path setting
-PidFile work/httpd.pid
+PidFile ${LOG_HOME}/httpd.pid
 
 # Apache Tomcat JK Connect setting
 Include conf/extra/httpd-jk.conf
@@ -1252,7 +1252,7 @@ LoadModule jk_module modules/mod_jk.so
     JkLogLevel info
 
     # Our JK shared memory file
-    JkShmFile work/mod_jk.shm
+    JkShmFile ${LOG_HOME}/mod_jk.shm
 
     # Define a new log format you can use in any CustomLog in order
     # to add mod_jk specific information to your access log.

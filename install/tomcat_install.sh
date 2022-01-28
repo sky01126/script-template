@@ -631,11 +631,11 @@ export CATALINA_OPTS=\"\$CATALINA_OPTS -XX:+DisableExplicitGC\"
 
 if [[ ${JAVA_VERSION} -ge 9 ]]; then
     echo "# Java 9 이상에서 GC 로그 기록, 서버에 많은 부하를 주지는 않음, 별도의 GC 모니터링이 필요 하다면 추가
-export CATALINA_OPTS=\"\$CATALINA_OPTS -Xlog:gc*:file=${LOG_HOME}/gc.log::filecount=10,filesize=10M\"
+export CATALINA_OPTS=\"\$CATALINA_OPTS -Xlog:gc*:file=${LOG_HOME}/gclog/gc.log::filecount=10,filesize=10M\"
 " >> ${CATALINA_BASE}/bin/setenv.sh
 else
     echo "# GC 로그 기록, 서버에 많은 부하를 주지는 않음, 별도의 GC 모니터링이 필요 하다면 추가
-export CATALINA_OPTS=\"\$CATALINA_OPTS -Xloggc:${LOG_HOME}/gc.log\"
+export CATALINA_OPTS=\"\$CATALINA_OPTS -Xloggc:${LOG_HOME}/gclog/gc.log\"
 
 export CATALINA_OPTS=\"\$CATALINA_OPTS -verbose:gc\"
 export CATALINA_OPTS=\"\$CATALINA_OPTS -XX:+PrintGCDetails\"
@@ -749,7 +749,7 @@ if [[ -z \"\$JAVA_HOME\" ]]; then
     printf \"\e[00;31mError: JAVA_HOME이 설정되지 않았습니다.\e[00m\\\\n\"
     exit 1
 elif [[ ! -d \"\$JAVA_HOME\" ]]; then
-    printf \"\e[00;31mError: JAVA_HOME은 디렉토리가 아닙니다.\e[00\\\\n\"
+    printf \"\e[00;31mError: JAVA_HOME \"\$JAVA_HOME\"은(는) 디렉토리가 아닙니다.\e[00\\\\n\"
     exit 1
 fi
 
@@ -759,7 +759,7 @@ if [[ -z \"\$CATALINA_HOME\" ]]; then
     echo \"error: CATALINA_HOME is not set\"
     exit 1
 elif [[ ! -d \"\$CATALINA_HOME\" ]]; then
-    printf \"\e[00;31mError: CATALINA_HOME은 디렉토리가 아닙니다.\e[00m\\\\n\"
+    printf \"\e[00;31mError: CATALINA_HOME \"\$CATALINA_HOME\"은(는) 디렉토리가 아닙니다.\e[00m\\\\n\"
     exit 1
 fi
 

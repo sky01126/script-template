@@ -64,9 +64,9 @@ if [[ ! -z ${OPENSSL_ALIAS} ]]; then
 #            printf "\e[00;32m| Setting openssl home path...\e[00m\n"
 #
 #            echo "# OpenSSL Home
-# export OPENSSL_HOME=\"${SERVER_HOME}/${OPENSSL_ALIAS}\"
-# export PATH=\$OPENSSL_HOME/bin:\$PATH
-# export LD_LIBRARY_PATH=\$OPENSSL_HOME/lib:\$LD_LIBRARY_PATH
+#export OPENSSL_HOME=\"${SERVER_HOME}/${OPENSSL_ALIAS}\"
+#export PATH=\$OPENSSL_HOME/bin:\$PATH
+#export LD_LIBRARY_PATH=\$OPENSSL_HOME/lib:\$LD_LIBRARY_PATH
 #    " >> ${BASH_FILE}
 #
 #            source ${BASH_FILE}

@@ -367,9 +367,9 @@ rm -rf ${SERVER_HOME}/${HTTPD_HOME}/man
 rm -rf ${SERVER_HOME}/${HTTPD_HOME}/manual
 
 # 필요 디렉토리 생성.
+mkdir -p ${LOG_HOME}/jk/shm
 mkdir -p ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/uriworkermaps
 mkdir -p ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/vhosts
-#mkdir -p ${SERVER_HOME}/${HTTPD_HOME}/work
 
 
 # ------------------------------------------------------------------------------
@@ -1246,13 +1246,13 @@ LoadModule jk_module modules/mod_jk.so
 
     # Our JK error log
     # You can (and should) use rotatelogs here
-    JkLogFile \"|${SERVER_HOME}/${HTTPD_HOME}/bin/rotatelogs ${LOG_HOME}/mod_jk.%Y-%m-%d.log 86400 +540\"
+    JkLogFile \"|${SERVER_HOME}/${HTTPD_HOME}/bin/rotatelogs ${LOG_HOME}/jk/mod_jk.%Y-%m-%d.log 86400 +540\"
 
     # Our JK log level (trace,debug,info,warn,error)
     JkLogLevel info
 
     # Our JK shared memory file
-    JkShmFile ${LOG_HOME}/mod_jk.shm
+    JkShmFile ${LOG_HOME}/jk/shm//mod_jk.shm
 
     # Define a new log format you can use in any CustomLog in order
     # to add mod_jk specific information to your access log.

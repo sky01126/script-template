@@ -37,7 +37,7 @@
 # alias nginx-restart=\"sudo /home/server/nginx/bin/restart.sh\"
 # alias nginx-conf=\"sudo /home/server/nginx/bin/configtest.sh\"
 # " >> $HOME/.bash_aliases && source $HOME/.bashrc
-echo "---------------- Apache - v2022.02.21.012 ----------------"
+echo "---------------- Apache - v2022.02.21.013 ----------------"
 
 # ------------------------------------------------------------------------------
 # 대문자 변환
@@ -417,7 +417,7 @@ INSTALL_CONFIG="${INSTALL_CONFIG} --add-module=${SRC_HOME}/${NGINX_HEADERS_MORE_
 if [ "${OS}" == "darwin" ]; then
     # < OPENSSL SOURCE>/.openssl 에 포함 파일 및 lib 파일과 함께 "포함" 및 "lib"가 있을 것으로 예상
     mkdir ${SRC_HOME}/${OPENSSL_HOME}/.openssl
-    cp /usr/local/Cellar/openssl@1.1/1.1.1m/lib/* ${SRC_HOME}/${OPENSSL_HOME}/.openssl/
+    cp -R /usr/local/Cellar/openssl@1.1/1.1.1m/lib/* ${SRC_HOME}/${OPENSSL_HOME}/.openssl/
 
     ./configure ${INSTALL_CONFIG}
     make

@@ -37,7 +37,7 @@
 # alias nginx-restart=\"sudo /home/server/nginx/bin/restart.sh\"
 # alias nginx-conf=\"sudo /home/server/nginx/bin/configtest.sh\"
 # " >> $HOME/.bash_aliases && source $HOME/.bashrc
-echo "---------------- Apache - v2022.02.21.008 ----------------"
+echo "---------------- Apache - v2022.02.21.009 ----------------"
 
 # ------------------------------------------------------------------------------
 # 대문자 변환
@@ -376,6 +376,8 @@ INSTALL_CONFIG="${INSTALL_CONFIG} --http-client-body-temp-path=${SERVER_HOME}/${
 if [ "${OS}" == "darwin" ]; then
     INSTALL_CONFIG="${INSTALL_CONFIG} --with-cc-opt='-I/usr/local/Cellar/pcre/8.45/include -I/usr/local/Cellar/openssl@1.1/1.1.1m/include'"
     INSTALL_CONFIG="${INSTALL_CONFIG} --with-ld-opt='-L/usr/local/Cellar/pcre/8.45/lib -L/usr/local/Cellar/openssl@1.1/1.1.1m/lib'"
+    INSTALL_CONFIG="${INSTALL_CONFIG} --with-pcre"
+    INSTALL_CONFIG="${INSTALL_CONFIG} --with-pcre-jit"
 else
     INSTALL_CONFIG="${INSTALL_CONFIG} --with-openssl=${SRC_HOME}/${OPENSSL_HOME}"
     INSTALL_CONFIG="${INSTALL_CONFIG} --with-pcre=${SRC_HOME}/${PCRE_HOME}"
@@ -840,7 +842,7 @@ chmod +x ${SERVER_HOME}/${NGINX_HOME}/bin/*
 
 # ------------------------------------------------------------------------------
 # nginx.conf
-if [ "$OS" == "darwin" ]; then
+if [ "${OS}" == "darwin" ]; then
     WORKER_PROCESSES='2'
 else
     WORKER_PROCESSES=`grep processor /proc/cpuinfo | wc -l`

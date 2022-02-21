@@ -37,7 +37,7 @@
 # alias nginx-restart=\"sudo /home/server/nginx/bin/restart.sh\"
 # alias nginx-conf=\"sudo /home/server/nginx/bin/configtest.sh\"
 # " >> $HOME/.bash_aliases && source $HOME/.bashrc
-echo "---------------- Apache - v2022.02.21.001 ----------------"
+echo "---------------- Apache - v2022.02.21.002 ----------------"
 
 # ------------------------------------------------------------------------------
 # 대문자 변환
@@ -107,7 +107,8 @@ printf "\e[00;32m+--------------------------------------------------------------
 printf "\e[00;32m| 1.12 :\e[00m NginX v1.12.X\n"
 printf "\e[00;32m| 1.14 :\e[00m NginX v1.14.X\n"
 printf "\e[00;32m| 1.16 :\e[00m NginX v1.16.X\n"
-printf "\e[00;32m| 1.19 :\e[00m NginX v1.19.X\n"
+printf "\e[00;32m| 1.18 :\e[00m NginX v1.18.X\n"
+printf "\e[00;32m| 1.20 :\e[00m NginX v1.20.X\n"
 printf "\e[00;32m| 1.21 :\e[00m NginX v1.21.X\n"
 printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
 
@@ -122,8 +123,10 @@ elif [ "${CHECK_NGINX_VERSION}" == "1.14" ]; then
     NGINX_VERSION='1.14.2'
 elif [ "${CHECK_NGINX_VERSION}" == "1.16" ]; then
     NGINX_VERSION='1.16.1'
-elif [ "${CHECK_NGINX_VERSION}" == "1.19" ]; then
-    NGINX_VERSION='1.19.9'
+elif [ "${CHECK_NGINX_VERSION}" == "1.18" ]; then
+    NGINX_VERSION='1.18.0'
+elif [ "${CHECK_NGINX_VERSION}" == "1.20" ]; then
+    NGINX_VERSION='1.20.2'
 else
     NGINX_VERSION='1.21.6'
 fi
@@ -369,7 +372,11 @@ INSTALL_CONFIG="${INSTALL_CONFIG} --http-log-path=${LOG_HOME}/access.log"
 
 INSTALL_CONFIG="${INSTALL_CONFIG} --http-proxy-temp-path=${SERVER_HOME}/${NGINX_HOME}/var/lib/nginx/proxy"
 INSTALL_CONFIG="${INSTALL_CONFIG} --http-client-body-temp-path=${SERVER_HOME}/${NGINX_HOME}/var/lib/nginx/body"
-INSTALL_CONFIG="${INSTALL_CONFIG} --with-openssl=${SRC_HOME}/${OPENSSL_HOME}"
+
+if [ "${OS}" == "linux" ]; then
+    INSTALL_CONFIG="${INSTALL_CONFIG} --with-openssl=${SRC_HOME}/${OPENSSL_HOME}"
+fi
+
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-pcre=${SRC_HOME}/${PCRE_HOME}"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-zlib=${SRC_HOME}/${ZLIB_HOME}"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-cc-opt=-Wno-error"
@@ -401,7 +408,7 @@ INSTALL_CONFIG="${INSTALL_CONFIG} --without-http_scgi_module"
 
 INSTALL_CONFIG="${INSTALL_CONFIG} --add-module=${SRC_HOME}/${NGINX_HEADERS_MORE_MODULE_HOME}"
 
-if [ "$OS" == "darwin" ]; then
+if [ "${OS}" == "darwin" ]; then
     ./configure ${INSTALL_CONFIG}
 else
     ./configure ${INSTALL_CONFIG} --with-ld-opt="-Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,-z,now -fPIC"

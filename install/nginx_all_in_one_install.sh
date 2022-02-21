@@ -37,7 +37,7 @@
 # alias nginx-restart=\"sudo /home/server/nginx/bin/restart.sh\"
 # alias nginx-conf=\"sudo /home/server/nginx/bin/configtest.sh\"
 # " >> $HOME/.bash_aliases && source $HOME/.bashrc
-echo "---------------- Apache - v2022.02.21.002 ----------------"
+echo "---------------- Apache - v2022.02.21.003 ----------------"
 
 # ------------------------------------------------------------------------------
 # 대문자 변환
@@ -373,7 +373,9 @@ INSTALL_CONFIG="${INSTALL_CONFIG} --http-log-path=${LOG_HOME}/access.log"
 INSTALL_CONFIG="${INSTALL_CONFIG} --http-proxy-temp-path=${SERVER_HOME}/${NGINX_HOME}/var/lib/nginx/proxy"
 INSTALL_CONFIG="${INSTALL_CONFIG} --http-client-body-temp-path=${SERVER_HOME}/${NGINX_HOME}/var/lib/nginx/body"
 
-if [ "${OS}" == "linux" ]; then
+if [ "${OS}" == "darwin" ]; then
+    INSTALL_CONFIG="${INSTALL_CONFIG} --with-cc-opt=\"-I/usr/local/Cellar/openssl@1.1/1.1.1m\""
+else
     INSTALL_CONFIG="${INSTALL_CONFIG} --with-openssl=${SRC_HOME}/${OPENSSL_HOME}"
 fi
 

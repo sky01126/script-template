@@ -37,7 +37,7 @@
 # alias nginx-restart=\"sudo /home/server/nginx/bin/restart.sh\"
 # alias nginx-conf=\"sudo /home/server/nginx/bin/configtest.sh\"
 # " >> $HOME/.bash_aliases && source $HOME/.bashrc
-echo "---------------- Apache - v2022.02.21.007 ----------------"
+echo "---------------- Apache - v2022.02.21.008 ----------------"
 
 # ------------------------------------------------------------------------------
 # 대문자 변환
@@ -374,7 +374,7 @@ INSTALL_CONFIG="${INSTALL_CONFIG} --http-proxy-temp-path=${SERVER_HOME}/${NGINX_
 INSTALL_CONFIG="${INSTALL_CONFIG} --http-client-body-temp-path=${SERVER_HOME}/${NGINX_HOME}/var/lib/nginx/body"
 
 if [ "${OS}" == "darwin" ]; then
-    INSTALL_CONFIG="${INSTALL_CONFIG} --with-cc-opt='-Wno-error -I/usr/local/Cellar/pcre/8.45/include -I/usr/local/Cellar/openssl@1.1/1.1.1m/include'"
+    INSTALL_CONFIG="${INSTALL_CONFIG} --with-cc-opt='-I/usr/local/Cellar/pcre/8.45/include -I/usr/local/Cellar/openssl@1.1/1.1.1m/include'"
     INSTALL_CONFIG="${INSTALL_CONFIG} --with-ld-opt='-L/usr/local/Cellar/pcre/8.45/lib -L/usr/local/Cellar/openssl@1.1/1.1.1m/lib'"
 else
     INSTALL_CONFIG="${INSTALL_CONFIG} --with-openssl=${SRC_HOME}/${OPENSSL_HOME}"

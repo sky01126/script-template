@@ -37,7 +37,7 @@
 # alias nginx-restart=\"sudo /home/server/nginx/bin/restart.sh\"
 # alias nginx-conf=\"sudo /home/server/nginx/bin/configtest.sh\"
 # " >> $HOME/.bash_aliases && source $HOME/.bashrc
-echo "---------------- Apache - v2022.02.21.010 ----------------"
+echo "---------------- Apache - v2022.02.21.011 ----------------"
 
 # ------------------------------------------------------------------------------
 # 대문자 변환
@@ -373,18 +373,18 @@ INSTALL_CONFIG="${INSTALL_CONFIG} --http-log-path=${LOG_HOME}/access.log"
 INSTALL_CONFIG="${INSTALL_CONFIG} --http-proxy-temp-path=${SERVER_HOME}/${NGINX_HOME}/var/lib/nginx/proxy"
 INSTALL_CONFIG="${INSTALL_CONFIG} --http-client-body-temp-path=${SERVER_HOME}/${NGINX_HOME}/var/lib/nginx/body"
 
-if [ "${OS}" == "darwin" ]; then
-    INSTALL_CONFIG="${INSTALL_CONFIG} --with-cc-opt='-I/usr/local/Cellar/pcre/8.45/include -I/usr/local/Cellar/openssl@1.1/1.1.1m/include'"
-    INSTALL_CONFIG="${INSTALL_CONFIG} --with-ld-opt='-L/usr/local/Cellar/pcre/8.45/lib -L/usr/local/Cellar/openssl@1.1/1.1.1m/lib'"
-    INSTALL_CONFIG="${INSTALL_CONFIG} --with-pcre"
-    INSTALL_CONFIG="${INSTALL_CONFIG} --with-pcre-jit"
-    INSTALL_CONFIG="${INSTALL_CONFIG} --with-http_secure_link_module"
-else
+# if [ "${OS}" == "darwin" ]; then
+#     INSTALL_CONFIG="${INSTALL_CONFIG} --with-cc-opt='-I/usr/local/Cellar/pcre/8.45/include -I/usr/local/Cellar/openssl@1.1/1.1.1m/include'"
+#     INSTALL_CONFIG="${INSTALL_CONFIG} --with-ld-opt='-L/usr/local/Cellar/pcre/8.45/lib -L/usr/local/Cellar/openssl@1.1/1.1.1m/lib'"
+#     INSTALL_CONFIG="${INSTALL_CONFIG} --with-pcre"
+#     INSTALL_CONFIG="${INSTALL_CONFIG} --with-pcre-jit"
+#     INSTALL_CONFIG="${INSTALL_CONFIG} --with-http_secure_link_module"
+# else
     INSTALL_CONFIG="${INSTALL_CONFIG} --with-openssl=${SRC_HOME}/${OPENSSL_HOME}"
     INSTALL_CONFIG="${INSTALL_CONFIG} --with-pcre=${SRC_HOME}/${PCRE_HOME}"
     INSTALL_CONFIG="${INSTALL_CONFIG} --with-zlib=${SRC_HOME}/${ZLIB_HOME}"
     INSTALL_CONFIG="${INSTALL_CONFIG} --with-cc-opt=-Wno-error"
-fi
+# fi
 
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-http_addition_module"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-http_auth_request_module"
@@ -415,13 +415,15 @@ INSTALL_CONFIG="${INSTALL_CONFIG} --without-http_scgi_module"
 INSTALL_CONFIG="${INSTALL_CONFIG} --add-module=${SRC_HOME}/${NGINX_HEADERS_MORE_MODULE_HOME}"
 
 if [ "${OS}" == "darwin" ]; then
-    ./configure ${INSTALL_CONFIG} --with-ld-opt="-fPIC"
+    ./configure ${INSTALL_CONFIG}
+    make -stdlib=libstdc++
+    sudomake install
 else
     ./configure ${INSTALL_CONFIG} --with-ld-opt="-Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,-z,now -fPIC"
+    make
+    make install
 fi
 
-make
-make install
 
 # Nginx 디렉토리 생성
 mkdir -p ${SERVER_HOME}/${NGINX_HOME}/bin

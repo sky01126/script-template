@@ -37,7 +37,7 @@
 # alias nginx-restart=\"sudo /home/server/nginx/bin/restart.sh\"
 # alias nginx-conf=\"sudo /home/server/nginx/bin/configtest.sh\"
 # " >> $HOME/.bash_aliases && source $HOME/.bashrc
-echo "---------------- Apache - v2022.02.21.004 ----------------"
+echo "---------------- Apache - v2022.02.21.005 ----------------"
 
 # ------------------------------------------------------------------------------
 # 대문자 변환
@@ -405,7 +405,7 @@ INSTALL_CONFIG="${INSTALL_CONFIG} --without-http_scgi_module"
 INSTALL_CONFIG="${INSTALL_CONFIG} --add-module=${SRC_HOME}/${NGINX_HEADERS_MORE_MODULE_HOME}"
 
 if [ "${OS}" == "darwin" ]; then
-    ./configure ${INSTALL_CONFIG}
+    ./configure ${INSTALL_CONFIG} --with-ld-opt="-fPIC"
 else
     ./configure ${INSTALL_CONFIG} --with-ld-opt="-Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,-z,now -fPIC"
 fi

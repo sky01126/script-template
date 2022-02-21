@@ -37,6 +37,8 @@
 # alias nginx-restart=\"sudo /home/server/nginx/bin/restart.sh\"
 # alias nginx-conf=\"sudo /home/server/nginx/bin/configtest.sh\"
 # " >> $HOME/.bash_aliases && source $HOME/.bashrc
+echo "---------------- Apache - v2022.02.21.001 ----------------"
+
 # ------------------------------------------------------------------------------
 # 대문자 변환
 uppercase() {
@@ -65,6 +67,14 @@ export BZ2_EXTENSION=".tar.bz2"
 # ------------------------------------------------------------------------------
 # Exit on error
 set -e
+
+## OS를 확인한다.
+export OS='unknown'
+if [[ "$(uname)" == "Darwin" ]]; then
+    OS="darwin"
+elif [[ "$(expr substr $(uname -s) 1 5)" == "Linux" ]]; then
+    OS="linux"
+fi
 
 # shopt은 shell option의 약자로 유틸이다.
 # 사용 하는 extglob 쉘 옵션 shopt 내장 명령을 사용 하 여 같은 확장된 패턴 일치 연산자를 사용
@@ -105,7 +115,7 @@ printf "\e[00;32m+--------------------------------------------------------------
 # export NGINX_VERSION='1.16.0'
 export NGINX_VERSION='1.21.6'
 printf "\e[00;32m| Enter nginx version\e[00m"
-read -e -p " (default. 1.16) > " CHECK_NGINX_VERSION
+read -e -p " (default. 1.21) > " CHECK_NGINX_VERSION
 if [ "${CHECK_NGINX_VERSION}" == "1.12" ]; then
     NGINX_VERSION='1.12.2'
 elif [ "${CHECK_NGINX_VERSION}" == "1.14" ]; then
@@ -391,7 +401,12 @@ INSTALL_CONFIG="${INSTALL_CONFIG} --without-http_scgi_module"
 
 INSTALL_CONFIG="${INSTALL_CONFIG} --add-module=${SRC_HOME}/${NGINX_HEADERS_MORE_MODULE_HOME}"
 
-./configure ${INSTALL_CONFIG} --with-ld-opt="-Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,-z,now -fPIC"
+if [ "$OS" == "darwin" ]; then
+    ./configure ${INSTALL_CONFIG}
+else
+    ./configure ${INSTALL_CONFIG} --with-ld-opt="-Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,-z,now -fPIC"
+fi
+
 make
 make install
 

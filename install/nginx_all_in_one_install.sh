@@ -37,7 +37,7 @@
 # alias nginx-restart=\"sudo /home/server/nginx/bin/restart.sh\"
 # alias nginx-conf=\"sudo /home/server/nginx/bin/configtest.sh\"
 # " >> $HOME/.bash_aliases && source $HOME/.bashrc
-echo "---------------- Apache - v2022.02.21.009 ----------------"
+echo "---------------- Apache - v2022.02.21.010 ----------------"
 
 # ------------------------------------------------------------------------------
 # 대문자 변환
@@ -378,6 +378,7 @@ if [ "${OS}" == "darwin" ]; then
     INSTALL_CONFIG="${INSTALL_CONFIG} --with-ld-opt='-L/usr/local/Cellar/pcre/8.45/lib -L/usr/local/Cellar/openssl@1.1/1.1.1m/lib'"
     INSTALL_CONFIG="${INSTALL_CONFIG} --with-pcre"
     INSTALL_CONFIG="${INSTALL_CONFIG} --with-pcre-jit"
+    INSTALL_CONFIG="${INSTALL_CONFIG} --with-http_secure_link_module"
 else
     INSTALL_CONFIG="${INSTALL_CONFIG} --with-openssl=${SRC_HOME}/${OPENSSL_HOME}"
     INSTALL_CONFIG="${INSTALL_CONFIG} --with-pcre=${SRC_HOME}/${PCRE_HOME}"
@@ -387,8 +388,8 @@ fi
 
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-http_addition_module"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-http_auth_request_module"
-INSTALL_CONFIG="${INSTALL_CONFIG} --with-http_degradation_module"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-http_dav_module"
+INSTALL_CONFIG="${INSTALL_CONFIG} --with-http_degradation_module"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-http_gunzip_module"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-http_gzip_static_module"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-http_random_index_module"

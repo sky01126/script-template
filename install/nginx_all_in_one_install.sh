@@ -37,7 +37,7 @@
 # alias nginx-restart=\"sudo /home/server/nginx/bin/restart.sh\"
 # alias nginx-conf=\"sudo /home/server/nginx/bin/configtest.sh\"
 # " >> $HOME/.bash_aliases && source $HOME/.bashrc
-echo "---------------- Apache - v2022.02.21.013 ----------------"
+echo "---------------- Apache - v2022.02.21.014 ----------------"
 
 # ------------------------------------------------------------------------------
 # 대문자 변환
@@ -138,8 +138,7 @@ export NGINX_DOWNLOAD_URL="https://nginx.org/download/nginx-${NGINX_VERSION}.tar
 export NGINX_HEADERS_MORE_MODULE_DOWNLOAD_URL="https://github.com/openresty/headers-more-nginx-module.git"
 export NGINX_NAME=${NGINX_DOWNLOAD_URL##+(*/)}
 # export NGINX_HOME=${NGINX_NAME%$EXTENSION}
-#export NGINX_HOME="nginx116"
-export NGINX_HOME="nginx"
+export NGINX_HOME="nginx116"
 
 # Setting OpenSSL version
 export OPENSSL_VERSION="1.1.1m"
@@ -161,18 +160,18 @@ export ZLIB_HOME=${ZLIB_NAME%$EXTENSION}
 
 
 # ------------------------------------------------------------------------------
-export SRC_HOME="/Volumes/Server/src"
-export SERVER_HOME="/Volumes/Server"
-export LOG_HOME="${SERVER_HOME}/${NGINX_HOME}/logs"
+export SRC_HOME="/nginx/src"
+export SERVER_HOME="/nginx"
+export LOG_HOME="/nx_log"
 if [[ ! -d "${SRC_HOME}" ]]; then
     mkdir -p ${SRC_HOME}
 fi
 if [[ ! -d "${SERVER_HOME}" ]]; then
     mkdir -p ${SERVER_HOME}
 fi
-# if [[ ! -d "${LOG_HOME}" ]]; then
-#     mkdir -p ${LOG_HOME}
-# fi
+if [[ ! -d "${LOG_HOME}" ]]; then
+    mkdir -p ${LOG_HOME}
+fi
 
 
 # ------------------------------------------------------------------------------
@@ -372,20 +371,10 @@ INSTALL_CONFIG="${INSTALL_CONFIG} --http-log-path=${LOG_HOME}/access.log"
 
 INSTALL_CONFIG="${INSTALL_CONFIG} --http-proxy-temp-path=${SERVER_HOME}/${NGINX_HOME}/var/lib/nginx/proxy"
 INSTALL_CONFIG="${INSTALL_CONFIG} --http-client-body-temp-path=${SERVER_HOME}/${NGINX_HOME}/var/lib/nginx/body"
-
-# if [ "${OS}" == "darwin" ]; then
-#     INSTALL_CONFIG="${INSTALL_CONFIG} --with-cc-opt='-I/usr/local/Cellar/pcre/8.45/include -I/usr/local/Cellar/openssl@1.1/1.1.1m/include'"
-#     INSTALL_CONFIG="${INSTALL_CONFIG} --with-ld-opt='-L/usr/local/Cellar/pcre/8.45/lib -L/usr/local/Cellar/openssl@1.1/1.1.1m/lib'"
-#     INSTALL_CONFIG="${INSTALL_CONFIG} --with-pcre"
-#     INSTALL_CONFIG="${INSTALL_CONFIG} --with-pcre-jit"
-#     INSTALL_CONFIG="${INSTALL_CONFIG} --with-http_secure_link_module"
-# else
-    INSTALL_CONFIG="${INSTALL_CONFIG} --with-openssl=${SRC_HOME}/${OPENSSL_HOME}"
-    INSTALL_CONFIG="${INSTALL_CONFIG} --with-pcre=${SRC_HOME}/${PCRE_HOME}"
-    INSTALL_CONFIG="${INSTALL_CONFIG} --with-zlib=${SRC_HOME}/${ZLIB_HOME}"
-    INSTALL_CONFIG="${INSTALL_CONFIG} --with-cc-opt=-Wno-error"
-# fi
-
+INSTALL_CONFIG="${INSTALL_CONFIG} --with-openssl=${SRC_HOME}/${OPENSSL_HOME}"
+INSTALL_CONFIG="${INSTALL_CONFIG} --with-pcre=${SRC_HOME}/${PCRE_HOME}"
+INSTALL_CONFIG="${INSTALL_CONFIG} --with-zlib=${SRC_HOME}/${ZLIB_HOME}"
+INSTALL_CONFIG="${INSTALL_CONFIG} --with-cc-opt=-Wno-error"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-http_addition_module"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-http_auth_request_module"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-http_dav_module"
@@ -414,20 +403,9 @@ INSTALL_CONFIG="${INSTALL_CONFIG} --without-http_scgi_module"
 
 INSTALL_CONFIG="${INSTALL_CONFIG} --add-module=${SRC_HOME}/${NGINX_HEADERS_MORE_MODULE_HOME}"
 
-if [ "${OS}" == "darwin" ]; then
-    # < OPENSSL SOURCE>/.openssl 에 포함 파일 및 lib 파일과 함께 "포함" 및 "lib"가 있을 것으로 예상
-    mkdir ${SRC_HOME}/${OPENSSL_HOME}/.openssl
-    cp -R /usr/local/Cellar/openssl@1.1/1.1.1m/lib/* ${SRC_HOME}/${OPENSSL_HOME}/.openssl/
-
-    ./configure ${INSTALL_CONFIG}
-    make
-    make install
-else
-    ./configure ${INSTALL_CONFIG} --with-ld-opt="-Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,-z,now -fPIC"
-    make
-    make install
-fi
-
+./configure ${INSTALL_CONFIG} --with-ld-opt="-Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,-z,now -fPIC"
+make
+make install
 
 # Nginx 디렉토리 생성
 mkdir -p ${SERVER_HOME}/${NGINX_HOME}/bin

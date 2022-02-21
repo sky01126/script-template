@@ -23,7 +23,7 @@
 # sudo apt install -y zlib1g-dev libgd-dev bzip2 libbz2-dev libncurses5-dev libpcap-dev libxml2-dev libxslt-dev
 #
 # ------------------------- MacOS --------------------------
-# brew install libgd --with-freetype --with-libtiff --with-libvpx && brew info libgd
+# brew install libgd --with-libtiff --with-libvpx && brew info libgd
 #
 # --------------------- GeoIP Install ----------------------
 # curl -O -L https://fossies.org/linux/misc/GeoIP-1.6.12.tar.gz
@@ -63,20 +63,6 @@ export XZ_EXTENSION=".tar.xz"
 export BZ2_EXTENSION=".tar.bz2"
 
 # ------------------------------------------------------------------------------
-export SRC_HOME="/var/tmp"
-export LOG_HOME="/nx_log"
-export SERVER_HOME="/nginx"
-if [[ ! -d "${SRC_HOME}" ]]; then
-    mkdir -p ${SRC_HOME}
-fi
-if [[ ! -d "${LOG_HOME}" ]]; then
-    mkdir -p ${LOG_HOME}
-fi
-if [[ ! -d "${SERVER_HOME}" ]]; then
-    mkdir -p ${SERVER_HOME}
-fi
-
-# ------------------------------------------------------------------------------
 # Exit on error
 set -e
 
@@ -109,14 +95,15 @@ printf "\e[00;32m+--------------------------------------------------------------
 printf "\e[00;32m| NginX 설치를 진행하려면 아래 옵션 중 하나를 선택하십시오.\e[00m\n"
 printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
 printf "\e[00;32m| 1.12 :\e[00m NginX v1.12.X\n"
-printf "\e[00;32m| 1.13 :\e[00m NginX v1.13.X\n"
 printf "\e[00;32m| 1.14 :\e[00m NginX v1.14.X\n"
 printf "\e[00;32m| 1.16 :\e[00m NginX v1.16.X\n"
 printf "\e[00;32m| 1.19 :\e[00m NginX v1.19.X\n"
+printf "\e[00;32m| 1.21 :\e[00m NginX v1.21.X\n"
 printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
 
 # ARCHETYPE_ARTIFACT_ID을 받기위해서 대기한다.
-export NGINX_VERSION='1.16.0'
+# export NGINX_VERSION='1.16.0'
+export NGINX_VERSION='1.21.6'
 printf "\e[00;32m| Enter nginx version\e[00m"
 read -e -p " (default. 1.16) > " CHECK_NGINX_VERSION
 if [ "${CHECK_NGINX_VERSION}" == "1.12" ]; then
@@ -127,6 +114,8 @@ elif [ "${CHECK_NGINX_VERSION}" == "1.16" ]; then
     NGINX_VERSION='1.16.1'
 elif [ "${CHECK_NGINX_VERSION}" == "1.19" ]; then
     NGINX_VERSION='1.19.9'
+else
+    NGINX_VERSION='1.21.6'
 fi
 
 
@@ -136,7 +125,8 @@ export NGINX_DOWNLOAD_URL="https://nginx.org/download/nginx-${NGINX_VERSION}.tar
 export NGINX_HEADERS_MORE_MODULE_DOWNLOAD_URL="https://github.com/openresty/headers-more-nginx-module.git"
 export NGINX_NAME=${NGINX_DOWNLOAD_URL##+(*/)}
 # export NGINX_HOME=${NGINX_NAME%$EXTENSION}
-export NGINX_HOME="nginx116"
+#export NGINX_HOME="nginx116"
+export NGINX_HOME="nginx"
 
 # Setting OpenSSL version
 export OPENSSL_VERSION="1.1.1m"
@@ -145,7 +135,7 @@ export OPENSSL_NAME=${OPENSSL_DOWNLOAD_URL##+(*/)}
 export OPENSSL_HOME=${OPENSSL_NAME%$EXTENSION}
 
 # Setting PCRE version
-export PCRE_VERSION="8.43"
+export PCRE_VERSION="8.45"
 export PCRE_DOWNLOAD_URL="http://sourceforge.net/projects/pcre/files/pcre/${PCRE_VERSION}/pcre-${PCRE_VERSION}.tar.gz"
 export PCRE_NAME=${PCRE_DOWNLOAD_URL##+(*/)}
 export PCRE_HOME=${PCRE_NAME%$EXTENSION}
@@ -155,6 +145,21 @@ export ZLIB_VERSION="1.2.11"
 export ZLIB_DOWNLOAD_URL="http://www.zlib.net/zlib-${ZLIB_VERSION}.tar.gz"
 export ZLIB_NAME=${ZLIB_DOWNLOAD_URL##+(*/)}
 export ZLIB_HOME=${ZLIB_NAME%$EXTENSION}
+
+
+# ------------------------------------------------------------------------------
+export SRC_HOME="/Volumes/Server/src"
+export SERVER_HOME="/Volumes/Server"
+export LOG_HOME="${SERVER_HOME}/${NGINX_HOME}/logs"
+if [[ ! -d "${SRC_HOME}" ]]; then
+    mkdir -p ${SRC_HOME}
+fi
+if [[ ! -d "${SERVER_HOME}" ]]; then
+    mkdir -p ${SERVER_HOME}
+fi
+# if [[ ! -d "${LOG_HOME}" ]]; then
+#     mkdir -p ${LOG_HOME}
+# fi
 
 
 # ------------------------------------------------------------------------------

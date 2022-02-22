@@ -37,7 +37,7 @@
 # alias nginx-restart=\"sudo /home/server/nginx/bin/restart.sh\"
 # alias nginx-conf=\"sudo /home/server/nginx/bin/configtest.sh\"
 # " >> $HOME/.bash_aliases && source $HOME/.bashrc
-echo "---------------- Apache - v2022.02.21.015 ----------------"
+echo "---------------- Apache - v2022.02.22.001 ----------------"
 
 # ------------------------------------------------------------------------------
 # 대문자 변환
@@ -847,7 +847,7 @@ else
     WORKER_PROCESSES=`grep processor /proc/cpuinfo | wc -l`
 fi
 
-echo "user [서비스_계정] [서비스_그룹]
+echo "# user [서비스_계정] [서비스_그룹]
 user ${USERNAME} ${GROUPNAME};
 
 # 프로세스 확인 : grep processor /proc/cpuinfo | wc -l

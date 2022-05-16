@@ -1654,17 +1654,17 @@ echo "<VirtualHost _default_:443>
 
     SSLEngine on
 
-    # +TLSv1.1 +TLSv1.2만 사용하고 모두 제외
-    SSLProtocol -All +TLSv1.1 +TLSv1.2
-    # +TLSv1 +TLSv1.1 +TLSv1.2만 사용하고 모두 제외
-    #SSLProtocol -All +TLSv1 +TLSv1.1 +TLSv1.2
-    # -SSLv2 -SSLv3 -TLSv1 제외하고 모두 사용
-    #SSLProtocol all -SSLv2 -SSLv3 -TLSv1
+    # TLSv1.2, TLSv1.3만 사용하고 모두 제외
+    SSLProtocol -All +TLSv1.2 +TLSv1.3
+    # TLSv1, TLSv1.1, TLSv1.2, TLSv1.3만 사용하고 모두 제외
+    #SSLProtocol -All +TLSv1 +TLSv1.1 +TLSv1.2 +TLSv1.3
+    # SSLv2, SSLv3, TLSv1, TLSv1.1 제외하고 모두 사용
+    #SSLProtocol all -SSLv2 -SSLv3 -TLSv1 +TLSv1.1
     SSLCipherSuite HIGH:MEDIUM:!ADH:!AECDH:!PSK:!RC4:!SRP:!SSLv2
-    #SSLCertificateFile conf/ssl/cert.pem
-    #SSLCertificateKeyFile conf/ssl/newkey.pem
-    #SSLCACertificateFile conf/ssl/TrueBusiness-Chain_sha2.pem
-    #SSLCertificateChainFile conf/ssl/Comodo_Chain.pem
+    # SSLCertificateFile conf/ssl/cert.pem
+    # SSLCertificateKeyFile conf/ssl/newkey.pem
+    # SSLCACertificateFile conf/ssl/TrueBusiness-Chain_sha2.pem
+    # SSLCertificateChainFile conf/ssl/Comodo_Chain.pem
     SSLCertificateFile conf/ssl/${INSTALL_WORKER_NAME}.crt
     SSLCertificateKeyFile conf/ssl/${INSTALL_WORKER_NAME}.key
 

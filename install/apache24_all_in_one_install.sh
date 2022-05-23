@@ -36,6 +36,10 @@
 # alias apache-configtest=\"/apache/apache24/bin/configtest.sh\"
 # " >> $HOME/.bash_aliases && source $HOME/.bashrc
 #
+# - SSL 1.1.1 사용 시 아래 2개 파일 복사
+#   cp /home/server/openssl/lib/libssl.so.1.1 /usr/lib64/
+#   cp /home/server/openssl/lib/libcrypto.so.1.1 /usr/lib64/
+#
 # ----------------------- 보안 업데이트 ------------------------
 # - [2022.01.04] 보안 업데이트 - Apache HTTP Server 2.4.51 및 이전 버전
 #   Apache HTTP Server에서 널 포인터 역참조로 인해 발생하는 서비스거부 취약점(CVE-2021-44224)
@@ -127,7 +131,7 @@ export BASH_FILE=${HOME}/.bashrc
 
 # ------------------------------------------------------------------------------
 # Apache 2.4
-export HTTPD_VERSION="2.4.52"
+export HTTPD_VERSION="2.4.53"
 export HTTPD_DOWNLOAD_URL="http://archive.apache.org/dist/httpd/httpd-${HTTPD_VERSION}.tar.gz"
 export HTTPD_NAME=${HTTPD_DOWNLOAD_URL##+(*/)}
 export HTTPD_HOME='apache24'

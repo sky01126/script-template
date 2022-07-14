@@ -131,7 +131,7 @@ export BASH_FILE=${HOME}/.bashrc
 
 # ------------------------------------------------------------------------------
 # Apache 2.4
-export HTTPD_VERSION="2.4.53"
+export HTTPD_VERSION="2.4.54"
 export HTTPD_DOWNLOAD_URL="http://archive.apache.org/dist/httpd/httpd-${HTTPD_VERSION}.tar.gz"
 export HTTPD_NAME=${HTTPD_DOWNLOAD_URL##+(*/)}
 export HTTPD_HOME='apache24'

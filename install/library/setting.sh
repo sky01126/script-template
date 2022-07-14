@@ -140,7 +140,7 @@ if [[ -z ${OPENSSL_ALIAS} ]]; then
     echo
 fi
 
-export OPENSSL_VERSION="1.1.1o"
+export OPENSSL_VERSION="1.1.1q"
 export OPENSSL_DOWNLOAD_URL="https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz"
 export OPENSSL_NAME=${OPENSSL_DOWNLOAD_URL##+(*/)}
 export OPENSSL_HOME=${OPENSSL_NAME%$EXTENSION}

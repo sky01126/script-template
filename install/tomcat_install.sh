@@ -123,7 +123,7 @@ CHECK_TOMCAT=${CHECK_TOMCAT##*( )}
 if [[ "${CHECK_TOMCAT}" == "Tomcat10" ]]; then
     # ------------------------------------------------------------------------------------------------------------------
     # Tomcat 10.0.x
-    TOMCAT_VERSION='10.0.14'
+    TOMCAT_VERSION='10.0.22'
     TOMCAT_DOWNLOAD_URL="http://archive.apache.org/dist/tomcat/tomcat-7/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz"
     TOMCAT_NATIVE_HOME='tomcat-native-*-src'
 
@@ -131,7 +131,7 @@ if [[ "${CHECK_TOMCAT}" == "Tomcat10" ]]; then
 elif [[ "${CHECK_TOMCAT}" == "Tomcat9" ]]; then
     # ------------------------------------------------------------------------------------------------------------------
     # Tomcat 9.0.x
-    TOMCAT_VERSION='9.0.33'
+    TOMCAT_VERSION='9.0.64'
     TOMCAT_DOWNLOAD_URL="http://archive.apache.org/dist/tomcat/tomcat-9/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz"
     TOMCAT_NATIVE_HOME='tomcat-native-*-src'
 
@@ -139,8 +139,7 @@ elif [[ "${CHECK_TOMCAT}" == "Tomcat9" ]]; then
 else
     # ------------------------------------------------------------------------------------------------------------------
     # Tomcat 8,5.x
-    # TOMCAT_VERSION='8.5.56'
-    TOMCAT_VERSION='8.5.73'
+    TOMCAT_VERSION='8.5.81'
     TOMCAT_DOWNLOAD_URL="http://archive.apache.org/dist/tomcat/tomcat-8/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz"
     TOMCAT_NATIVE_HOME='tomcat-native-*-src'
 

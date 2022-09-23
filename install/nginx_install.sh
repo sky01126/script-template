@@ -39,7 +39,7 @@
 # " >> $HOME/.bash_aliases && source $HOME/.bashrc
 #
 # ----------------------- Nginx 계정 생성 ------------------------
-# groupadd -g 981 -r nginx && useradd -r -u 981 -g nginx -s /sbin/nologin -d /nginx -c "Nginx" nginx
+# groupadd -g 101 -r nginx && useradd -r -u 101 -g nginx -s /sbin/nologin -d /nginx -c "Nginx" nginx
 #
 
 echo "---------------- Nginx - v2022.01.14.001 ----------------"
@@ -319,6 +319,18 @@ else
     sed -i "22s/.*/\"<hr><center>Error<\/center>\" CRLF/g"                                                              ${SRC_HOME}/${NGINX_HOME}/src/http/ngx_http_special_response.c
     sed -i "29s/.*/\"<hr><center>Error<\/center>\" CRLF/g"                                                              ${SRC_HOME}/${NGINX_HOME}/src/http/ngx_http_special_response.c
 fi
+
+# 1.23.1
+# sed -i "49s/.*/\/* static u_char ngx_http_server_string[] = \"Server: nginx\" CRLF; *\//g"                          ${SRC_HOME}/${NGINX_HOME}/src/http/ngx_http_header_filter_module.c
+# sed -i "50s/.*/\/* static u_char ngx_http_server_full_string[] = \"Server: nginx\" CRLF; *\//g"                     ${SRC_HOME}/${NGINX_HOME}/src/http/ngx_http_header_filter_module.c
+# sed -i "51s/.*/\/* static u_char ngx_http_server_build_string[] = \"Server: nginx\" CRLF; *\//g"                    ${SRC_HOME}/${NGINX_HOME}/src/http/ngx_http_header_filter_module.c
+# sed -i "286s/.*/    \/* if (r->headers_out.server == NULL) {;/g"                                                    ${SRC_HOME}/${NGINX_HOME}/src/http/ngx_http_header_filter_module.c
+# sed -i "296s/.*/    }; *\//g"                                                                                       ${SRC_HOME}/${NGINX_HOME}/src/http/ngx_http_header_filter_module.c
+# sed -i "455s/.*/    \/* if (r->headers_out.server == NULL) {;/g"                                                    ${SRC_HOME}/${NGINX_HOME}/src/http/ngx_http_header_filter_module.c
+# sed -i "470s/.*/    }; *\//g"                                                                                       ${SRC_HOME}/${NGINX_HOME}/src/http/ngx_http_header_filter_module.c
+
+# sed -i "22s/.*/\"<hr><center>Error<\/center>\" CRLF/g"                                                              ${SRC_HOME}/${NGINX_HOME}/src/http/ngx_http_special_response.c
+# sed -i "29s/.*/\"<hr><center>Error<\/center>\" CRLF/g"                                                              ${SRC_HOME}/${NGINX_HOME}/src/http/ngx_http_special_response.c
 
 
 # +---------------------+-------------------------------------------------------

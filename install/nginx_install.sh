@@ -97,10 +97,10 @@ printf "\e[00;32m+--------------------------------------------------------------
 printf "\e[00;32m| NginX 설치를 진행하려면 아래 옵션 중 하나를 선택하십시오.\e[00m\n"
 printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
 printf "\e[00;32m| 1.12 :\e[00m NginX v1.12.X\n"
-printf "\e[00;32m| 1.13 :\e[00m NginX v1.13.X\n"
 printf "\e[00;32m| 1.14 :\e[00m NginX v1.14.X\n"
 printf "\e[00;32m| 1.16 :\e[00m NginX v1.16.X\n"
-printf "\e[00;32m| 1.19 :\e[00m NginX v1.19.X\n"
+printf "\e[00;32m| 1.20 :\e[00m NginX v1.20.X\n"
+printf "\e[00;32m| 1.23 :\e[00m NginX v1.23.X\n"
 printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
 
 # ARCHETYPE_ARTIFACT_ID을 받기위해서 대기한다.
@@ -113,8 +113,10 @@ elif [ "${CHECK_NGINX_VERSION}" == "1.14" ]; then
     NGINX_VERSION='1.14.2'
 elif [ "${CHECK_NGINX_VERSION}" == "1.16" ]; then
     NGINX_VERSION='1.16.0'
-elif [ "${CHECK_NGINX_VERSION}" == "1.19" ]; then
-    NGINX_VERSION='1.19.9'
+elif [ "${CHECK_NGINX_VERSION}" == "1.20" ]; then
+    NGINX_VERSION='1.20.2'
+elif [ "${CHECK_NGINX_VERSION}" == "1.23" ]; then
+    NGINX_VERSION='1.23.1'
 fi
 
 
@@ -305,7 +307,22 @@ elif [ "${CHECK_NGINX_VERSION}" == "1.12" ]; then
 
     sed -i "22s/.*/\"<hr><center>Error<\/center>\" CRLF/g"                                                              ${SRC_HOME}/${NGINX_HOME}/src/http/ngx_http_special_response.c
     sed -i "29s/.*/\"<hr><center>Error<\/center>\" CRLF/g"                                                              ${SRC_HOME}/${NGINX_HOME}/src/http/ngx_http_special_response.c
-else
+
+elif [ "${CHECK_NGINX_VERSION}" == "1.23" ]; then
+    sed -i "49s/.*/\/* static u_char ngx_http_server_string[] = \"Server: nginx\" CRLF; *\//g"                          ${SRC_HOME}/${NGINX_HOME}/src/http/ngx_http_header_filter_module.c
+    sed -i "50s/.*/\/* static u_char ngx_http_server_full_string[] = \"Server: nginx\" CRLF; *\//g"                     ${SRC_HOME}/${NGINX_HOME}/src/http/ngx_http_header_filter_module.c
+    sed -i "51s/.*/\/* static u_char ngx_http_server_build_string[] = \"Server: nginx\" CRLF; *\//g"                    ${SRC_HOME}/${NGINX_HOME}/src/http/ngx_http_header_filter_module.c
+
+    sed -i "286s/.*/    \/* if (r->headers_out.server == NULL) {;/g"                                                    ${SRC_HOME}/${NGINX_HOME}/src/http/ngx_http_header_filter_module.c
+    sed -i "296s/.*/    }; *\//g"                                                                                       ${SRC_HOME}/${NGINX_HOME}/src/http/ngx_http_header_filter_module.c
+
+    sed -i "455s/.*/    \/* if (r->headers_out.server == NULL) {;/g"                                                    ${SRC_HOME}/${NGINX_HOME}/src/http/ngx_http_header_filter_module.c
+    sed -i "470s/.*/    }; *\//g"                                                                                       ${SRC_HOME}/${NGINX_HOME}/src/http/ngx_http_header_filter_module.c
+
+    sed -i "22s/.*/\"<hr><center>Error<\/center>\" CRLF/g"                                                              ${SRC_HOME}/${NGINX_HOME}/src/http/ngx_http_special_response.c
+    sed -i "29s/.*/\"<hr><center>Error<\/center>\" CRLF/g"                                                              ${SRC_HOME}/${NGINX_HOME}/src/http/ngx_http_special_response.c
+
+else # 1.16, 1.18, 1.20
     sed -i "49s/.*/\/* static u_char ngx_http_server_string[] = \"Server: nginx\" CRLF; *\//g"                          ${SRC_HOME}/${NGINX_HOME}/src/http/ngx_http_header_filter_module.c
     sed -i "50s/.*/\/* static u_char ngx_http_server_full_string[] = \"Server: nginx\" CRLF; *\//g"                     ${SRC_HOME}/${NGINX_HOME}/src/http/ngx_http_header_filter_module.c
     sed -i "51s/.*/\/* static u_char ngx_http_server_build_string[] = \"Server: nginx\" CRLF; *\//g"                    ${SRC_HOME}/${NGINX_HOME}/src/http/ngx_http_header_filter_module.c
@@ -319,18 +336,6 @@ else
     sed -i "22s/.*/\"<hr><center>Error<\/center>\" CRLF/g"                                                              ${SRC_HOME}/${NGINX_HOME}/src/http/ngx_http_special_response.c
     sed -i "29s/.*/\"<hr><center>Error<\/center>\" CRLF/g"                                                              ${SRC_HOME}/${NGINX_HOME}/src/http/ngx_http_special_response.c
 fi
-
-# 1.23.1
-# sed -i "49s/.*/\/* static u_char ngx_http_server_string[] = \"Server: nginx\" CRLF; *\//g"                          ${SRC_HOME}/${NGINX_HOME}/src/http/ngx_http_header_filter_module.c
-# sed -i "50s/.*/\/* static u_char ngx_http_server_full_string[] = \"Server: nginx\" CRLF; *\//g"                     ${SRC_HOME}/${NGINX_HOME}/src/http/ngx_http_header_filter_module.c
-# sed -i "51s/.*/\/* static u_char ngx_http_server_build_string[] = \"Server: nginx\" CRLF; *\//g"                    ${SRC_HOME}/${NGINX_HOME}/src/http/ngx_http_header_filter_module.c
-# sed -i "286s/.*/    \/* if (r->headers_out.server == NULL) {;/g"                                                    ${SRC_HOME}/${NGINX_HOME}/src/http/ngx_http_header_filter_module.c
-# sed -i "296s/.*/    }; *\//g"                                                                                       ${SRC_HOME}/${NGINX_HOME}/src/http/ngx_http_header_filter_module.c
-# sed -i "455s/.*/    \/* if (r->headers_out.server == NULL) {;/g"                                                    ${SRC_HOME}/${NGINX_HOME}/src/http/ngx_http_header_filter_module.c
-# sed -i "470s/.*/    }; *\//g"                                                                                       ${SRC_HOME}/${NGINX_HOME}/src/http/ngx_http_header_filter_module.c
-
-# sed -i "22s/.*/\"<hr><center>Error<\/center>\" CRLF/g"                                                              ${SRC_HOME}/${NGINX_HOME}/src/http/ngx_http_special_response.c
-# sed -i "29s/.*/\"<hr><center>Error<\/center>\" CRLF/g"                                                              ${SRC_HOME}/${NGINX_HOME}/src/http/ngx_http_special_response.c
 
 
 # +---------------------+-------------------------------------------------------

@@ -42,7 +42,7 @@
 # groupadd -g 101 -r nginx && useradd -r -u 101 -g nginx -s /sbin/nologin -d /nginx -c "Nginx" nginx
 #
 
-echo "---------------- Nginx - v2022.09.24.001 ----------------"
+echo "---------------- Nginx - v2022.09.24.002 ----------------"
 
 # ------------------------------------------------------------------------------
 # Exit on error
@@ -391,6 +391,10 @@ INSTALL_CONFIG="${INSTALL_CONFIG} --add-module=${SRC_HOME}/${NGINX_HEADERS_MORE_
 if [ "$(uppercase $INSTALL_NGINX_RTMP)" == "Y" ]; then
     INSTALL_CONFIG="${INSTALL_CONFIG} --add-module=${SRC_HOME}/${NGINX_RTMP_MODULE_HOME}"
 fi
+
+echo "./configure ${INSTALL_CONFIG} --with-ld-opt=\"-Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,-z,now -fPIC\""
+
+sleep 5
 
 ./configure ${INSTALL_CONFIG} --with-ld-opt="-Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,-z,now -fPIC"
 make
@@ -831,7 +835,7 @@ else
     WORKER_PROCESSES=`grep processor /proc/cpuinfo | wc -l`
 fi
 
-echo "user [서비스_계정] [서비스_그룹]
+echo "# user [서비스_계정] [서비스_그룹]
 user ${USERNAME} ${GROUPNAME};
 
 # 프로세스 확인 : grep processor /proc/cpuinfo | wc -l

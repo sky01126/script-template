@@ -392,7 +392,7 @@ if [ "$(uppercase $INSTALL_NGINX_RTMP)" == "Y" ]; then
     INSTALL_CONFIG="${INSTALL_CONFIG} --add-module=${SRC_HOME}/${NGINX_RTMP_MODULE_HOME}"
 fi
 
-echo "./configure ${INSTALL_CONFIG} --with-ld-opt=\"-Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,-z,now -fPIC\""
+# echo "./configure ${INSTALL_CONFIG} --with-ld-opt=\"-Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,-z,now -fPIC\""
 
 sleep 5
 

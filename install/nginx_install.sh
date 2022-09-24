@@ -42,7 +42,7 @@
 # groupadd -g 101 -r nginx && useradd -r -u 101 -g nginx -s /sbin/nologin -d /nginx -c "Nginx" nginx
 #
 
-echo "---------------- Nginx - v2022.01.14.001 ----------------"
+echo "---------------- Nginx - v2022.09.24.001 ----------------"
 
 # ------------------------------------------------------------------------------
 # Exit on error
@@ -52,7 +52,7 @@ set -e
 # 사용 하는 extglob 쉘 옵션 shopt 내장 명령을 사용 하 여 같은 확장된 패턴 일치 연산자를 사용
 shopt -s extglob
 
-export SERVER_HOME=/nkapps/nkshop
+# export SERVER_HOME=/nkapps/nkshop
 
 ## OS를 확인한다.
 export OS='unknown'

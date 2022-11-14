@@ -258,19 +258,7 @@ INSTALL_CONFIG="${INSTALL_CONFIG} --enable-so"
 INSTALL_CONFIG="${INSTALL_CONFIG} --enable-ssl"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-mpm=event"
 
-if [[ -z ${PCRE_HOME} ]]; then
-    INSTALL_CONFIG="${INSTALL_CONFIG} --with-pcre=${SERVER_HOME}${PROGRAME_HOME}/${PCRE_HOME}"
-else
-    INSTALL_CONFIG="${INSTALL_CONFIG} --with-pcre=${SERVER_HOME}/${PCRE_ALIAS}"
-fi
-
-if [[ -z ${PCRE_HOME} ]]; then
-    INSTALL_CONFIG="${INSTALL_CONFIG} --with-ssl=${SERVER_HOME}${PROGRAME_HOME}/${OPENSSL_HOME}"
-else
-    INSTALL_CONFIG="${INSTALL_CONFIG} --with-ssl=${SERVER_HOME}/${OPENSSL_ALIAS}"
-fi
-
-if [[ -z ${PCRE_HOME} ]]; then
+if [[ -z ${APR_HOME} ]]; then
     INSTALL_CONFIG="${INSTALL_CONFIG} --with-apr=${SERVER_HOME}${PROGRAME_HOME}/${APR_HOME}"
     INSTALL_CONFIG="${INSTALL_CONFIG} --with-apr-util=${SERVER_HOME}${PROGRAME_HOME}/${APR_HOME}"
 else
@@ -278,6 +266,17 @@ else
     INSTALL_CONFIG="${INSTALL_CONFIG} --with-apr-util=${SERVER_HOME}/${APR_ALIAS}"
 fi
 
+if [[ -z ${PCRE_HOME} ]]; then
+    INSTALL_CONFIG="${INSTALL_CONFIG} --with-pcre=${SERVER_HOME}${PROGRAME_HOME}/${PCRE_HOME}"
+else
+    INSTALL_CONFIG="${INSTALL_CONFIG} --with-pcre=${SERVER_HOME}/${PCRE_ALIAS}"
+fi
+
+if [[ -z ${OPENSSL_HOME} ]]; then
+    INSTALL_CONFIG="${INSTALL_CONFIG} --with-ssl=${SERVER_HOME}${PROGRAME_HOME}/${OPENSSL_HOME}"
+else
+    INSTALL_CONFIG="${INSTALL_CONFIG} --with-ssl=${SERVER_HOME}/${OPENSSL_ALIAS}"
+fi
 
 ./configure ${INSTALL_CONFIG}
 make
@@ -1350,7 +1349,7 @@ Include conf/extra/httpd-jk.conf
 #    Protocols h2 http/1.1
 #
 #    # HTTP/2 in a Server context (TLS and cleartext)
-#    #Protocols h2 h2c http/1.1
+#    # Protocols h2 h2c http/1.1
 #</IfModule>
 
 ## \"Content-Security-Policy\", \"X-Content-Type-Options\", \"X-XSS-Protection\", \"Strict-Transport-Security\" 헤더 추가
@@ -1881,8 +1880,8 @@ countryName_min                 = 2
 countryName_max                 = 2
 
 # 회사명 입력
-organizationName                = KTH
-organizationName_default        = KTH Inc.
+organizationName                = kt alpha
+organizationName_default        = kt alpha Co., Ltd.
 
 # 부서 입력
 #organizationalUnitName         = Organizational Unit Name (eg, section)

@@ -195,6 +195,18 @@ if [[ -d "${SERVER_HOME}/${HTTPD_HOME}" ]]; then
 fi
 
 # ------------------------------------------------------------------------------
+# Domain Name 설정.
+if [[ -z ${DOMAIN_NAME} ]]; then
+    printf "\e[00;32m| Enter the domain name\e[00m"
+    read -e -p " > " DOMAIN_NAME
+    while [[ -z ${DOMAIN_NAME} ]]; do
+        printf "\e[00;32m| Enter the domain name\e[00m"
+        read -e -p " > " DOMAIN_NAME
+    done
+    printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
+fi
+
+# ------------------------------------------------------------------------------
 if [[ ! -d "${SERVER_HOME}/openssl" ]]; then
     cd ${SRC_HOME}
 
@@ -234,18 +246,6 @@ if [[ ! -d "${SERVER_HOME}/pcre2" ]]; then
         printf "\e[00;32m| \"${SRC_HOME}/${PCRE2_HOME}\" delete...\e[00m\n"
         rm -rf ${SRC_HOME}/${PCRE2_HOME}
     fi
-fi
-
-# ------------------------------------------------------------------------------
-# Domain Name 설정.
-if [[ -z ${DOMAIN_NAME} ]]; then
-    printf "\e[00;32m| Enter the domain name\e[00m"
-    read -e -p " > " DOMAIN_NAME
-    while [[ -z ${DOMAIN_NAME} ]]; do
-        printf "\e[00;32m| Enter the domain name\e[00m"
-        read -e -p " > " DOMAIN_NAME
-    done
-    printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
 fi
 
 cd ${SRC_HOME}

@@ -110,7 +110,7 @@ export EXTENSION='.tar.gz'
 # export LOG_HOME="/ap_log"
 
 export SRC_HOME="/home/server/src"
-export SERVER_HOME="/home/server/httpd"
+export SERVER_HOME="/home/server"
 export LOG_HOME="/home/server/httpd_log"
 if [[ ! -d "${SRC_HOME}" ]]; then
     mkdir -p ${SRC_HOME}
@@ -195,6 +195,48 @@ if [[ -d "${SERVER_HOME}/${HTTPD_HOME}" ]]; then
 fi
 
 # ------------------------------------------------------------------------------
+if [[ ! -d "${SERVER_HOME}/openssl" ]]; then
+    cd ${SRC_HOME}
+
+    printf "\e[00;32m| ${OPENSSL_NAME} download (URL : ${OPENSSL_DOWNLOAD_URL})\e[00m\n"
+    curl -O ${OPENSSL_DOWNLOAD_URL}
+
+    tar xvzf ${OPENSSL_NAME}
+    cd ${SRC_HOME}/${OPENSSL_HOME}
+
+    ./config --prefix=${SERVER_HOME}/openssl -fPIC shared
+    make
+    make install
+
+    printf "\e[00;32m|---------------------------------------------------------------------------------\e[00m\n"
+    printf "\e[00;32m| ${OPENSSL_HOME} install success...\e[00m\n"
+    printf "\e[00;32m|---------------------------------------------------------------------------------\e[00m\n"
+fi
+
+# ------------------------------------------------------------------------------
+# PCRE 설치
+if [[ ! -d "${SERVER_HOME}/pcre2" ]]; then
+    cd ${SRC_HOME}
+    if [ ! -f "${SRC_HOME}/${PCRE2_NAME}" ]; then
+        printf "\e[00;32m| ${PCRE2_NAME} download (URL : ${PCRE2_DOWNLOAD_URL})\e[00m\n"
+        curl -L -O ${PCRE2_DOWNLOAD_URL}
+    fi
+
+    tar xvzf ${PCRE2_NAME}
+    cd ${SRC_HOME}/${PCRE2_HOME}
+
+    ./configure --prefix=${SRC_HOME}/pcre2
+    make
+    make install
+
+    # Install source delete
+    if [[ -d "${SRC_HOME}/${PCRE2_HOME}" ]]; then
+        printf "\e[00;32m| \"${SRC_HOME}/${PCRE2_HOME}\" delete...\e[00m\n"
+        rm -rf ${SRC_HOME}/${PCRE2_HOME}
+    fi
+fi
+
+# ------------------------------------------------------------------------------
 # Domain Name 설정.
 if [[ -z ${DOMAIN_NAME} ]]; then
     printf "\e[00;32m| Enter the domain name\e[00m"
@@ -263,48 +305,6 @@ fi
 tar xvzf ${APR_ICONV_NAME} -C ${SRC_HOME}/${HTTPD_NAME%$EXTENSION}/srclib/
 cd ${SRC_HOME}/${HTTPD_NAME%$EXTENSION}/srclib/
 mv ${APR_ICONV_HOME} apr-iconv
-
-# ------------------------------------------------------------------------------
-if [[ ! -d "${SERVER_HOME}/openssl" ]]; then
-    cd ${SRC_HOME}
-
-    printf "\e[00;32m| ${OPENSSL_NAME} download (URL : ${OPENSSL_DOWNLOAD_URL})\e[00m\n"
-    curl -O ${OPENSSL_DOWNLOAD_URL}
-
-    tar xvzf ${OPENSSL_NAME}
-    cd ${SRC_HOME}/${OPENSSL_HOME}
-
-    ./config --prefix=${SERVER_HOME}/openssl -fPIC shared
-    make
-    make install
-
-    printf "\e[00;32m|---------------------------------------------------------------------------------\e[00m\n"
-    printf "\e[00;32m| ${OPENSSL_HOME} install success...\e[00m\n"
-    printf "\e[00;32m|---------------------------------------------------------------------------------\e[00m\n"
-fi
-
-# ------------------------------------------------------------------------------
-# PCRE 설치
-if [[ ! -d "${SERVER_HOME}/pcre2" ]]; then
-    cd ${SRC_HOME}
-    if [ ! -f "${SRC_HOME}/${PCRE2_NAME}" ]; then
-        printf "\e[00;32m| ${PCRE2_NAME} download (URL : ${PCRE2_DOWNLOAD_URL})\e[00m\n"
-        curl -L -O ${PCRE2_DOWNLOAD_URL}
-    fi
-
-    tar xvzf ${PCRE2_NAME}
-    cd ${SRC_HOME}/${PCRE2_HOME}
-
-    ./configure --prefix=${SRC_HOME}/pcre2
-    make
-    make install
-
-    # Install source delete
-    if [[ -d "${SRC_HOME}/${PCRE2_HOME}" ]]; then
-        printf "\e[00;32m| \"${SRC_HOME}/${PCRE2_HOME}\" delete...\e[00m\n"
-        rm -rf ${SRC_HOME}/${PCRE2_HOME}
-    fi
-fi
 
 # ------------------------------------------------------------------------------
 # MPM 모드 설정 변경.

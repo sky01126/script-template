@@ -105,13 +105,15 @@ export EXTENSION='.tar.gz'
 # 서버 디렉토리 설정.
 # export SERVER_HOME="/apache"
 # export LOG_HOME="/ap_log"
+# export PID_HOME="/ap_log"
 
+printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
 # export SERVER_HOME="/home/www"
 if [[ -z "${SERVER_HOME}" ]]; then
-    printf "Enter the server home path"
+    printf "\e[00;32m| Enter the server home path\e[00m"
     read -e -p " > " SERVER_HOME
     while [[ -z "${SERVER_HOME}" ]]; do
-        printf "Enter the server home path"
+        printf "\e[00;32m| Enter the server home path\e[00m"
         read -e -p " > " SERVER_HOME
     done
 fi
@@ -119,10 +121,10 @@ mkdir -p ${SERVER_HOME}
 
 # export LOG_HOME="/home/www/httpd_log"
 if [[ -z "${LOG_HOME}" ]]; then
-    printf "Enter the http log path"
+    printf "\e[00;32m| Enter the http log save path\e[00m"
     read -e -p " > " LOG_HOME
     while [[ -z "${LOG_HOME}" ]]; do
-        printf "Enter the http log path"
+        printf "\e[00;32m| Enter the http log save path\e[00m"
         read -e -p " > " LOG_HOME
     done
 fi
@@ -132,10 +134,10 @@ fi
 
 # export PID_HOME="/home/www/httpd/work"
 if [[ -z "${PID_HOME}" ]]; then
-    printf "Enter the http log path"
+    printf "\e[00;32m| Enter the http pid save path\e[00m"
     read -e -p " > " PID_HOME
     while [[ -z "${PID_HOME}" ]]; do
-        printf "Enter the http log path"
+        printf "\e[00;32m| Enter the http pid save path\e[00m"
         read -e -p " > " PID_HOME
     done
 fi

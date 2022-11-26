@@ -19,7 +19,7 @@ echo "---------------- APR - v2022.01.10.003 ----------------"
 # 사용 하는 extglob 쉘 옵션 shopt 내장 명령을 사용 하 여 같은 확장된 패턴 일치 연산자를 사용
 shopt -s extglob
 
-if [[ ! -z ${APR_ALIAS} ]]; then
+if [[ -n "${APR_ALIAS}" ]]; then
     rm -rf ${SERVER_HOME}/${APR_ALIAS}
 fi
 rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${APR_HOME}
@@ -76,27 +76,27 @@ cd ${SRC_HOME}/${APR_UTIL_HOME}
 make
 make install
 
-# # ----------------------------------------------------------------------------------------------------------------------
-# # APR Iconv Install
-# cd ${SRC_HOME}
+# ----------------------------------------------------------------------------------------------------------------------
+# APR Iconv Install
+cd ${SRC_HOME}
 
-# # verify that the source exists download
-# if [ ! -f "${SRC_HOME}/${APR_ICONV_NAME}" ]; then
-#     printf "\e[00;32m| ${APR_ICONV_NAME} download (URL : ${APR_ICONV_DOWNLOAD_URL})\e[00m\n"
-#     curl -L -O ${APR_ICONV_DOWNLOAD_URL}
-# fi
+# verify that the source exists download
+if [ ! -f "${SRC_HOME}/${APR_ICONV_NAME}" ]; then
+    printf "\e[00;32m| ${APR_ICONV_NAME} download (URL : ${APR_ICONV_DOWNLOAD_URL})\e[00m\n"
+    curl -L -O ${APR_ICONV_DOWNLOAD_URL}
+fi
 
-# tar xvzf ${APR_ICONV_NAME}
-# cd ${SRC_HOME}/${APR_ICONV_HOME}
+tar xvzf ${APR_ICONV_NAME}
+cd ${SRC_HOME}/${APR_ICONV_HOME}
 
-# ./configure --prefix=${SERVER_HOME}/${PROGRAME_HOME}/${APR_HOME}                \
-#             --with-apr=${SERVER_HOME}/${PROGRAME_HOME}/${APR_HOME}
-# make
-# make install
-# sleep 0.5
+./configure --prefix=${SERVER_HOME}/${PROGRAME_HOME}/${APR_HOME}                \
+            --with-apr=${SERVER_HOME}/${PROGRAME_HOME}/${APR_HOME}
+make
+make install
+sleep 0.5
 
 # ----------------------------------------------------------------------------------------------------------------------
-if [[ ! -z ${APR_ALIAS} ]]; then
+if [[ -n "${APR_ALIAS}" ]]; then
     cd ${SERVER_HOME}
     ln -s ./${PROGRAME_HOME}/${APR_HOME} ${APR_ALIAS}
 fi

@@ -132,6 +132,21 @@ export PCRE_HOME=${PCRE_NAME%$EXTENSION}
 
 
 # ----------------------------------------------------------------------------------------------------------------------
+# PCRE2
+export PCRE2_ALIAS='pcre'
+if [[ -z ${PCRE2_ALIAS} ]]; then
+    printf "Enter the pcre2 alias (ex. pcre2)"
+    read -e -p " > " PCRE2_ALIAS
+    echo
+fi
+
+export PCRE2_VERSION="10.37"
+export PCRE2_DOWNLOAD_URL="http://sourceforge.net/projects/pcre/files/pcre2/${PCRE_VERSION}/pcre2-${PCRE_VERSION}.tar.gz"
+export PCRE2_NAME=${PCRE2_DOWNLOAD_URL##+(*/)}
+export PCRE2_HOME=${PCRE2_NAME%$EXTENSION}
+
+
+# ----------------------------------------------------------------------------------------------------------------------
 # OpenSSL 설정.
 export OPENSSL_ALIAS='openssl'
 if [[ -z ${OPENSSL_ALIAS} ]]; then
@@ -140,7 +155,7 @@ if [[ -z ${OPENSSL_ALIAS} ]]; then
     echo
 fi
 
-export OPENSSL_VERSION="1.1.1q"
+export OPENSSL_VERSION="3.0.7"
 export OPENSSL_DOWNLOAD_URL="https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz"
 export OPENSSL_NAME=${OPENSSL_DOWNLOAD_URL##+(*/)}
 export OPENSSL_HOME=${OPENSSL_NAME%$EXTENSION}

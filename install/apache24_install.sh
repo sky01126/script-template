@@ -51,52 +51,45 @@ fi
 
 unset TMOUT
 
-
 # ----------------------------------------------------------------------------------------------------------------------
 PRG="$0"
-while [[ -h "$PRG" ]]; do
-    ls=`ls -ld "$PRG"`
-    link=`expr "$ls" : '.*-> \(.*\)$'`
-    if expr "$link" : '/.*' > /dev/null; then
+while [[ -L "$PRG" ]]; do
+    ls=$(ls -ld "$PRG")
+    link=$(expr "$ls" : '.*-> \(.*\)$')
+    if expr "$link" : '/.*' >/dev/null; then
         PRG="$link"
     else
-        PRG=`dirname "$PRG"`/"$link"
+        PRG=$(dirname "$PRG")/"$link"
     fi
 done
 
 # Get standard environment variables
-PRGDIR=`dirname "$PRG"`
-
+PRGDIR=$(dirname "$PRG")
 
 # ----------------------------------------------------------------------------------------------------------------------
 # 멀티의 setting.sh 읽기
 if [[ ! -f "${PRGDIR}/library/setting.sh" ]]; then
     rm -rf /tmp/setting.sh
 
-    curl -f -L -sS  https://raw.githubusercontent.com/sky01126/script-template/master/install/library/setting.sh -o /tmp/setting.sh
+    curl -f -L -sS https://raw.githubusercontent.com/sky01126/script-template/master/install/library/setting.sh -o /tmp/setting.sh
     source /tmp/setting.sh
-    # bash   /tmp/setting.sh
 else
     source ${PRGDIR}/library/setting.sh
-    # bash   ${PRGDIR}/library/setting.sh
 fi
-
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Apache 2.4
 HTTPD_ALIAS='httpd'
 
-HTTPD_VERSION="2.4.52"
+HTTPD_VERSION="2.4.54"
 HTTPD_DOWNLOAD_URL="http://archive.apache.org/dist/httpd/httpd-${HTTPD_VERSION}.tar.gz"
 HTTPD_NAME=${HTTPD_DOWNLOAD_URL##+(*/)}
 HTTPD_HOME=${HTTPD_NAME%$EXTENSION}
-
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Apache Tomcat Connector
 MOD_JK_VERSION="1.2.48"
 MOD_JK_DOWNLOAD_URL="http://archive.apache.org/dist/tomcat/tomcat-connectors/jk/tomcat-connectors-${MOD_JK_VERSION}-src.tar.gz"
-
 
 # ----------------------------------------------------------------------------------------------------------------------
 printf "\e[00;32m+--------------+----------------------------------------------------------\e[00m\n"
@@ -106,23 +99,21 @@ printf "\e[00;32m| HTTPD_HOME   |\e[00m ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_H
 printf "\e[00;32m| HTTPD_ALIAS  |\e[00m ${SERVER_HOME}/${HTTPD_ALIAS}\n"
 printf "\e[00;32m+--------------+------------------------------------------------------------------\e[00m\n"
 
-
 # ----------------------------------------------------------------------------------------------------------------------
-# PCRE 설치 여부 확인
-if [[ ! -d "${SERVER_HOME}${PROGRAME_HOME}/${PCRE_HOME}" ]]; then
-    if [[ ! -f "${PRGDIR}/library/pcre.sh" ]]; then
-        rm -rf /tmp/pcre.sh
+# PCRE2 설치 여부 확인
+if [[ ! -d "${SERVER_HOME}${PROGRAME_HOME}/${PCRE2_HOME}" ]]; then
+    if [[ ! -f "${PRGDIR}/library/pcre2.sh" ]]; then
+        rm -rf /tmp/pcre2.sh
 
-        curl -f -L -sS  https://raw.githubusercontent.com/sky01126/script-template/master/install/library/pcre.sh -o /tmp/pcre.sh
-        bash   /tmp/pcre.sh
+        curl -f -L -sS https://raw.githubusercontent.com/sky01126/script-template/master/install/library/pcre2.sh -o /tmp/pcre2.sh
+        bash /tmp/pcre2.sh
     else
-        bash  ${PRGDIR}/library/pcre.sh
+        bash ${PRGDIR}/library/pcre2.sh
     fi
-elif [[ ! -z ${PCRE_ALIAS}  ]] && [[ ! -d "${SERVER_HOME}/${PCRE_ALIAS}" ]]; then
+elif [[ -n "${PCRE2_ALIAS}" ]] && [[ ! -d "${SERVER_HOME}/${PCRE2_ALIAS}" ]]; then
     cd ${SERVER_HOME}
-    ln -s .${PROGRAME_HOME}/${PCRE_HOME} ${PCRE_ALIAS}
+    ln -s .${PROGRAME_HOME}/${PCRE2_HOME} ${PCRE2_ALIAS}
 fi
-
 
 # ----------------------------------------------------------------------------------------------------------------------
 # OpenSSL 설치 여부 확인
@@ -130,16 +121,15 @@ if [[ ! -d "${SERVER_HOME}${PROGRAME_HOME}/${OPENSSL_HOME}" ]]; then
     if [[ ! -f "${PRGDIR}/library/openssl.sh" ]]; then
         rm -rf /tmp/openssl.sh
 
-        curl -f -L -sS  https://raw.githubusercontent.com/sky01126/script-template/master/install/library/openssl.sh -o /tmp/openssl.sh
-        bash   /tmp/openssl.sh
+        curl -f -L -sS https://raw.githubusercontent.com/sky01126/script-template/master/install/library/openssl.sh -o /tmp/openssl.sh
+        bash /tmp/openssl.sh
     else
-        bash  ${PRGDIR}/library/openssl.sh
+        bash ${PRGDIR}/library/openssl.sh
     fi
-elif [[ ! -z ${OPENSSL_ALIAS}  ]] && [[ ! -d "${SERVER_HOME}/${OPENSSL_ALIAS}" || ! -L "${SERVER_HOME}/${OPENSSL_ALIAS}" ]]; then
+elif [[ -n "${OPENSSL_ALIAS}" ]] && [[ ! -d "${SERVER_HOME}/${OPENSSL_ALIAS}" || ! -L "${SERVER_HOME}/${OPENSSL_ALIAS}" ]]; then
     cd ${SERVER_HOME}
     ln -s .${PROGRAME_HOME}/${OPENSSL_HOME} ${OPENSSL_ALIAS}
 fi
-
 
 # ----------------------------------------------------------------------------------------------------------------------
 # APR / APR Util 설치 여부 확인
@@ -147,16 +137,15 @@ if [[ ! -d "${SERVER_HOME}${PROGRAME_HOME}/${APR_HOME}" ]]; then
     if [[ ! -f "${PRGDIR}/library/apr.sh" ]]; then
         rm -rf /tmp/apr.sh
 
-        curl -f -L -sS  https://raw.githubusercontent.com/sky01126/script-template/master/install/library/apr.sh -o /tmp/apr.sh
-        bash   /tmp/apr.sh
+        curl -f -L -sS https://raw.githubusercontent.com/sky01126/script-template/master/install/library/apr.sh -o /tmp/apr.sh
+        bash /tmp/apr.sh
     else
-        bash  ${PRGDIR}/library/apr.sh
+        bash ${PRGDIR}/library/apr.sh
     fi
-elif [[ ! -z ${APR_ALIAS}  ]] && [[ ! -d "${SERVER_HOME}/${APR_ALIAS}" || ! -L "${SERVER_HOME}/${APR_ALIAS}" ]]; then
+elif [[ -n "${APR_ALIAS}" ]] && [[ ! -d "${SERVER_HOME}/${APR_ALIAS}" || ! -L "${SERVER_HOME}/${APR_ALIAS}" ]]; then
     cd ${SERVER_HOME}
     ln -s .${PROGRAME_HOME}/${APR_HOME} ${APR_ALIAS}
 fi
-
 
 # ----------------------------------------------------------------------------------------------------------------------
 # 설치 여부 확인
@@ -178,10 +167,9 @@ if [[ -d "${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}" ]]; then
     fi
 fi
 
-
 # ----------------------------------------------------------------------------------------------------------------------
 # Domain Name 설정.
-if [[ -z ${DOMAIN_NAME} ]]; then
+if [[ -z "${DOMAIN_NAME}" ]]; then
     printf "\e[00;32m| Enter the domain name\e[00m"
     read -e -p " > " DOMAIN_NAME
     while [[ -z ${DOMAIN_NAME} ]]; do
@@ -190,7 +178,6 @@ if [[ -z ${DOMAIN_NAME} ]]; then
     done
     printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
 fi
-
 
 cd ${SRC_HOME}
 
@@ -213,7 +200,7 @@ if [[ -d "${SERVER_HOME}/${HTTPD_ALIAS}" || -L "${SERVER_HOME}/${HTTPD_ALIAS}" ]
 fi
 
 # verify that the source exists download
-if [ ! -f "${SRC_HOME}/${HTTPD_NAME}" ]; then
+if [[ ! -f "${SRC_HOME}/${HTTPD_NAME}" ]]; then
     printf "\e[00;32m| \"${HTTPD_NAME}\" download (URL : ${HTTPD_DOWNLOAD_URL})\e[00m\n"
     curl -L -O ${HTTPD_DOWNLOAD_URL}
 fi
@@ -222,18 +209,15 @@ tar xvzf ${HTTPD_NAME}
 cd ${SRC_HOME}/${HTTPD_HOME}
 
 ## 특정라인 변경.
-if [ "$OS" == "linux" ]; then
+if [[ "$OS" == "linux" ]]; then
     sed -i "75s/.*/#define DEFAULT_SERVER_LIMIT 1024/g" ${SRC_HOME}/${HTTPD_HOME}/server/mpm/prefork/prefork.c
 
     # ServerLimit과 ThreadsPerChild 값을 변경한다. 서버의 스팩에 따라서 적절하게 수정한다.
-    sed -i "87s/.*/#define DEFAULT_SERVER_LIMIT 128/g"  ${SRC_HOME}/${HTTPD_HOME}/server/mpm/worker/worker.c
-    sed -i "105s/.*/#define DEFAULT_THREAD_LIMIT 64/g"  ${SRC_HOME}/${HTTPD_HOME}/server/mpm/worker/worker.c
+    sed -i "87s/.*/#define DEFAULT_SERVER_LIMIT 128/g" ${SRC_HOME}/${HTTPD_HOME}/server/mpm/worker/worker.c
 
     # ServerLimit과 ThreadsPerChild 값을 변경한다. 서버의 스팩에 따라서 적절하게 수정한다.
     sed -i "115s/.*/#define DEFAULT_SERVER_LIMIT 128/g" ${SRC_HOME}/${HTTPD_HOME}/server/mpm/event/event.c
-    sed -i "133s/.*/#define DEFAULT_THREAD_LIMIT 64/g" ${SRC_HOME}/${HTTPD_HOME}/server/mpm/event/event.c
 fi
-
 
 INSTALL_CONFIG="--prefix=${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}"
 INSTALL_CONFIG="${INSTALL_CONFIG} --enable-cache"
@@ -266,10 +250,10 @@ else
     INSTALL_CONFIG="${INSTALL_CONFIG} --with-apr-util=${SERVER_HOME}/${APR_ALIAS}"
 fi
 
-if [[ -z ${PCRE_HOME} ]]; then
-    INSTALL_CONFIG="${INSTALL_CONFIG} --with-pcre=${SERVER_HOME}${PROGRAME_HOME}/${PCRE_HOME}"
+if [[ -z ${PCRE2_HOME} ]]; then
+    INSTALL_CONFIG="${INSTALL_CONFIG} --with-pcre=${SERVER_HOME}${PROGRAME_HOME}/${PCRE2_HOME}/bin/pcre2-config"
 else
-    INSTALL_CONFIG="${INSTALL_CONFIG} --with-pcre=${SERVER_HOME}/${PCRE_ALIAS}"
+    INSTALL_CONFIG="${INSTALL_CONFIG} --with-pcre=${SERVER_HOME}/${PCRE2_ALIAS}/bin/pcre2-config"
 fi
 
 if [[ -z ${OPENSSL_HOME} ]]; then
@@ -293,15 +277,15 @@ sleep 0.5
 # Apache Tomcat Connector 설치
 printf "\e[00;32m| Apache Tomcat Connector install start...\e[00m\n"
 
-MOD_JK_NAME=${MOD_JK_DOWNLOAD_URL##+(*/)}
-MOD_JK_HOME=${MOD_JK_NAME%$EXTENSION}
+MOD_JK_NAME="${MOD_JK_DOWNLOAD_URL##+(*/)}"
+MOD_JK_HOME="${MOD_JK_NAME%$EXTENSION}"
 
 cd ${SRC_HOME}
 
 # verify that the source exists download
 if [ ! -f "${SRC_HOME}/${MOD_JK_NAME}" ]; then
     printf "\e[00;32m| \"${MOD_JK_NAME}\" download (URL : ${MOD_JK_DOWNLOAD_URL})\e[00m\n"
-    curl -L -O ${MOD_JK_DOWNLOAD_URL}
+    curl -L -O "${MOD_JK_DOWNLOAD_URL}"
 fi
 
 tar xvzf ${MOD_JK_NAME}
@@ -341,7 +325,6 @@ mkdir -p ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/conf/extra/sites-enabled
 #mkdir -p ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/logs/archive
 mkdir -p ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/work
 
-
 # ----------------------------------------------------------------------------------------------------------------------
 ## Tomcat Worker Name 설정.
 printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
@@ -354,11 +337,10 @@ printf "\e[00;32m+--------------------------------------------------------------
 if [[ -z ${INSTALL_WORKER_NAME} ]]; then
     printf "\e[00;32m| Enter the JK Connecter name\e[00m"
     read -e -p ' (default. tomcat) > ' INSTALL_WORKER_NAME
-    if [[ -z ${CHECK_TOMCAT}  ]]; then
+    if [[ -z ${CHECK_TOMCAT} ]]; then
         INSTALL_WORKER_NAME="tomcat"
     fi
 fi
-
 
 # ----------------------------------------------------------------------------------------------------------------------
 echo "#!/bin/sh
@@ -412,8 +394,7 @@ if [[ ! -f \"${SERVER_HOME}/${HTTPD_ALIAS}/work/httpd.pid\" ]]; then
     fi
 fi
 
-" > ${SERVER_HOME}/${HTTPD_ALIAS}/bin/start.sh
-
+" >${SERVER_HOME}/${HTTPD_ALIAS}/bin/start.sh
 
 # ----------------------------------------------------------------------------------------------------------------------
 echo "#!/bin/sh
@@ -471,8 +452,7 @@ if [[ -n \"\$STOPD\" ]]; then
         printf \"                                           [\e[00;32mFAILED\e[00m]\\\\n\"
     fi
 fi
-" > ${SERVER_HOME}/${HTTPD_ALIAS}/bin/stop.sh
-
+" >${SERVER_HOME}/${HTTPD_ALIAS}/bin/stop.sh
 
 # ----------------------------------------------------------------------------------------------------------------------
 echo "#!/bin/sh
@@ -540,8 +520,7 @@ else
         printf \"                                           [\e[00;32mFAILED\e[00m]\\\\n\"
     fi
 fi
-" > ${SERVER_HOME}/${HTTPD_ALIAS}/bin/restart.sh
-
+" >${SERVER_HOME}/${HTTPD_ALIAS}/bin/restart.sh
 
 # ----------------------------------------------------------------------------------------------------------------------
 echo "#!/bin/sh
@@ -575,8 +554,7 @@ else
     echo \"httpd (no pid file) not running.\"
     exit 1
 fi
-" > ${SERVER_HOME}/${HTTPD_ALIAS}/bin/status.sh
-
+" >${SERVER_HOME}/${HTTPD_ALIAS}/bin/status.sh
 
 # ----------------------------------------------------------------------------------------------------------------------
 echo "#!/bin/sh
@@ -617,8 +595,7 @@ PRGDIR=\`dirname \"\$PRG\"\`
 export HTTPD_HOME=\`cd \"\$PRGDIR/..\" >/dev/null; pwd\`
 
 \$HTTPD_HOME/bin/apachectl configtest
-" > ${SERVER_HOME}/${HTTPD_ALIAS}/bin/configtest.sh
-
+" >${SERVER_HOME}/${HTTPD_ALIAS}/bin/configtest.sh
 
 # ----------------------------------------------------------------------------------------------------------------------
 echo "#!/bin/sh
@@ -659,8 +636,7 @@ else
     echo \"httpd (no pid file) not running.\"
     exit 1
 fi
-" > ${SERVER_HOME}/${HTTPD_ALIAS}/bin/check-run-thread.sh
-
+" >${SERVER_HOME}/${HTTPD_ALIAS}/bin/check-run-thread.sh
 
 # ----------------------------------------------------------------------------------------------------------------------
 echo "#!/bin/sh
@@ -712,8 +688,7 @@ sed -i \"s/GROUP=.*/GROUP=\${GROUPNAME}/g\"    \${PRGDIR}/bin/*.sh
 # Apache Config 수정.
 sed -i \"s/User.*/User \${USERNAME}/g\"        \${PRGDIR}/conf/httpd.conf
 sed -i \"s/Group.*/Group \${GROUPNAME}/g\"     \${PRGDIR}/conf/httpd.conf
-" > ${SERVER_HOME}/${HTTPD_ALIAS}/bin/change-user.sh
-
+" >${SERVER_HOME}/${HTTPD_ALIAS}/bin/change-user.sh
 
 # ----------------------------------------------------------------------------------------------------------------------
 echo "#!/bin/bash
@@ -766,12 +741,10 @@ else
 fi
 
 chown \${USER}:\${GROUP} \${FILE_PATH}/\${DELETE_LOG_NAME}
-" > ${SERVER_HOME}/${HTTPD_ALIAS}/bin/delete-log.sh
-
+" >${SERVER_HOME}/${HTTPD_ALIAS}/bin/delete-log.sh
 
 # ----------------------------------------------------------------------------------------------------------------------
 chmod +x ${SERVER_HOME}/${HTTPD_ALIAS}/bin/*.sh
-
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Apache Config 수정.
@@ -1369,13 +1342,11 @@ Include conf/extra/httpd-jk.conf
         Deny from all
     </LimitExcept>
 </Location>
-" > ${SERVER_HOME}/${HTTPD_ALIAS}/conf/httpd.conf
-
+" >${SERVER_HOME}/${HTTPD_ALIAS}/conf/httpd.conf
 
 # ----------------------------------------------------------------------------------------------------------------------
 # httpd-default.conf에서 ServerTokens 설정 변경
 sed -i "55s/.*/ServerTokens Prod/g" ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-default.conf
-
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Apache Tomcat Connecter Config 추가.
@@ -1429,8 +1400,7 @@ LoadModule jk_module modules/mod_jk.so
     # Example for UnMounting requests using regexps
     #SetEnvIf REQUEST_URI \"\\.(htm|html|php|php3|phps|inc|phtml|css|gif|jpg|png|bmp|js)\$\" no-jk
 </IfModule>
-" > ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-jk.conf
-
+" >${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-jk.conf
 
 # ----------------------------------------------------------------------------------------------------------------------
 # securety settings
@@ -1462,8 +1432,7 @@ echo "<Location /jkmanager>
 <LocationMatch \"/META-INF\">
     Require all denied
 </LocationMatch>
-" > ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/security.conf
-
+" >${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/security.conf
 
 # ----------------------------------------------------------------------------------------------------------------------
 # StartServers * ThreadsPerChild = MaxSpareThreads
@@ -1490,16 +1459,15 @@ echo "<Location /jkmanager>
 #sed -i "67s/.*/    MaxRequestWorkers       800/g"   ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
 #sed -i "68s/.*/    MaxConnectionsPerChild    0/g"   ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
 #sed -i "69s/.*/<\/IfModule>\\n/g"                   ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
-sed -i "61s/.*/<IfModule mpm_event_module>/g"       ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
-sed -i "62s/.*/    StartServers              8/g"   ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
-sed -i "63s/.*/    ServerLimit              16/g"   ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
-sed -i "64s/.*/    MinSpareThreads          75/g"   ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
-sed -i "65s/.*/    MaxSpareThreads         200/g"   ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
-sed -i "66s/.*/    ThreadsPerChild          25/g"   ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
-sed -i "67s/.*/    MaxRequestWorkers       400/g"   ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
-sed -i "68s/.*/    MaxConnectionsPerChild    0/g"   ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
-sed -i "69s/.*/<\/IfModule>\\n/g"                   ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
-
+sed -i "61s/.*/<IfModule mpm_event_module>/g" ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
+sed -i "62s/.*/    StartServers              8/g" ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
+sed -i "63s/.*/    ServerLimit              16/g" ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
+sed -i "64s/.*/    MinSpareThreads          75/g" ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
+sed -i "65s/.*/    MaxSpareThreads         200/g" ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
+sed -i "66s/.*/    ThreadsPerChild          25/g" ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
+sed -i "67s/.*/    MaxRequestWorkers       400/g" ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
+sed -i "68s/.*/    MaxConnectionsPerChild    0/g" ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
+sed -i "69s/.*/<\/IfModule>\\n/g" ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
 
 # ----------------------------------------------------------------------------------------------------------------------
 #  worker settings
@@ -1566,8 +1534,7 @@ worker.${INSTALL_WORKER_NAME}Wlb.balance_workers=${INSTALL_WORKER_NAME}01
 # Define status worker
 #
 worker.jkstatus.type=status
-" > ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/workers.properties
-
+" >${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/workers.properties
 
 # ----------------------------------------------------------------------------------------------------------------------
 # uriworkermap settings
@@ -1594,8 +1561,7 @@ echo "# This file provides sample mappings for example wlb
 # ------------------------------------------------------------------------------
 # ROOT Settings
 /*=${INSTALL_WORKER_NAME}Wlb
-" > ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/uriworkermaps/${INSTALL_WORKER_NAME}.properties
-
+" >${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/uriworkermaps/${INSTALL_WORKER_NAME}.properties
 
 # ----------------------------------------------------------------------------------------------------------------------
 # httpd-vhosts settings
@@ -1622,8 +1588,7 @@ echo "# Virtual Hosts
 # match a ServerName or ServerAlias in any <VirtualHost> block.
 #
 Include conf/extra/sites-enabled/${INSTALL_WORKER_NAME}.conf
-" > ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-vhosts.conf
-
+" >${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-vhosts.conf
 
 # ----------------------------------------------------------------------------------------------------------------------
 # ${INSTALL_WORKER_NAME}.conf settings
@@ -1666,8 +1631,7 @@ echo "<VirtualHost *:80>
     # Mount JK File
     JkMountFile conf/extra/uriworkermaps/${INSTALL_WORKER_NAME}.properties
 </VirtualHost>
-" > ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/sites-enabled/${INSTALL_WORKER_NAME}.conf
-
+" >${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/sites-enabled/${INSTALL_WORKER_NAME}.conf
 
 # ----------------------------------------------------------------------------------------------------------------------
 # httpd-vhosts settings
@@ -1792,8 +1756,7 @@ SSLSessionCacheTimeout  300
 ## SSL Virtual Host Context
 ##
 Include conf/extra/sites-enabled/${INSTALL_WORKER_NAME}-ssl.conf
-" > ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-ssl.conf
-
+" >${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-ssl.conf
 
 # ----------------------------------------------------------------------------------------------------------------------
 # ${INSTALL_WORKER_NAME}-ssl.conf settings
@@ -1844,109 +1807,105 @@ echo "<VirtualHost _default_:443>
     # Mount JK File
     JkMountFile conf/extra/uriworkermaps/${INSTALL_WORKER_NAME}.properties
 </VirtualHost>
-" > ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/sites-enabled/${INSTALL_WORKER_NAME}-ssl.conf
+" >${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/sites-enabled/${INSTALL_WORKER_NAME}-ssl.conf
 
+# # ----------------------------------------------------------------------------------------------------------------------
+# printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
+# printf "\e[00;32m| 사설 인증키를 생성하려면 도메인을 입력주세요.\e[00m\n"
+# printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
+# printf "\e[00;32m| Enter whether to ssl setting?\e[00m"
+# read -e -p ' [Y / n](enter)] (default. n) > ' CHECK_SSL
+# if [[ ! -z ${CHECK_SSL} ]] && [[ "$(uppercase ${CHECK_SSL})" == "Y" ]]; then
+#     # 사설 인증키 생성
+#     mkdir ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/conf/ssl
 
-# ----------------------------------------------------------------------------------------------------------------------
-printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
-printf "\e[00;32m| 사설 인증키를 생성하려면 도메인을 입력주세요.\e[00m\n"
-printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
-printf "\e[00;32m| Enter whether to ssl setting?\e[00m"
-read -e -p ' [Y / n](enter)] (default. n) > ' CHECK_SSL
-if [[ ! -z ${CHECK_SSL}  ]] && [[ "$(uppercase ${CHECK_SSL})" == "Y" ]]; then
-    # 사설 인증키 생성
-    mkdir ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/conf/ssl
+#     echo "[v3_extensions]
+# # Extensions to add to a certificate request
+# basicConstraints                = CA:FALSE
+# authorityKeyIdentifier          = keyid,issuer
+# subjectKeyIdentifier            = hash
+# keyUsage                        = nonRepudiation, digitalSignature, keyEncipherment
 
-    echo "[v3_extensions]
-# Extensions to add to a certificate request
-basicConstraints                = CA:FALSE
-authorityKeyIdentifier          = keyid,issuer
-subjectKeyIdentifier            = hash
-keyUsage                        = nonRepudiation, digitalSignature, keyEncipherment
+# ## SSL 용 확장키 필드
+# extendedKeyUsage                = serverAuth,clientAuth
+# subjectAltName                  = @subject_alternative_name
 
-## SSL 용 확장키 필드
-extendedKeyUsage                = serverAuth,clientAuth
-subjectAltName                  = @subject_alternative_name
+# [subject_alternative_name]
+# # Subject AltName의 DNSName field에 SSL Host 의 도메인 이름을 적어준다.
+# # 멀티 도메인일 경우 *.lesstif.com 처럼 쓸 수 있다.
+# DNS.1                           = *.${DOMAIN_NAME}
 
-[subject_alternative_name]
-# Subject AltName의 DNSName field에 SSL Host 의 도메인 이름을 적어준다.
-# 멀티 도메인일 경우 *.lesstif.com 처럼 쓸 수 있다.
-DNS.1                           = *.${DOMAIN_NAME}
+# [distinguished_name]
+# countryName                     = Seoul
+# countryName_default             = KR
+# countryName_min                 = 2
+# countryName_max                 = 2
 
-[distinguished_name]
-countryName                     = Seoul
-countryName_default             = KR
-countryName_min                 = 2
-countryName_max                 = 2
+# # 회사명 입력
+# organizationName                = kt alpha
+# organizationName_default        = kt alpha Co., Ltd.
 
-# 회사명 입력
-organizationName                = kt alpha
-organizationName_default        = kt alpha Co., Ltd.
+# # 부서 입력
+# #organizationalUnitName         = Organizational Unit Name (eg, section)
+# #organizationalUnitName_default = lesstif SSL Project
 
-# 부서 입력
-#organizationalUnitName         = Organizational Unit Name (eg, section)
-#organizationalUnitName_default = lesstif SSL Project
+# # SSL 서비스할 domain 명 입력
+# commonName                      = ${DOMAIN_NAME}
+# commonName_default              = admin@${DOMAIN_NAME}
+# commonName_max                  = 64
 
-# SSL 서비스할 domain 명 입력
-commonName                      = ${DOMAIN_NAME}
-commonName_default              = admin@${DOMAIN_NAME}
-commonName_max                  = 64
+# [req]
+# # 화면으로 입력 받지 않도록 설정.
+# prompt                          = no
+# default_bits                    = 2048
+# default_md                      = sha1
+# default_keyfile                 = lesstif-rootca.key
+# distinguished_name              = distinguished_name
+# x509_extensions                 = v3_extensions
+# # 인증서 요청시에도 extension 이 들어가면 authorityKeyIdentifier 를 찾지 못해 에러가 나므로 막아둔다.
+# #req_extensions                  = v3_extensions
+#     " >${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/conf/ssl/${DOMAIN_NAME}.conf
 
-[req]
-# 화면으로 입력 받지 않도록 설정.
-prompt                          = no
-default_bits                    = 2048
-default_md                      = sha1
-default_keyfile                 = lesstif-rootca.key
-distinguished_name              = distinguished_name
-x509_extensions                 = v3_extensions
-# 인증서 요청시에도 extension 이 들어가면 authorityKeyIdentifier 를 찾지 못해 에러가 나므로 막아둔다.
-#req_extensions                  = v3_extensions
-    " > ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/conf/ssl/${DOMAIN_NAME}.conf
+#     ${SERVER_HOME}/${OPENSSL_ALIAS}/bin/openssl genpkey \
+#     -algorithm RSA \
+#     -pkeyopt rsa_keygen_bits:4096 \
+#     -out ${SERVER_HOME}/${HTTPD_ALIAS}/conf/ssl/${DOMAIN_NAME}.key
 
-    ${SERVER_HOME}/${OPENSSL_ALIAS}/bin/openssl genpkey                         \
-        -algorithm RSA                                                          \
-        -pkeyopt rsa_keygen_bits:4096                                           \
-        -out ${SERVER_HOME}/${HTTPD_ALIAS}/conf/ssl/${DOMAIN_NAME}.key
+#     chmod 400 ${SERVER_HOME}/${HTTPD_ALIAS}/conf/ssl/${DOMAIN_NAME}.key
 
-    chmod 400 ${SERVER_HOME}/${HTTPD_ALIAS}/conf/ssl/${DOMAIN_NAME}.key
+#     ${SERVER_HOME}/${OPENSSL_ALIAS}/bin/openssl req \
+#     -new \
+#     -sha256 \
+#     -key ${SERVER_HOME}/${HTTPD_ALIAS}/conf/ssl/${DOMAIN_NAME}.key \
+#     -out ${SERVER_HOME}/${HTTPD_ALIAS}/conf/ssl/${DOMAIN_NAME}.csr \
+#     -config ${SERVER_HOME}/${HTTPD_ALIAS}/conf/ssl/${DOMAIN_NAME}.conf
 
-    ${SERVER_HOME}/${OPENSSL_ALIAS}/bin/openssl req                             \
-        -new                                                                    \
-        -sha256                                                                 \
-        -key ${SERVER_HOME}/${HTTPD_ALIAS}/conf/ssl/${DOMAIN_NAME}.key          \
-        -out ${SERVER_HOME}/${HTTPD_ALIAS}/conf/ssl/${DOMAIN_NAME}.csr          \
-        -config ${SERVER_HOME}/${HTTPD_ALIAS}/conf/ssl/${DOMAIN_NAME}.conf
+#     ${SERVER_HOME}/${OPENSSL_ALIAS}/bin/openssl x509 -req \
+#     -days 3650 \
+#     -extensions v3_user \
+#     -in ${SERVER_HOME}/${HTTPD_ALIAS}/conf/ssl/${DOMAIN_NAME}.csr \
+#     -signkey ${SERVER_HOME}/${HTTPD_ALIAS}/conf/ssl/${DOMAIN_NAME}.key \
+#     -out ${SERVER_HOME}/${HTTPD_ALIAS}/conf/ssl/${DOMAIN_NAME}.crt \
+#     -extfile ${SERVER_HOME}/${HTTPD_ALIAS}/conf/ssl/${DOMAIN_NAME}.conf
 
-    ${SERVER_HOME}/${OPENSSL_ALIAS}/bin/openssl x509 -req                       \
-        -days 3650                                                              \
-        -extensions v3_user                                                     \
-        -in      ${SERVER_HOME}/${HTTPD_ALIAS}/conf/ssl/${DOMAIN_NAME}.csr      \
-        -signkey ${SERVER_HOME}/${HTTPD_ALIAS}/conf/ssl/${DOMAIN_NAME}.key      \
-        -out     ${SERVER_HOME}/${HTTPD_ALIAS}/conf/ssl/${DOMAIN_NAME}.crt      \
-        -extfile ${SERVER_HOME}/${HTTPD_ALIAS}/conf/ssl/${DOMAIN_NAME}.conf
+#     rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/conf/ssl/${DOMAIN_NAME}.conf
+# fi
 
-    rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/conf/ssl/${DOMAIN_NAME}.conf
-fi
-
-
-# ----------------------------------------------------------------------------------------------------------------------
-if [[ -f ${BASH_FILE} ]]; then
-    SET_HTTPD_HOME=`awk "/# Apache Start \/ Restart \/ Stop script/" ${BASH_FILE}`
-    if [[ ! -n ${SET_HTTPD_HOME} ]]; then
-        echo "# Apache Start / Restart / Stop script
-# Apache Start / Stop Aliases
-alias httpd-start='sudo   ${SERVER_HOME}/${HTTPD_ALIAS}/bin/start.sh'
-alias httpd-stop='sudo    ${SERVER_HOME}/${HTTPD_ALIAS}/bin/stop.sh'
-alias httpd-restart='sudo ${SERVER_HOME}/${HTTPD_ALIAS}/bin/restart.sh'
-alias httpd-status='sudo  ${SERVER_HOME}/${HTTPD_ALIAS}/bin/status.sh'
-" >> ${BASH_FILE}
-    fi
-fi
-
+# # ----------------------------------------------------------------------------------------------------------------------
+# if [[ -f ${BASH_FILE} ]]; then
+#     SET_HTTPD_HOME=$(awk "/# Apache Start \/ Restart \/ Stop script/" ${BASH_FILE})
+#     if [[ ! -n ${SET_HTTPD_HOME} ]]; then
+#         echo "# Apache Start / Restart / Stop script
+# # Apache Start / Stop Aliases
+# alias httpd-start='sudo   ${SERVER_HOME}/${HTTPD_ALIAS}/bin/start.sh'
+# alias httpd-stop='sudo    ${SERVER_HOME}/${HTTPD_ALIAS}/bin/stop.sh'
+# alias httpd-restart='sudo ${SERVER_HOME}/${HTTPD_ALIAS}/bin/restart.sh'
+# alias httpd-status='sudo  ${SERVER_HOME}/${HTTPD_ALIAS}/bin/status.sh'
+# " >>${BASH_FILE}
+#     fi
+# fi
 
 # ----------------------------------------------------------------------------------------------------------------------
 printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
 printf "\e[00;32m| \"${HTTPD_ALIAS}\" install success...\e[00m\n"
 printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
-

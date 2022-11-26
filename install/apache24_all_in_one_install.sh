@@ -105,22 +105,35 @@ export EXTENSION='.tar.gz'
 
 # ------------------------------------------------------------------------------
 # 서버 디렉토리 설정.
-# export SRC_HOME="/apache/src"
 # export SERVER_HOME="/apache"
 # export LOG_HOME="/ap_log"
 
-export SRC_HOME="/home/www/src"
-export SERVER_HOME="/home/www"
-export LOG_HOME="/home/www/httpd_log"
-if [[ ! -d "${SRC_HOME}" ]]; then
-    mkdir -p ${SRC_HOME}
+# export SERVER_HOME="/home/www"
+if [[ -z "${SERVER_HOME}" ]]; then
+    printf "Enter the server home path"
+    read -e -p " > " SERVER_HOME
+    while [[ -z "${SERVER_HOME}" ]]; do
+        printf "Enter the server home path"
+        read -e -p " > " SERVER_HOME
+    done
+    echo
 fi
-if [[ ! -d "${SERVER_HOME}" ]]; then
-    mkdir -p ${SERVER_HOME}
+mkdir -p ${SERVER_HOME}
+
+# export LOG_HOME="/home/www/httpd_log"
+if [[ -z "${LOG_HOME}" ]]; then
+    printf "Enter the server home path"
+    read -e -p " > " LOG_HOME
+    while [[ -z "${LOG_HOME}" ]]; do
+        printf "Enter the server home path"
+        read -e -p " > " LOG_HOME
+    done
+    echo
 fi
-if [[ ! -d "${LOG_HOME}" ]]; then
-    mkdir -p ${LOG_HOME}
-fi
+mkdir -p ${LOG_HOME}
+
+export SRC_HOME="${SERVER_HOME}/src"
+mkdir -p ${SRC_HOME}
 
 # ------------------------------------------------------------------------------
 # .bashrc 경로 설정.
@@ -196,10 +209,10 @@ fi
 
 # ------------------------------------------------------------------------------
 # Domain Name 설정.
-if [[ -z ${DOMAIN_NAME} ]]; then
+if [[ -z "${DOMAIN_NAME}" ]]; then
     printf "\e[00;32m| Enter the domain name\e[00m"
     read -e -p " > " DOMAIN_NAME
-    while [[ -z ${DOMAIN_NAME} ]]; do
+    while [[ -z "${DOMAIN_NAME}" ]]; do
         printf "\e[00;32m| Enter the domain name\e[00m"
         read -e -p " > " DOMAIN_NAME
     done
@@ -412,7 +425,7 @@ printf "\e[00;32m|   / / / __ \/ __  __ \/ ___/ __  / __/ \e[00m\n"
 printf "\e[00;32m|  / / / /_/ / / / / / / /__/ /_/ / /_   \e[00m\n"
 printf "\e[00;32m| /_/  \____/_/ /_/ /_/\___/\__,_/\__/   \e[00m\n"
 printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
-if [[ -z ${INSTALL_WORKER_NAME} ]]; then
+if [[ -z" ${INSTALL_WORKER_NAME}" ]]; then
     printf "\e[00;32m| Enter the JK Connecter name\e[00m"
     read -e -p ' (default. default) > ' INSTALL_WORKER_NAME
     if [[ -z ${CHECK_TOMCAT} ]]; then
@@ -443,20 +456,20 @@ echo
 # resolve links - \$0 may be a softlink
 PRG=\"\$0\"
 while [ -h \"\$PRG\" ]; do
-    ls=\`ls -ld \"\$PRG\"\`
-    link=\`expr \"\$ls\" : '.*-> \(.*\)\$'\`
+    ls=\$(ls -ld \"\$PRG\")
+    link=\$(expr \"\$ls\" : '.*-> \(.*\)\$')
     if expr \"\$link\" : '/.*' > /dev/null; then
         PRG=\"\$link\"
     else
-        PRG=\`dirname \"\$PRG\"\`/\"\$link\"
+        PRG=\$(dirname \"\$PRG\")/\"\$link\"
     fi
 done
 
 # Get standard environment variables
-PRGDIR=\`dirname \"\$PRG\"\`
+PRGDIR=\$(dirname \"\$PRG\")
 
 # HTTPD_HOME is the location of the configuration files of this instance of nginx
-export HTTPD_HOME=\`cd \"\$PRGDIR/..\" >/dev/null; pwd\`
+export HTTPD_HOME=\$(cd \"\$PRGDIR/..\" >/dev/null; pwd)
 
 \$HTTPD_HOME/bin/apachectl start
 
@@ -497,20 +510,20 @@ echo
 # resolve links - \$0 may be a softlink
 PRG=\"\$0\"
 while [ -h \"\$PRG\" ]; do
-    ls=\`ls -ld \"\$PRG\"\`
-    link=\`expr \"\$ls\" : '.*-> \(.*\)\$'\`
+    ls=\$(ls -ld \"\$PRG\")
+    link=\$(expr \"\$ls\" : '.*-> \(.*\)\$')
     if expr \"\$link\" : '/.*' > /dev/null; then
         PRG=\"\$link\"
     else
-        PRG=\`dirname \"\$PRG\"\`/\"\$link\"
+        PRG=\$(dirname \"\$PRG\")/\"\$link\"
     fi
 done
 
 # Get standard environment variables
-PRGDIR=\`dirname \"\$PRG\"\`
+PRGDIR=\$(dirname \"\$PRG\")
 
 # HTTPD_HOME is the location of the configuration files of this instance of nginx
-export HTTPD_HOME=\`cd \"\$PRGDIR/..\" >/dev/null; pwd\`
+export HTTPD_HOME=\$(cd \"\$PRGDIR/..\" >/dev/null; pwd)
 
 STOPD=
 if [[ -f \"${LOG_HOME}/httpd.pid\" ]]; then
@@ -555,20 +568,20 @@ echo
 # resolve links - \$0 may be a softlink
 PRG=\"\$0\"
 while [ -h \"\$PRG\" ]; do
-    ls=\`ls -ld \"\$PRG\"\`
-    link=\`expr \"\$ls\" : '.*-> \(.*\)\$'\`
+    ls=\$(ls -ld \"\$PRG\")
+    link=\$(expr \"\$ls\" : '.*-> \(.*\)\$')
     if expr \"\$link\" : '/.*' > /dev/null; then
         PRG=\"\$link\"
     else
-        PRG=\`dirname \"\$PRG\"\`/\"\$link\"
+        PRG=\$(dirname \"\$PRG\")/\"\$link\"
     fi
 done
 
 # Get standard environment variables
-PRGDIR=\`dirname \"\$PRG\"\`
+PRGDIR=\$(dirname \"\$PRG\")
 
 # HTTPD_HOME is the location of the configuration files of this instance of nginx
-export HTTPD_HOME=\`cd \"\$PRGDIR/..\" >/dev/null; pwd\`
+export HTTPD_HOME=\$(cd \"\$PRGDIR/..\" >/dev/null; pwd)
 
 STOPD=
 if [[ -f \"${LOG_HOME}/httpd.pid\" ]]; then
@@ -621,11 +634,11 @@ printf \" \e[00;32m  :: Apache ::              (v${HTTPD_VERSION})   \e[00m\\\\n
 echo
 
 server_pid() {
-    echo \`ps aux | grep httpd | grep -v grep | grep -v status | grep -v rotatelogs | awk '{print \$2}'\`
+    echo \$(ps aux | grep httpd | grep -v grep | grep -v status | grep -v rotatelogs | awk '{print \$2}')
 }
 
 if [[ -n \"\$(server_pid)\" ]]; then
-    pid=\`cat ${LOG_HOME}/httpd.pid\`
+    pid=\$(cat ${LOG_HOME}/httpd.pid)
     echo \"httpd (pid \$pid) is running.\"
     exit 0
 else
@@ -657,20 +670,20 @@ echo
 # resolve links - \$0 may be a softlink
 PRG=\"\$0\"
 while [ -h \"\$PRG\" ]; do
-    ls=\`ls -ld \"\$PRG\"\`
-    link=\`expr \"\$ls\" : '.*-> \(.*\)\$'\`
+    ls=\$(ls -ld \"\$PRG\")
+    link=\$(expr \"\$ls\" : '.*-> \(.*\)\$')
     if expr \"\$link\" : '/.*' > /dev/null; then
         PRG=\"\$link\"
     else
-        PRG=\`dirname \"\$PRG\"\`/\"\$link\"
+        PRG=\$(dirname \"\$PRG\")/\"\$link\"
     fi
 done
 
 # Get standard environment variables
-PRGDIR=\`dirname \"\$PRG\"\`
+PRGDIR=\$(dirname \"\$PRG\")
 
 # HTTPD_HOME is the location of the configuration files of this instance of nginx
-export HTTPD_HOME=\`cd \"\$PRGDIR/..\" >/dev/null; pwd\`
+export HTTPD_HOME=\$(cd \"\$PRGDIR/..\" >/dev/null; pwd)
 
 \$HTTPD_HOME/bin/apachectl configtest
 " >${SERVER_HOME}/${HTTPD_HOME}/bin/configtest.sh
@@ -696,19 +709,19 @@ printf \" \e[00;32m  :: Apache ::              (v${HTTPD_VERSION})   \e[00m\\\\n
 echo
 
 server_pid() {
-    echo \`ps aux | grep httpd | grep -v grep | grep -v status | grep -v rotatelogs | awk '{print \$2}'\`
+    echo \$(ps aux | grep httpd | grep -v grep | grep -v status | grep -v rotatelogs | awk '{print \$2}')
 }
 
 if [[ -n \"\$(server_pid)\" ]]; then
     # Apache에서 실행되는 전체 Thread 숫자를 조회한다.
     PROCESS_IDS=''
-    for pid in \`ps aux | grep httpd | grep ${USERNAME} | grep -v grep | grep -v status | grep -v rotatelogs | awk '{print \$2}'\`; do
+    for pid in \$(ps aux | grep httpd | grep ${USERNAME} | grep -v grep | grep -v status | grep -v rotatelogs | awk '{print \$2}'); do
         PROCESS_IDS+=\"\${pid} \"
     done
     #printf \" \e[00;32m|\e[00m ps hH p \${PROCESS_IDS} | wc -l\"
     #echo
 
-    printf \"Total thread count running on httpd: \e[00;32m\`ps hH p \${PROCESS_IDS} | wc -l\`\e[00m\\\\n\"
+    printf \"Total thread count running on httpd: \e[00;32m\$(ps hH p \${PROCESS_IDS} | wc -l)\e[00m\\\\n\"
     exit 0
 else
     echo \"httpd (no pid file) not running.\"
@@ -742,7 +755,7 @@ do
             echo \"\$cmd, support parameter: -n, -c, -t\"
             ;;
     esac
-    cmd_idx=\`expr \$cmd_idx + 2\`
+    cmd_idx=\$(expr \$cmd_idx + 2)
 done
 
 url=\$1
@@ -764,75 +777,75 @@ min=99999999
 while [ \$idx -le \$times ]
 do
     echo \"start loop \$idx\"
-    result=\`\$ab_cmd | grep 'Requests per second:'\`
-    result=\`echo \$result | awk -F ' ' '{ print \$4 }' | awk -F '.' '{ print \$1 }'\`
+    result=\$(\$ab_cmd | grep 'Requests per second:')
+    result=\$(echo \$result | awk -F ' ' '{ print \$4 }' | awk -F '.' '{ print \$1 }')
 
-    rps_sum=\`expr \$result + \$rps_sum\`
+    rps_sum=\$(expr \$result + \$rps_sum)
     if [[ \$result -gt \$max ]]; then
         max=\$result
     fi
     if [[ \$result -lt \$min ]]; then
         min=\$result
     fi
-    idx=\`expr \$idx + 1\`
+    idx=\$(expr \$idx + 1)
 done
 
-echo \"avg rps: \"\`expr \$rps_sum / \$times\`
+echo \"avg rps: \"\$(expr \$rps_sum / \$times)
 echo \"min rps: \$min\"
 echo \"max rps: \$max\"
 " >${SERVER_HOME}/${HTTPD_HOME}/bin/stress.sh
 
-# # ------------------------------------------------------------------------------
-# echo "#!/bin/sh
-# # ------------------------------------------------------------------------------
-# #     ___                     __
-# #    /   |  ____  ____ ______/ /_  ___
-# #   / /| | / __ \/ __ \`/ ___/ __ \/ _ \
-# #  / ___ |/ /_/ / /_/ / /__/ / / /  __/
-# # /_/  |_/ .___/\__,_/\___/_/ /_/\___/
-# #       /_/
-# #  :: Apache ::              (v${HTTPD_VERSION})
-# #
-# # ------------------------------------------------------------------------------
-# # Exit on error
-# set -e
+# ------------------------------------------------------------------------------
+echo "#!/bin/sh
+# ------------------------------------------------------------------------------
+#     ___                     __
+#    /   |  ____  ____ ______/ /_  ___
+#   / /| | / __ \/ __ \`/ ___/ __ \/ _ \
+#  / ___ |/ /_/ / /_/ / /__/ / / /  __/
+# /_/  |_/ .___/\__,_/\___/_/ /_/\___/
+#       /_/
+#  :: Apache ::              (v${HTTPD_VERSION})
+#
+# ------------------------------------------------------------------------------
+# Exit on error
+set -e
 
-# # ------------------------------------------------------------------------------
-# # shopt은 shell option의 약자로 유틸이다.
-# # 사용 하는 extglob 쉘 옵션 shopt 내장 명령을 사용 하 여 같은 확장된 패턴 일치 연산자를 사용
-# shopt -s extglob
+# ------------------------------------------------------------------------------
+# shopt은 shell option의 약자로 유틸이다.
+# 사용 하는 extglob 쉘 옵션 shopt 내장 명령을 사용 하 여 같은 확장된 패턴 일치 연산자를 사용
+shopt -s extglob
 
-# # resolve links - \$0 may be a softlink
-# PRG=\"\$0\"
-# while [ -h \"\$PRG\" ]; do
-#     ls=\`ls -ld \"\$PRG\"\`
-#     link=\`expr \"\$ls\" : '.*-> \(.*\)\$'\`
-#     if expr \"\$link\" : '/.*' > /dev/null; then
-#         PRG=\"\$link\"
-#     else
-#         PRG=\`dirname \"\$PRG\"\`/\"\$link\"
-#     fi
-# done
+# resolve links - \$0 may be a softlink
+PRG=\"\$0\"
+while [ -h \"\$PRG\" ]; do
+    ls=\$(ls -ld \"\$PRG\")
+    link=\$(expr \"\$ls\" : '.*-> \(.*\)\$')
+    if expr \"\$link\" : '/.*' > /dev/null; then
+        PRG=\"\$link\"
+    else
+        PRG=\$(dirname \"\$PRG\")/\"\$link\"
+    fi
+done
 
-# # ------------------------------------------------------------------------------
-# # 현재 사용자의 아이디명과 그룹정보
-# USERNAME=\`id -u -n\`
-# GROUPNAME=\`id -g -n\`
+# ------------------------------------------------------------------------------
+# 현재 사용자의 아이디명과 그룹정보
+USERNAME=\$(id -u -n)
+GROUPNAME=\$(id -g -n)
 
-# # ------------------------------------------------------------------------------
-# # check-run-thread.sh
-# sed -i \"s/for pid in.*/for pid in \`ps aux | grep httpd | grep \${USERNAME} | grep -v grep | grep -v status | grep -v rotatelogs | awk '{print \$2}'\`; do/g\" \${PRGDIR}/bin/check-run-thread.sh
+# ------------------------------------------------------------------------------
+# check-run-thread.sh
+sed -i \"s/for pid in.*/for pid in \$(ps aux | grep httpd | grep \${USERNAME} | grep -v grep | grep -v status | grep -v rotatelogs | awk '{print \$2}'); do/g\" \${PRGDIR}/bin/check-run-thread.sh
 
-# # ------------------------------------------------------------------------------
-# # delete-log.sh
-# sed -i \"s/USER=.*/USER=\${USERNAME}/g\"       \${PRGDIR}/bin/*.sh
-# sed -i \"s/GROUP=.*/GROUP=\${GROUPNAME}/g\"    \${PRGDIR}/bin/*.sh
+# ------------------------------------------------------------------------------
+# delete-log.sh
+sed -i \"s/USER=.*/USER=\${USERNAME}/g\"       \${PRGDIR}/bin/*.sh
+sed -i \"s/GROUP=.*/GROUP=\${GROUPNAME}/g\"    \${PRGDIR}/bin/*.sh
 
-# # ------------------------------------------------------------------------------
-# # Apache Config 수정.
-# sed -i \"s/User.*/User \${USERNAME}/g\"        \${PRGDIR}/conf/httpd.conf
-# sed -i \"s/Group.*/Group \${GROUPNAME}/g\"     \${PRGDIR}/conf/httpd.conf
-# " > ${SERVER_HOME}/${HTTPD_HOME}/bin/change-user.sh
+# ------------------------------------------------------------------------------
+# Apache Config 수정.
+sed -i \"s/User.*/User \${USERNAME}/g\"        \${PRGDIR}/conf/httpd.conf
+sed -i \"s/Group.*/Group \${GROUPNAME}/g\"     \${PRGDIR}/conf/httpd.conf
+" > ${SERVER_HOME}/${HTTPD_HOME}/bin/change-user.sh
 
 # ------------------------------------------------------------------------------
 chmod +x ${SERVER_HOME}/${HTTPD_HOME}/bin/*.sh
@@ -1297,14 +1310,13 @@ LoadModule jk_module modules/mod_jk.so
 # ------------------------------------------------------------------------------
 # securety settings
 echo "# securety settings
-<Location /jkmanager>
-    JkMount jkstatus
-    Order deny,allow
-    AllowOverride all
-
-    SetEnvIf REMOTE_ADDR ^((192.168)|(27.35.74)|(203.245.5[0|3|4])) let_remote_addr
-    Require env let_remote_addr
-</Location>
+# <Location /jkmanager>
+#     JkMount jkstatus
+#     Order deny,allow
+#     AllowOverride all
+#     SetEnvIf REMOTE_ADDR ^((192.168)|(27.35.74)|(203.245.5[0|3|4])) let_remote_addr
+#     Require env let_remote_addr
+# </Location>
 
 <Location /manager>
     Order deny,allow
@@ -1344,15 +1356,6 @@ echo "# securety settings
 # |---------------------|-----------------------------------------------------
 # | MaxRequestWorkers   | 요청을 동시에 처리할 수 있는 쓰레드 개수
 # +---------------------+-----------------------------------------------------
-#sed -i "61s/.*/<IfModule mpm_event_module>/g"       ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
-#sed -i "62s/.*/    StartServers             16/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
-#sed -i "63s/.*/    ServerLimit              32/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
-#sed -i "64s/.*/    MinSpareThreads          75/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
-#sed -i "65s/.*/    MaxSpareThreads         400/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
-#sed -i "66s/.*/    ThreadsPerChild          25/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
-#sed -i "67s/.*/    MaxRequestWorkers       800/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
-#sed -i "68s/.*/    MaxConnectionsPerChild    0/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
-#sed -i "69s/.*/<\/IfModule>\\n/g"                   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
 sed -i "61s/.*/<IfModule mpm_event_module>/g" ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
 sed -i "62s/.*/    StartServers              8/g" ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
 sed -i "63s/.*/    ServerLimit              32/g" ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
@@ -1705,19 +1708,19 @@ Include conf/extra/vhosts/${INSTALL_WORKER_NAME}-ssl.conf
 # </VirtualHost>
 # " >${SERVER_HOME}/${HTTPD_HOME}/conf/extra/vhosts/${INSTALL_WORKER_NAME}-ssl.conf
 
-#------------------------------------------------------------------------------
-#if [[ -f ${BASH_FILE} ]]; then
+# #------------------------------------------------------------------------------
+# if [[ -f "${BASH_FILE}" ]]; then
 #    SET_HTTPD_HOME=`awk "/# Apache Start \/ Restart \/ Stop script/" ${BASH_FILE}`
-#    if [[ ! -n ${SET_HTTPD_HOME} ]]; then
+#    if [[ ! -n "${SET_HTTPD_HOME}" ]]; then
 #        echo "# Apache Start / Restart / Stop script
-## Apache Start / Stop Aliases
-#alias httpd-start='sudo   ${SERVER_HOME}/${HTTPD_HOME}/bin/start.sh'
-#alias httpd-stop='sudo    ${SERVER_HOME}/${HTTPD_HOME}/bin/stop.sh'
-#alias httpd-restart='sudo ${SERVER_HOME}/${HTTPD_HOME}/bin/restart.sh'
-#alias httpd-status='sudo  ${SERVER_HOME}/${HTTPD_HOME}/bin/status.sh'
-#" >> ${BASH_FILE}
+# # Apache Start / Stop Aliases
+# alias httpd-start='sudo   ${SERVER_HOME}/${HTTPD_HOME}/bin/start.sh'
+# alias httpd-stop='sudo    ${SERVER_HOME}/${HTTPD_HOME}/bin/stop.sh'
+# alias httpd-restart='sudo ${SERVER_HOME}/${HTTPD_HOME}/bin/restart.sh'
+# alias httpd-status='sudo  ${SERVER_HOME}/${HTTPD_HOME}/bin/status.sh'
+# " >> ${BASH_FILE}
 #    fi
-#fi
+# fi
 
 printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
 printf "\e[00;32m| \"${HTTPD_HOME}\" install success...\e[00m\n"

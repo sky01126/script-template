@@ -240,7 +240,7 @@ INSTALL_CONFIG="${INSTALL_CONFIG} --enable-so"
 INSTALL_CONFIG="${INSTALL_CONFIG} --enable-ssl"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-mpm=event"
 
-if [[ -z ${APR_HOME} ]]; then
+if [[ -z "${APR_HOME}" ]]; then
     INSTALL_CONFIG="${INSTALL_CONFIG} --with-apr=${SERVER_HOME}/${PROGRAME_HOME}/${APR_HOME}"
     INSTALL_CONFIG="${INSTALL_CONFIG} --with-apr-util=${SERVER_HOME}/${PROGRAME_HOME}/${APR_HOME}"
 else
@@ -248,13 +248,13 @@ else
     INSTALL_CONFIG="${INSTALL_CONFIG} --with-apr-util=${SERVER_HOME}/${APR_ALIAS}"
 fi
 
-if [[ -z ${PCRE2_HOME} ]]; then
+if [[ -z "${PCRE2_HOME}" ]]; then
     INSTALL_CONFIG="${INSTALL_CONFIG} --with-pcre=${SERVER_HOME}/${PROGRAME_HOME}/${PCRE2_HOME}/bin/pcre2-config"
 else
     INSTALL_CONFIG="${INSTALL_CONFIG} --with-pcre=${SERVER_HOME}/${PCRE2_ALIAS}/bin/pcre2-config"
 fi
 
-if [[ -z ${OPENSSL_HOME} ]]; then
+if [[ -z "${OPENSSL_HOME}" ]]; then
     INSTALL_CONFIG="${INSTALL_CONFIG} --with-ssl=${SERVER_HOME}/${PROGRAME_HOME}/${OPENSSL_HOME}"
 else
     INSTALL_CONFIG="${INSTALL_CONFIG} --with-ssl=${SERVER_HOME}/${OPENSSL_ALIAS}"
@@ -332,10 +332,10 @@ printf "\e[00;32m|   / / / __ \/ __  __ \/ ___/ __  / __/ \e[00m\n"
 printf "\e[00;32m|  / / / /_/ / / / / / / /__/ /_/ / /_   \e[00m\n"
 printf "\e[00;32m| /_/  \____/_/ /_/ /_/\___/\__,_/\__/   \e[00m\n"
 printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
-if [[ -z ${INSTALL_WORKER_NAME} ]]; then
+if [[ -z "${INSTALL_WORKER_NAME}" ]]; then
     printf "\e[00;32m| Enter the JK Connecter name\e[00m"
     read -e -p ' (default. default) > ' INSTALL_WORKER_NAME
-    if [[ -z ${CHECK_TOMCAT} ]]; then
+    if [[ -z "${CHECK_TOMCAT}" ]]; then
         INSTALL_WORKER_NAME="default"
     fi
 fi
@@ -1448,15 +1448,6 @@ echo "<Location /jkmanager>
 # |---------------------|-----------------------------------------------------
 # | MaxRequestWorkers   | 요청을 동시에 처리할 수 있는 쓰레드 개수
 # +---------------------+-----------------------------------------------------
-#sed -i "61s/.*/<IfModule mpm_event_module>/g"       ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
-#sed -i "62s/.*/    StartServers             16/g"   ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
-#sed -i "63s/.*/    ServerLimit              32/g"   ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
-#sed -i "64s/.*/    MinSpareThreads          75/g"   ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
-#sed -i "65s/.*/    MaxSpareThreads         400/g"   ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
-#sed -i "66s/.*/    ThreadsPerChild          25/g"   ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
-#sed -i "67s/.*/    MaxRequestWorkers       800/g"   ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
-#sed -i "68s/.*/    MaxConnectionsPerChild    0/g"   ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
-#sed -i "69s/.*/<\/IfModule>\\n/g"                   ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
 sed -i "61s/.*/<IfModule mpm_event_module>/g" ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
 sed -i "62s/.*/    StartServers              8/g" ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
 sed -i "63s/.*/    ServerLimit              16/g" ${SERVER_HOME}/${HTTPD_ALIAS}/conf/extra/httpd-mpm.conf
@@ -1890,9 +1881,9 @@ echo "<VirtualHost _default_:443>
 # fi
 
 # # ----------------------------------------------------------------------------------------------------------------------
-# if [[ -f ${BASH_FILE} ]]; then
+# if [[ -f "${BASH_FILE}" ]]; then
 #     SET_HTTPD_HOME=$(awk "/# Apache Start \/ Restart \/ Stop script/" ${BASH_FILE})
-#     if [[ ! -n ${SET_HTTPD_HOME} ]]; then
+#     if [[ ! -n "${SET_HTTPD_HOME}" ]]; then
 #         echo "# Apache Start / Restart / Stop script
 # # Apache Start / Stop Aliases
 # alias httpd-start='sudo   ${SERVER_HOME}/${HTTPD_ALIAS}/bin/start.sh'

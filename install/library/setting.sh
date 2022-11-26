@@ -40,10 +40,10 @@ export BASH_FILE=${HOME}/.bashrc
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Server Home 경로 설정.
-if [[ -z ${SERVER_HOME} ]]; then
+if [[ -z "${SERVER_HOME}" ]]; then
     printf "Enter the server home path"
     read -e -p " > " SERVER_HOME
-    while [[ -z ${SERVER_HOME} ]]; do
+    while [[ -z "${SERVER_HOME}" ]]; do
         printf "Enter the server home path"
         read -e -p " > " SERVER_HOME
     done
@@ -51,7 +51,7 @@ if [[ -z ${SERVER_HOME} ]]; then
 fi
 
 mkdir -p ${SERVER_HOME}
-if [[ ! -d ${SERVER_HOME} ]]; then
+if [[ ! -d "${SERVER_HOME}" ]]; then
     echo
     printf "\"\e[00;31m${SERVER_HOME}\e[00m\" 디렉토리를 생성 후 다시 시도해주세요.\n"
     exit 1

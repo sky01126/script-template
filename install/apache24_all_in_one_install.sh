@@ -126,7 +126,22 @@ if [[ -z "${LOG_HOME}" ]]; then
         read -e -p " > " LOG_HOME
     done
 fi
-mkdir -p ${LOG_HOME}
+if [[ "${LOG_HOME}" != "${SERVER_HOME}"* ]]; then
+    mkdir -p ${LOG_HOME}
+fi
+
+# export PID_HOME="/home/www/httpd/work"
+if [[ -z "${PID_HOME}" ]]; then
+    printf "Enter the http log path"
+    read -e -p " > " PID_HOME
+    while [[ -z "${PID_HOME}" ]]; do
+        printf "Enter the http log path"
+        read -e -p " > " PID_HOME
+    done
+fi
+if [[ "${PID_HOME}" != "${SERVER_HOME}"* ]]; then
+    mkdir -p ${PID_HOME}
+fi
 
 export SRC_HOME="${SERVER_HOME}/src"
 mkdir -p ${SRC_HOME}
@@ -450,12 +465,17 @@ done
 # Get standard environment variables
 PRGDIR=\$(dirname \"\$PRG\")
 
+# PID Directory check
+if [[ ! -d \"${PID_HOME}/jk/shm\" ]]; then
+    mkdir -p ${PID_HOME}/jk/shm
+fi
+
 # HTTPD_HOME is the location of the configuration files of this instance of nginx
 export HTTPD_HOME=\$(cd \"\$PRGDIR/..\" >/dev/null; pwd)
 
 \$HTTPD_HOME/bin/apachectl start
 
-if [[ ! -f \"${LOG_HOME}/httpd.pid\" ]]; then
+if [[ ! -f \"${PID_HOME}/httpd.pid\" ]]; then
     printf \"Apache Starting:\"
 
     sleep 0.5
@@ -508,26 +528,17 @@ PRGDIR=\$(dirname \"\$PRG\")
 export HTTPD_HOME=\$(cd \"\$PRGDIR/..\" >/dev/null; pwd)
 
 STOPD=
-if [[ -f \"${LOG_HOME}/httpd.pid\" ]]; then
+if [[ -f \"${PID_HOME}/httpd.pid\" ]]; then
     STOPD='true'
 fi
 
 \$HTTPD_HOME/bin/apachectl stop
 
 if [[ -n \"\$STOPD\" ]]; then
-    # printf \"Apache Stopping:\"
-    # sleep 1.5
-    # retval=\$?
-    # if [[ \$retval = 0 ]]; then
-    #     printf \"                           [  \e[00;32mOK\e[00m  ]\\\\n\"
-    # else
-    #     printf \"                           [\e[00;32mFAILED\e[00m]\\\\n\"
-    # fi
-
-    let kwait=10
+    let kwait=20
     count=0;
-    until [[ ! -f \"${LOG_HOME}/httpd.pid\" ]] || [[ \${count} -gt \${kwait} ]]; do
-        printf "Apache Stopping:"
+    until [[ ! -f \"${PID_HOME}/httpd.pid\" ]] || [[ \${count} -gt \${kwait} ]]; do
+        printf \"Apache Stopping:\"
 
         retval=\$?
         if [[ \$retval = 0 ]]; then
@@ -535,10 +546,9 @@ if [[ -n \"\$STOPD\" ]]; then
         else
             printf \"                           [\e[00;32mFAILED\e[00m]\\\\n\"
         fi
-        sleep .5
+        sleep .2
         let count=\${count}+1;
     done
-
 fi
 " >${SERVER_HOME}/${HTTPD_HOME}/bin/stop.sh
 
@@ -581,7 +591,7 @@ PRGDIR=\$(dirname \"\$PRG\")
 export HTTPD_HOME=\$(cd \"\$PRGDIR/..\" >/dev/null; pwd)
 
 STOPD=
-if [[ -f \"${LOG_HOME}/httpd.pid\" ]]; then
+if [[ -f \"${PID_HOME}/httpd.pid\" ]]; then
     STOPD='true'
 fi
 
@@ -635,7 +645,7 @@ server_pid() {
 }
 
 if [[ -n \"\$(server_pid)\" ]]; then
-    pid=\$(cat ${LOG_HOME}/httpd.pid)
+    pid=\$(cat ${PID_HOME}/httpd.pid)
     echo \"httpd (pid \$pid) is running.\"
     exit 0
 else
@@ -1174,7 +1184,7 @@ Include conf/extra/httpd-default.conf
 </IfModule>
 
 # PID File Path setting
-PidFile ${LOG_HOME}/httpd.pid
+PidFile ${PID_HOME}/httpd.pid
 
 # Apache Tomcat JK Connect setting
 Include conf/extra/httpd-jk.conf
@@ -1281,7 +1291,7 @@ LoadModule jk_module modules/mod_jk.so
     JkLogLevel info
 
     # Our JK shared memory file
-    JkShmFile ${LOG_HOME}/jk/shm/mod_jk.shm
+    JkShmFile ${PID_HOME}/jk/shm/mod_jk.shm
 
     # Define a new log format you can use in any CustomLog in order
     # to add mod_jk specific information to your access log.

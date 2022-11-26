@@ -440,15 +440,29 @@ fi
 \$HTTPD_HOME/bin/apachectl stop
 
 if [[ -n \"\$STOPD\" ]]; then
-    printf \"httpd 중지 중:\"
+    # printf \"httpd 중지 중:\"
+    # sleep 1.5
+    # retval=\$?
+    # if [[ \$retval = 0 ]]; then
+    #     printf \"                           [  \e[00;32mOK\e[00m  ]\\\\n\"
+    # else
+    #     printf \"                           [\e[00;32mFAILED\e[00m]\\\\n\"
+    # fi
 
-    sleep 1.5
-    retval=\$?
-    if [[ \$retval = 0 ]]; then
-        printf \"                           [  \e[00;32mOK\e[00m  ]\\\\n\"
-    else
-        printf \"                           [\e[00;32mFAILED\e[00m]\\\\n\"
-    fi
+    let kwait=20
+    count=0;
+    until [[ ! -f \"${SERVER_HOME}/${HTTPD_ALIAS}/work/httpd.pid\" ]] || [[ \${count} -gt \${kwait} ]]; do
+        printf \"httpd 중지 중:\"
+
+        retval=\$?
+        if [[ \$retval = 0 ]]; then
+            printf \"                           [  \e[00;32mOK\e[00m  ]\\\\n\"
+        else
+            printf \"                           [\e[00;32mFAILED\e[00m]\\\\n\"
+        fi
+        sleep .2
+        let count=\${count}+1;
+    done
 fi
 " >${SERVER_HOME}/${HTTPD_ALIAS}/bin/stop.sh
 

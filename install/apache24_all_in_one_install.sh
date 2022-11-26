@@ -109,9 +109,9 @@ export EXTENSION='.tar.gz'
 # export SERVER_HOME="/apache"
 # export LOG_HOME="/ap_log"
 
-export SRC_HOME="/home/server/src"
-export SERVER_HOME="/home/server"
-export LOG_HOME="/home/server/httpd_log"
+export SRC_HOME="/home/www/src"
+export SERVER_HOME="/home/www"
+export LOG_HOME="/home/www/httpd_log"
 if [[ ! -d "${SRC_HOME}" ]]; then
     mkdir -p ${SRC_HOME}
 fi

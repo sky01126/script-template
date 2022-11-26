@@ -175,25 +175,6 @@ printf "\e[00;32m| SERVER_HOME  |\e[00m ${SERVER_HOME}\n"
 printf "\e[00;32m+--------------+------------------------------------------------------------------\e[00m\n"
 
 # ------------------------------------------------------------------------------
-if [[ ! -d "${SERVER_HOME}/openssl" ]]; then
-    cd ${SRC_HOME}
-
-    printf "\e[00;32m| ${OPENSSL_NAME} download (URL : ${OPENSSL_DOWNLOAD_URL})\e[00m\n"
-    curl -O ${OPENSSL_DOWNLOAD_URL}
-
-    tar xvzf ${OPENSSL_NAME}
-    cd ${SRC_HOME}/${OPENSSL_HOME}
-
-    ./config --prefix=${SERVER_HOME}/openssl -fPIC shared
-    make
-    make install
-
-    printf "\e[00;32m|---------------------------------------------------------------------------------\e[00m\n"
-    printf "\e[00;32m| ${OPENSSL_HOME} install success...\e[00m\n"
-    printf "\e[00;32m|---------------------------------------------------------------------------------\e[00m\n"
-fi
-
-# ------------------------------------------------------------------------------
 # 설치 여부 확인
 if [[ -d "${SERVER_HOME}/${HTTPD_HOME}" ]]; then
     printf "\e[00;32m|\e[00m \e[00;31m기존에 설치된 Apache가 있습니다. 삭제하고 다시 설치하려면 \"Y\"를 입력하세요.\e[00m\n"
@@ -284,24 +265,45 @@ cd ${SRC_HOME}/${HTTPD_NAME%$EXTENSION}/srclib/
 mv ${APR_ICONV_HOME} apr-iconv
 
 # ------------------------------------------------------------------------------
-# PCRE 설치
-cd ${SRC_HOME}
-if [ ! -f "${SRC_HOME}/${PCRE2_NAME}" ]; then
-    printf "\e[00;32m| ${PCRE2_NAME} download (URL : ${PCRE2_DOWNLOAD_URL})\e[00m\n"
-    curl -L -O ${PCRE2_DOWNLOAD_URL}
+if [[ ! -d "${SERVER_HOME}/openssl" ]]; then
+    cd ${SRC_HOME}
+
+    printf "\e[00;32m| ${OPENSSL_NAME} download (URL : ${OPENSSL_DOWNLOAD_URL})\e[00m\n"
+    curl -O ${OPENSSL_DOWNLOAD_URL}
+
+    tar xvzf ${OPENSSL_NAME}
+    cd ${SRC_HOME}/${OPENSSL_HOME}
+
+    ./config --prefix=${SERVER_HOME}/openssl -fPIC shared
+    make
+    make install
+
+    printf "\e[00;32m|---------------------------------------------------------------------------------\e[00m\n"
+    printf "\e[00;32m| ${OPENSSL_HOME} install success...\e[00m\n"
+    printf "\e[00;32m|---------------------------------------------------------------------------------\e[00m\n"
 fi
 
-tar xvzf ${PCRE2_NAME}
-cd ${SRC_HOME}/${PCRE2_HOME}
+# ------------------------------------------------------------------------------
+# PCRE 설치
+if [[ ! -d "${SERVER_HOME}/pcre2" ]]; then
+    cd ${SRC_HOME}
+    if [ ! -f "${SRC_HOME}/${PCRE2_NAME}" ]; then
+        printf "\e[00;32m| ${PCRE2_NAME} download (URL : ${PCRE2_DOWNLOAD_URL})\e[00m\n"
+        curl -L -O ${PCRE2_DOWNLOAD_URL}
+    fi
 
-./configure --prefix=${SRC_HOME}/${HTTPD_NAME%$EXTENSION}/srclib/pcre2
-make
-make install
+    tar xvzf ${PCRE2_NAME}
+    cd ${SRC_HOME}/${PCRE2_HOME}
 
-# Install source delete
-if [[ -d "${SRC_HOME}/${PCRE2_HOME}" ]]; then
-    printf "\e[00;32m| \"${SRC_HOME}/${PCRE2_HOME}\" delete...\e[00m\n"
-    rm -rf ${SRC_HOME}/${PCRE2_HOME}
+    ./configure --prefix=${SRC_HOME}/pcre2
+    make
+    make install
+
+    # Install source delete
+    if [[ -d "${SRC_HOME}/${PCRE2_HOME}" ]]; then
+        printf "\e[00;32m| \"${SRC_HOME}/${PCRE2_HOME}\" delete...\e[00m\n"
+        rm -rf ${SRC_HOME}/${PCRE2_HOME}
+    fi
 fi
 
 # ------------------------------------------------------------------------------
@@ -338,9 +340,8 @@ INSTALL_CONFIG="${INSTALL_CONFIG} --enable-so"
 INSTALL_CONFIG="${INSTALL_CONFIG} --enable-ssl"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-included-apr"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-mpm=event"
-INSTALL_CONFIG="${INSTALL_CONFIG} --with-pcre=${SRC_HOME}/${HTTPD_NAME%$EXTENSION}/srclib/pcre2"
-
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-ssl=${SERVER_HOME}/openssl"
+INSTALL_CONFIG="${INSTALL_CONFIG} --with-pcre=${SRC_HOME}/pcre2/bin/pcre2-config"
 
 cd ${SRC_HOME}/${HTTPD_NAME%$EXTENSION}
 

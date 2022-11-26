@@ -93,13 +93,13 @@ MOD_JK_DOWNLOAD_URL="http://archive.apache.org/dist/tomcat/tomcat-connectors/jk/
 printf "\e[00;32m+--------------+----------------------------------------------------------\e[00m\n"
 printf "\e[00;32m| SRC_HOME     |\e[00m ${SRC_HOME}\n"
 printf "\e[00;32m| SERVER_HOME  |\e[00m ${SERVER_HOME}\n"
-printf "\e[00;32m| HTTPD_HOME   |\e[00m ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}\n"
+printf "\e[00;32m| HTTPD_HOME   |\e[00m ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}\n"
 printf "\e[00;32m| HTTPD_ALIAS  |\e[00m ${SERVER_HOME}/${HTTPD_ALIAS}\n"
 printf "\e[00;32m+--------------+------------------------------------------------------------------\e[00m\n"
 
 # ----------------------------------------------------------------------------------------------------------------------
 # PCRE2 설치 여부 확인
-if [[ ! -d "${SERVER_HOME}${PROGRAME_HOME}/${PCRE2_HOME}" ]]; then
+if [[ ! -d "${SERVER_HOME}/${PROGRAME_HOME}/${PCRE2_HOME}" ]]; then
     if [[ ! -f "${PRGDIR}/library/pcre2.sh" ]]; then
         rm -rf /tmp/pcre2.sh
 
@@ -110,12 +110,12 @@ if [[ ! -d "${SERVER_HOME}${PROGRAME_HOME}/${PCRE2_HOME}" ]]; then
     fi
 elif [[ -n "${PCRE2_ALIAS}" ]] && [[ ! -d "${SERVER_HOME}/${PCRE2_ALIAS}" ]]; then
     cd ${SERVER_HOME}
-    ln -s .${PROGRAME_HOME}/${PCRE2_HOME} ${PCRE2_ALIAS}
+    ln -s ./${PROGRAME_HOME}/${PCRE2_HOME} ${PCRE2_ALIAS}
 fi
 
 # ----------------------------------------------------------------------------------------------------------------------
 # OpenSSL 설치 여부 확인
-if [[ ! -d "${SERVER_HOME}${PROGRAME_HOME}/${OPENSSL_HOME}" ]]; then
+if [[ ! -d "${SERVER_HOME}/${PROGRAME_HOME}/${OPENSSL_HOME}" ]]; then
     if [[ ! -f "${PRGDIR}/library/openssl.sh" ]]; then
         rm -rf /tmp/openssl.sh
 
@@ -126,12 +126,12 @@ if [[ ! -d "${SERVER_HOME}${PROGRAME_HOME}/${OPENSSL_HOME}" ]]; then
     fi
 elif [[ -n "${OPENSSL_ALIAS}" ]] && [[ ! -d "${SERVER_HOME}/${OPENSSL_ALIAS}" || ! -L "${SERVER_HOME}/${OPENSSL_ALIAS}" ]]; then
     cd ${SERVER_HOME}
-    ln -s .${PROGRAME_HOME}/${OPENSSL_HOME} ${OPENSSL_ALIAS}
+    ln -s ./${PROGRAME_HOME}/${OPENSSL_HOME} ${OPENSSL_ALIAS}
 fi
 
 # ----------------------------------------------------------------------------------------------------------------------
 # APR / APR Util 설치 여부 확인
-if [[ ! -d "${SERVER_HOME}${PROGRAME_HOME}/${APR_HOME}" ]]; then
+if [[ ! -d "${SERVER_HOME}/${PROGRAME_HOME}/${APR_HOME}" ]]; then
     if [[ ! -f "${PRGDIR}/library/apr.sh" ]]; then
         rm -rf /tmp/apr.sh
 
@@ -142,12 +142,12 @@ if [[ ! -d "${SERVER_HOME}${PROGRAME_HOME}/${APR_HOME}" ]]; then
     fi
 elif [[ -n "${APR_ALIAS}" ]] && [[ ! -d "${SERVER_HOME}/${APR_ALIAS}" || ! -L "${SERVER_HOME}/${APR_ALIAS}" ]]; then
     cd ${SERVER_HOME}
-    ln -s .${PROGRAME_HOME}/${APR_HOME} ${APR_ALIAS}
+    ln -s ./${PROGRAME_HOME}/${APR_HOME} ${APR_ALIAS}
 fi
 
 # ----------------------------------------------------------------------------------------------------------------------
 # 설치 여부 확인
-if [[ -d "${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}" ]]; then
+if [[ -d "${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}" ]]; then
     printf "\e[00;32m|\e[00m \e[00;31m기존에 설치된 Apache가 있습니다. 삭제하고 다시 설치하려면 \"Y\"를 입력하세요.\e[00m\n"
     printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
     printf "\e[00;32m| Enter whether to install \"${HTTPD_HOME}\" service\e[00m\n"
@@ -188,9 +188,9 @@ fi
 printf "\e[00;32m| \"${HTTPD_HOME}\" install start...\e[00m\n"
 
 # delete the previous home
-if [[ -d "${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}" ]]; then
+if [[ -d "${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}" ]]; then
     printf "\e[00;32m| \"${HTTPD_HOME}\" delete...\e[00m\n"
-    rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}
+    rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}
 fi
 if [[ -d "${SERVER_HOME}/${HTTPD_ALIAS}" || -L "${SERVER_HOME}/${HTTPD_ALIAS}" ]]; then
     printf "\e[00;32m| \"${HTTPD_ALIAS}\" delete...\e[00m\n"
@@ -217,7 +217,7 @@ if [[ "$OS" == "linux" ]]; then
     sed -i "115s/.*/#define DEFAULT_SERVER_LIMIT 128/g" ${SRC_HOME}/${HTTPD_HOME}/server/mpm/event/event.c
 fi
 
-INSTALL_CONFIG="--prefix=${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}"
+INSTALL_CONFIG="--prefix=${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}"
 INSTALL_CONFIG="${INSTALL_CONFIG} --enable-cache"
 INSTALL_CONFIG="${INSTALL_CONFIG} --enable-cache-disk"
 INSTALL_CONFIG="${INSTALL_CONFIG} --enable-deflate"
@@ -241,21 +241,21 @@ INSTALL_CONFIG="${INSTALL_CONFIG} --enable-ssl"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-mpm=event"
 
 if [[ -z ${APR_HOME} ]]; then
-    INSTALL_CONFIG="${INSTALL_CONFIG} --with-apr=${SERVER_HOME}${PROGRAME_HOME}/${APR_HOME}"
-    INSTALL_CONFIG="${INSTALL_CONFIG} --with-apr-util=${SERVER_HOME}${PROGRAME_HOME}/${APR_HOME}"
+    INSTALL_CONFIG="${INSTALL_CONFIG} --with-apr=${SERVER_HOME}/${PROGRAME_HOME}/${APR_HOME}"
+    INSTALL_CONFIG="${INSTALL_CONFIG} --with-apr-util=${SERVER_HOME}/${PROGRAME_HOME}/${APR_HOME}"
 else
     INSTALL_CONFIG="${INSTALL_CONFIG} --with-apr=${SERVER_HOME}/${APR_ALIAS}"
     INSTALL_CONFIG="${INSTALL_CONFIG} --with-apr-util=${SERVER_HOME}/${APR_ALIAS}"
 fi
 
 if [[ -z ${PCRE2_HOME} ]]; then
-    INSTALL_CONFIG="${INSTALL_CONFIG} --with-pcre=${SERVER_HOME}${PROGRAME_HOME}/${PCRE2_HOME}/bin/pcre2-config"
+    INSTALL_CONFIG="${INSTALL_CONFIG} --with-pcre=${SERVER_HOME}/${PROGRAME_HOME}/${PCRE2_HOME}/bin/pcre2-config"
 else
     INSTALL_CONFIG="${INSTALL_CONFIG} --with-pcre=${SERVER_HOME}/${PCRE2_ALIAS}/bin/pcre2-config"
 fi
 
 if [[ -z ${OPENSSL_HOME} ]]; then
-    INSTALL_CONFIG="${INSTALL_CONFIG} --with-ssl=${SERVER_HOME}${PROGRAME_HOME}/${OPENSSL_HOME}"
+    INSTALL_CONFIG="${INSTALL_CONFIG} --with-ssl=${SERVER_HOME}/${PROGRAME_HOME}/${OPENSSL_HOME}"
 else
     INSTALL_CONFIG="${INSTALL_CONFIG} --with-ssl=${SERVER_HOME}/${OPENSSL_ALIAS}"
 fi
@@ -265,7 +265,7 @@ make
 make install
 
 cd ${SERVER_HOME}
-ln -s .${PROGRAME_HOME}/${HTTPD_HOME} ${HTTPD_ALIAS}
+ln -s ./${PROGRAME_HOME}/${HTTPD_HOME} ${HTTPD_ALIAS}
 
 printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
 printf "\e[00;32m| \"${HTTPD_HOME}\" install success...\e[00m\n"
@@ -289,11 +289,11 @@ fi
 tar xvzf ${MOD_JK_NAME}
 cd ${SRC_HOME}/${MOD_JK_HOME}/native
 
-./configure --with-apxs=${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/bin/apxs
+./configure --with-apxs=${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/bin/apxs
 make
 make install
 
-cp -rf apache-2.0/mod_jk.so ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/modules/
+cp -rf apache-2.0/mod_jk.so ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/modules/
 
 # Install source delete
 if [[ -d "${SRC_HOME}/${MOD_JK_HOME}" ]]; then
@@ -308,20 +308,20 @@ if [[ -d "${SRC_HOME}/${HTTPD_HOME}" ]]; then
 fi
 
 # HTTPD 서버에서 필요없는 디렉토리 삭제.
-# rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/build
-rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/cgi-bin
-rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/error
-rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/htdocs
-rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/icons
-rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/man
-rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/manual
+# rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/build
+rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/cgi-bin
+rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/error
+rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/htdocs
+rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/icons
+rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/man
+rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/manual
 
 # 필요 디렉토리 생성.
-mkdir -p ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/conf/extra/uriworkermaps
-mkdir -p ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/conf/extra/sites-enabled
-##mkdir -p ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/logs/archive
-#mkdir -p ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/logs/archive
-mkdir -p ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/work
+mkdir -p ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/conf/extra/uriworkermaps
+mkdir -p ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/conf/extra/sites-enabled
+##mkdir -p ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/logs/archive
+#mkdir -p ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/logs/archive
+mkdir -p ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/work
 
 # ----------------------------------------------------------------------------------------------------------------------
 ## Tomcat Worker Name 설정.
@@ -1724,8 +1724,8 @@ SSLPassPhraseDialog  builtin
 #   Inter-Process Session Cache:
 #   Configure the SSL Session Cache: First the mechanism
 #   to use and second the expiring timeout (in seconds).
-#SSLSessionCache         \"dbm:${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/logs/ssl_scache\"
-SSLSessionCache        \"shmcb:${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/logs/ssl_scache(512000)\"
+#SSLSessionCache         \"dbm:${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/logs/ssl_scache\"
+SSLSessionCache        \"shmcb:${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/logs/ssl_scache(512000)\"
 SSLSessionCacheTimeout  300
 
 #   OCSP Stapling (requires OpenSSL 0.9.8h or later)
@@ -1742,7 +1742,7 @@ SSLSessionCacheTimeout  300
 #   the same mechanism that is used for the SSL session cache
 #   above.  If stapling is used with more than a few certificates,
 #   the size may need to be increased.  (AH01929 will be logged.)
-#SSLStaplingCache \"shmcb:${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/logs/ssl_stapling(32768)\"
+#SSLStaplingCache \"shmcb:${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/logs/ssl_stapling(32768)\"
 
 #   Seconds before valid OCSP responses are expired from the cache
 #SSLStaplingStandardCacheTimeout 3600
@@ -1815,7 +1815,7 @@ echo "<VirtualHost _default_:443>
 # read -e -p ' [Y / n](enter)] (default. n) > ' CHECK_SSL
 # if [[ ! -z ${CHECK_SSL} ]] && [[ "$(uppercase ${CHECK_SSL})" == "Y" ]]; then
 #     # 사설 인증키 생성
-#     mkdir ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/conf/ssl
+#     mkdir ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/conf/ssl
 
 #     echo "[v3_extensions]
 # # Extensions to add to a certificate request
@@ -1862,7 +1862,7 @@ echo "<VirtualHost _default_:443>
 # x509_extensions                 = v3_extensions
 # # 인증서 요청시에도 extension 이 들어가면 authorityKeyIdentifier 를 찾지 못해 에러가 나므로 막아둔다.
 # #req_extensions                  = v3_extensions
-#     " >${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/conf/ssl/${DOMAIN_NAME}.conf
+#     " >${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/conf/ssl/${DOMAIN_NAME}.conf
 
 #     ${SERVER_HOME}/${OPENSSL_ALIAS}/bin/openssl genpkey \
 #     -algorithm RSA \
@@ -1886,7 +1886,7 @@ echo "<VirtualHost _default_:443>
 #     -out ${SERVER_HOME}/${HTTPD_ALIAS}/conf/ssl/${DOMAIN_NAME}.crt \
 #     -extfile ${SERVER_HOME}/${HTTPD_ALIAS}/conf/ssl/${DOMAIN_NAME}.conf
 
-#     rm -rf ${SERVER_HOME}${PROGRAME_HOME}/${HTTPD_HOME}/conf/ssl/${DOMAIN_NAME}.conf
+#     rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${HTTPD_HOME}/conf/ssl/${DOMAIN_NAME}.conf
 # fi
 
 # # ----------------------------------------------------------------------------------------------------------------------

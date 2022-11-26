@@ -75,7 +75,7 @@ export SRC_HOME=/var/tmp
 # ----------------------------------------------------------------------------------------------------------------------
 # Programe Home 경로 설정.
 # opt : 애드온(Add-on) 소프트웨어 패키지 디렉토리
-export PROGRAME_HOME='/opt/local'
+export PROGRAME_HOME='opt/local'
 if [[ -z "${PROGRAME_HOME}" ]]; then
     printf "Enter the program install path (ex. /opt/local)"
     read -e -p " > " PROGRAME_HOME

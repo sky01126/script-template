@@ -51,7 +51,7 @@ make install
 
 if [[ -n "${PCRE2_ALIAS}" ]]; then
     cd ${SERVER_HOME}
-    ln -s .${PROGRAME_HOME}/${PCRE2_HOME} ${PCRE2_ALIAS}
+    ln -s ./${PROGRAME_HOME}/${PCRE2_HOME} ${PCRE2_ALIAS}
 fi
 
 

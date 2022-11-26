@@ -531,15 +531,30 @@ fi
 \$HTTPD_HOME/bin/apachectl stop
 
 if [[ -n \"\$STOPD\" ]]; then
-    printf \"Apache Stopping:\"
+    # printf \"Apache Stopping:\"
+    # sleep 1.5
+    # retval=\$?
+    # if [[ \$retval = 0 ]]; then
+    #     printf \"                           [  \e[00;32mOK\e[00m  ]\\\\n\"
+    # else
+    #     printf \"                           [\e[00;32mFAILED\e[00m]\\\\n\"
+    # fi
 
-    sleep 0.5
-    retval=\$?
-    if [[ \$retval = 0 ]]; then
-        printf \"                           [  \e[00;32mOK\e[00m  ]\\\\n\"
-    else
-        printf \"                           [\e[00;32mFAILED\e[00m]\\\\n\"
-    fi
+    let kwait=10
+    count=0;
+    until [[ ! -f \"${LOG_HOME}/httpd.pid\" ]] || [[ \${count} -gt \${kwait} ]]; do
+        printf "Apache Stopping:"
+
+        retval=\$?
+        if [[ \$retval = 0 ]]; then
+            printf \"                           [  \e[00;32mOK\e[00m  ]\\\\n\"
+        else
+            printf \"                           [\e[00;32mFAILED\e[00m]\\\\n\"
+        fi
+        sleep .5
+        let count=\${count}+1;
+    done
+
 fi
 " >${SERVER_HOME}/${HTTPD_HOME}/bin/stop.sh
 
@@ -1282,7 +1297,7 @@ LoadModule jk_module modules/mod_jk.so
     JkLogLevel info
 
     # Our JK shared memory file
-    JkShmFile ${LOG_HOME}/jk/shm//mod_jk.shm
+    JkShmFile ${LOG_HOME}/jk/shm/mod_jk.shm
 
     # Define a new log format you can use in any CustomLog in order
     # to add mod_jk specific information to your access log.

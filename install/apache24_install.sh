@@ -363,20 +363,20 @@ echo
 # resolve links - \$0 may be a softlink
 PRG=\"\$0\"
 while [ -h \"\$PRG\" ]; do
-    ls=\`ls -ld \"\$PRG\"\`
-    link=\`expr \"\$ls\" : '.*-> \(.*\)\$'\`
+    ls=\$(ls -ld \"\$PRG\")
+    link=\$(expr \"\$ls\" : '.*-> \(.*\)\$')
     if expr \"\$link\" : '/.*' > /dev/null; then
         PRG=\"\$link\"
     else
-        PRG=\`dirname \"\$PRG\"\`/\"\$link\"
+        PRG=\$(dirname \"\$PRG\")/\"\$link\"
     fi
 done
 
 # Get standard environment variables
-PRGDIR=\`dirname \"\$PRG\"\`
+PRGDIR=\$(dirname \"\$PRG\")
 
 # HTTPD_HOME is the location of the configuration files of this instance of nginx
-export HTTPD_HOME=\`cd \"\$PRGDIR/..\" >/dev/null; pwd\`
+export HTTPD_HOME=\$(cd \"\$PRGDIR/..\" >/dev/null; pwd)
 
 \$HTTPD_HOME/bin/apachectl start
 
@@ -417,20 +417,20 @@ echo
 # resolve links - \$0 may be a softlink
 PRG=\"\$0\"
 while [ -h \"\$PRG\" ]; do
-    ls=\`ls -ld \"\$PRG\"\`
-    link=\`expr \"\$ls\" : '.*-> \(.*\)\$'\`
+    ls=\$(ls -ld \"\$PRG\")
+    link=\$(expr \"\$ls\" : '.*-> \(.*\)\$')
     if expr \"\$link\" : '/.*' > /dev/null; then
         PRG=\"\$link\"
     else
-        PRG=\`dirname \"\$PRG\"\`/\"\$link\"
+        PRG=\$(dirname \"\$PRG\")/\"\$link\"
     fi
 done
 
 # Get standard environment variables
-PRGDIR=\`dirname \"\$PRG\"\`
+PRGDIR=\$(dirname \"\$PRG\")
 
 # HTTPD_HOME is the location of the configuration files of this instance of nginx
-export HTTPD_HOME=\`cd \"\$PRGDIR/..\" >/dev/null; pwd\`
+export HTTPD_HOME=\$(cd \"\$PRGDIR/..\" >/dev/null; pwd)
 
 STOPD=
 if [[ -f \"${SERVER_HOME}/${HTTPD_ALIAS}/work/httpd.pid\" ]]; then
@@ -442,12 +442,12 @@ fi
 if [[ -n \"\$STOPD\" ]]; then
     printf \"httpd 중지 중:\"
 
-    sleep 0.5
+    sleep 1.5
     retval=\$?
     if [[ \$retval = 0 ]]; then
-        printf \"                                           [  \e[00;32mOK\e[00m  ]\\\\n\"
+        printf \"                           [  \e[00;32mOK\e[00m  ]\\\\n\"
     else
-        printf \"                                           [\e[00;32mFAILED\e[00m]\\\\n\"
+        printf \"                           [\e[00;32mFAILED\e[00m]\\\\n\"
     fi
 fi
 " >${SERVER_HOME}/${HTTPD_ALIAS}/bin/stop.sh
@@ -475,20 +475,20 @@ echo
 # resolve links - \$0 may be a softlink
 PRG=\"\$0\"
 while [ -h \"\$PRG\" ]; do
-    ls=\`ls -ld \"\$PRG\"\`
-    link=\`expr \"\$ls\" : '.*-> \(.*\)\$'\`
+    ls=\$(ls -ld \"\$PRG\")
+    link=\$(expr \"\$ls\" : '.*-> \(.*\)\$')
     if expr \"\$link\" : '/.*' > /dev/null; then
         PRG=\"\$link\"
     else
-        PRG=\`dirname \"\$PRG\"\`/\"\$link\"
+        PRG=\$(dirname \"\$PRG\")/\"\$link\"
     fi
 done
 
 # Get standard environment variables
-PRGDIR=\`dirname \"\$PRG\"\`
+PRGDIR=\$(dirname \"\$PRG\")
 
 # HTTPD_HOME is the location of the configuration files of this instance of nginx
-export HTTPD_HOME=\`cd \"\$PRGDIR/..\" >/dev/null; pwd\`
+export HTTPD_HOME=\$(cd \"\$PRGDIR/..\" >/dev/null; pwd)
 
 STOPD=
 if [[ -f \"${SERVER_HOME}/${HTTPD_ALIAS}/work/httpd.pid\" ]]; then
@@ -541,11 +541,11 @@ printf \" \e[00;32m  :: Apache ::              (v${HTTPD_VERSION})   \e[00m\\\\n
 echo
 
 server_pid() {
-    echo \`ps aux | grep httpd | grep -v grep | grep -v status | grep -v rotatelogs | awk '{print \$2}'\`
+    echo \$(ps aux | grep httpd | grep -v grep | grep -v status | grep -v rotatelogs | awk '{print \$2}')
 }
 
 if [[ -n \"\$(server_pid)\" ]]; then
-    pid=\`cat ${SERVER_HOME}/${HTTPD_ALIAS}/work/httpd.pid\`
+    pid=\$(cat ${SERVER_HOME}/${HTTPD_ALIAS}/work/httpd.pid)
     echo \"httpd (pid \$pid) is running.\"
     exit 0
 else
@@ -577,20 +577,20 @@ echo
 # resolve links - \$0 may be a softlink
 PRG=\"\$0\"
 while [ -h \"\$PRG\" ]; do
-    ls=\`ls -ld \"\$PRG\"\`
-    link=\`expr \"\$ls\" : '.*-> \(.*\)\$'\`
+    ls=\$(ls -ld \"\$PRG\")
+    link=\$(expr \"\$ls\" : '.*-> \(.*\)\$')
     if expr \"\$link\" : '/.*' > /dev/null; then
         PRG=\"\$link\"
     else
-        PRG=\`dirname \"\$PRG\"\`/\"\$link\"
+        PRG=\$(dirname \"\$PRG\")/\"\$link\"
     fi
 done
 
 # Get standard environment variables
-PRGDIR=\`dirname \"\$PRG\"\`
+PRGDIR=\$(dirname \"\$PRG\")
 
 # HTTPD_HOME is the location of the configuration files of this instance of nginx
-export HTTPD_HOME=\`cd \"\$PRGDIR/..\" >/dev/null; pwd\`
+export HTTPD_HOME=\$(cd \"\$PRGDIR/..\" >/dev/null; pwd)
 
 \$HTTPD_HOME/bin/apachectl configtest
 " >${SERVER_HOME}/${HTTPD_ALIAS}/bin/configtest.sh
@@ -616,7 +616,7 @@ printf \" \e[00;32m  :: Apache ::              (v${HTTPD_VERSION})   \e[00m\\\\n
 echo
 
 server_pid() {
-    echo \`ps aux | grep httpd | grep -v grep | grep -v status | grep -v rotatelogs | awk '{print \$2}'\`
+    echo \$(ps aux | grep httpd | grep -v grep | grep -v status | grep -v rotatelogs | awk '{print \$2}')
 }
 
 if [[ -n \"\$(server_pid)\" ]]; then
@@ -628,7 +628,7 @@ if [[ -n \"\$(server_pid)\" ]]; then
     #printf \" \e[00;32m|\e[00m ps hH p \${PROCESS_IDS} | wc -l\"
     #echo
 
-    printf \"Total thread count running on httpd: \e[00;32m\`ps hH p \${PROCESS_IDS} | wc -l\`\e[00m\\\\n\"
+    printf \"Total thread count running on httpd: \e[00;32m\$(ps hH p \${PROCESS_IDS} | wc -l)\e[00m\\\\n\"
     exit 0
 else
     echo \"httpd (no pid file) not running.\"
@@ -659,23 +659,23 @@ shopt -s extglob
 # resolve links - \$0 may be a softlink
 PRG=\"\$0\"
 while [ -h \"\$PRG\" ]; do
-    ls=\`ls -ld \"\$PRG\"\`
-    link=\`expr \"\$ls\" : '.*-> \(.*\)\$'\`
+    ls=\$(ls -ld \"\$PRG\")
+    link=\$(expr \"\$ls\" : '.*-> \(.*\)\$')
     if expr \"\$link\" : '/.*' > /dev/null; then
         PRG=\"\$link\"
     else
-        PRG=\`dirname \"\$PRG\"\`/\"\$link\"
+        PRG=\$(dirname \"\$PRG\")/\"\$link\"
     fi
 done
 
 # ------------------------------------------------------------------------------
 # 현재 사용자의 아이디명과 그룹정보
-USERNAME=\`id -u -n\`
-GROUPNAME=\`id -g -n\`
+USERNAME=\$(id -u -n)
+GROUPNAME=\$(id -g -n)
 
 # ------------------------------------------------------------------------------
 # check-run-thread.sh
-sed -i \"s/for pid in.*/for pid in \`ps aux | grep httpd | grep \${USERNAME} | grep -v grep | grep -v status | grep -v rotatelogs | awk '{print \$2}'\`; do/g\" \${PRGDIR}/bin/check-run-thread.sh
+sed -i \"s/for pid in.*/for pid in \$(ps aux | grep httpd | grep \${USERNAME} | grep -v grep | grep -v status | grep -v rotatelogs | awk '{print \$2}'); do/g\" \${PRGDIR}/bin/check-run-thread.sh
 
 # ------------------------------------------------------------------------------
 # delete-log.sh
@@ -712,7 +712,7 @@ GROUP=${GROUPNAME}
 MAX_HISTORYS='30'
 # FILE_PATH='${SERVER_HOME}/${HTTPD_ALIAS}/logs/archive'
 FILE_PATH='${SERVER_HOME}/${HTTPD_ALIAS}/logs'
-FILE_NAME=\`basename \"\${FILE_PATH}\"\`
+FILE_NAME=\$(basename \"\${FILE_PATH}\")
 EXTENSION='${EXTENSION}'
 
 DELETE_LOG_NAME=\"delete-\$(date -d \"1 day ago\" +\"%Y-%m\").log\"
@@ -730,7 +730,7 @@ echo \"- 파일 삭제 : \$(date +\"%Y:%m:%d %H-%M-%S\")\" | tee -a \${FILE_PATH
 pushd \${FILE_PATH} > /dev/null
 
 # 보관주기가 지난 백업 파일은 삭제한다.
-OLD_BACKUP_FILES=\`find . -mtime +\$((MAX_HISTORYS - 1)) -name \"*\${EXTENSION}\" -type f\`
+OLD_BACKUP_FILES=\$(find . -mtime +\$((MAX_HISTORYS - 1)) -name \"*\${EXTENSION}\" -type f)
 if [[ -n \${OLD_BACKUP_FILES} ]]; then
     rm -rf \${OLD_BACKUP_FILES}
     echo \"  . 로그 파일 삭제 : \${OLD_BACKUP_FILES}\" | tee -a \${FILE_PATH}/\${DELETE_LOG_NAME}

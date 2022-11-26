@@ -66,22 +66,20 @@ fi
 
 unset TMOUT
 
-
 # ------------------------------------------------------------------------------
 PRG="$0"
-while [[ -h "$PRG" ]]; do
-    ls=`ls -ld "$PRG"`
-    link=`expr "$ls" : '.*-> \(.*\)$'`
-    if expr "$link" : '/.*' > /dev/null; then
+while [[ -L "$PRG" ]]; do
+    ls=$(ls -ld "$PRG")
+    link=$(expr "$ls" : '.*-> \(.*\)$')
+    if expr "$link" : '/.*' >/dev/null; then
         PRG="$link"
     else
-        PRG=`dirname "$PRG"`/"$link"
+        PRG=$(dirname "$PRG")/"$link"
     fi
 done
 
 # Get standard environment variables
-PRGDIR=`dirname "$PRG"`
-
+PRGDIR=$(dirname "$PRG")
 
 # ------------------------------------------------------------------------------
 # 현재 사용자의 아이디명과 그룹정보
@@ -89,7 +87,6 @@ PRGDIR=`dirname "$PRG"`
 # export GROUPNAME=`id -g -n`
 export USERNAME="apache"
 export GROUPNAME="apache"
-
 
 # ------------------------------------------------------------------------------
 # 대문자 변환
@@ -102,48 +99,52 @@ lowercase() {
     echo $* | tr "[A-Z]" "[a-z]"
 }
 
-
 # ------------------------------------------------------------------------------
 # File Extension
 export EXTENSION='.tar.gz'
 
-
 # ------------------------------------------------------------------------------
 # 서버 디렉토리 설정.
-export SRC_HOME="/apache/src"
-export LOG_HOME="/ap_log"
-export SERVER_HOME="/apache"
+# export SRC_HOME="/apache/src"
+# export SERVER_HOME="/apache"
+# export LOG_HOME="/ap_log"
+
+export SRC_HOME="/home/server/src"
+export SERVER_HOME="/home/server/httpd"
+export LOG_HOME="/home/server/httpd_log"
 if [[ ! -d "${SRC_HOME}" ]]; then
     mkdir -p ${SRC_HOME}
-fi
-if [[ ! -d "${LOG_HOME}" ]]; then
-    mkdir -p ${LOG_HOME}
 fi
 if [[ ! -d "${SERVER_HOME}" ]]; then
     mkdir -p ${SERVER_HOME}
 fi
-
+if [[ ! -d "${LOG_HOME}" ]]; then
+    mkdir -p ${LOG_HOME}
+fi
 
 # ------------------------------------------------------------------------------
 # .bashrc 경로 설정.
 export BASH_FILE=${HOME}/.bashrc
-
 
 # ------------------------------------------------------------------------------
 # Apache 2.4
 export HTTPD_VERSION="2.4.54"
 export HTTPD_DOWNLOAD_URL="http://archive.apache.org/dist/httpd/httpd-${HTTPD_VERSION}.tar.gz"
 export HTTPD_NAME=${HTTPD_DOWNLOAD_URL##+(*/)}
-export HTTPD_HOME='apache24'
-
+export HTTPD_HOME='httpd'
 
 # ------------------------------------------------------------------------------
-# PCRE
-export PCRE_VERSION="8.45"
-export PCRE_DOWNLOAD_URL="http://sourceforge.net/projects/pcre/files/pcre/${PCRE_VERSION}/pcre-${PCRE_VERSION}.tar.gz"
-export PCRE_NAME=${PCRE_DOWNLOAD_URL##+(*/)}
-export PCRE_HOME=${PCRE_NAME%$EXTENSION}
+export OPENSSL_VERSION="3.0.7"
+export OPENSSL_DOWNLOAD_URL="https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz"
+export OPENSSL_NAME="${OPENSSL_DOWNLOAD_URL##+(*/)}"
+export OPENSSL_HOME="${OPENSSL_NAME%$EXTENSION}"
 
+# ------------------------------------------------------------------------------
+# PCRE2
+export PCRE2_VERSION="10.37"
+export PCRE2_DOWNLOAD_URL="http://sourceforge.net/projects/pcre/files/pcre2/${PCRE2_VERSION}/pcre2-${PCRE2_VERSION}.tar.gz"
+export PCRE2_NAME="${PCRE2_DOWNLOAD_URL##+(*/)}"
+export PCRE2_HOME="${PCRE2_NAME%$EXTENSION}"
 
 # ------------------------------------------------------------------------------
 # APR / APR Util
@@ -157,12 +158,15 @@ export APR_UTIL_DOWNLOAD_URL="http://archive.apache.org/dist/apr/apr-util-${APR_
 export APR_UTIL_NAME=${APR_UTIL_DOWNLOAD_URL##+(*/)}
 export APR_UTIL_HOME=${APR_UTIL_NAME%$EXTENSION}
 
+export APR_ICONV_VERSION="1.2.2"
+export APR_ICONV_DOWNLOAD_URL="http://archive.apache.org/dist/apr/apr-iconv-${APR_ICONV_VERSION}.tar.gz"
+export APR_ICONV_NAME="${APR_ICONV_DOWNLOAD_URL##+(*/)}"
+export APR_ICONV_HOME="${APR_ICONV_NAME%$EXTENSION}"
 
 # ------------------------------------------------------------------------------
 # Apache Tomcat Connector
 MOD_JK_VERSION="1.2.48"
 MOD_JK_DOWNLOAD_URL="http://archive.apache.org/dist/tomcat/tomcat-connectors/jk/tomcat-connectors-${MOD_JK_VERSION}-src.tar.gz"
-
 
 # ------------------------------------------------------------------------------
 printf "\e[00;32m+--------------+----------------------------------------------------------\e[00m\n"
@@ -170,8 +174,26 @@ printf "\e[00;32m| SRC_HOME     |\e[00m ${SRC_HOME}\n"
 printf "\e[00;32m| SERVER_HOME  |\e[00m ${SERVER_HOME}\n"
 printf "\e[00;32m+--------------+------------------------------------------------------------------\e[00m\n"
 
+# ------------------------------------------------------------------------------
+if [[ ! -d "${SERVER_HOME}/openssl" ]]; then
+    cd ${SRC_HOME}
 
-# ----------------------------------------------------------------------------------------------------------------------
+    printf "\e[00;32m| ${OPENSSL_NAME} download (URL : ${OPENSSL_DOWNLOAD_URL})\e[00m\n"
+    curl -O ${OPENSSL_DOWNLOAD_URL}
+
+    tar xvzf ${OPENSSL_NAME}
+    cd ${SRC_HOME}/${OPENSSL_HOME}
+
+    ./config --prefix=${SERVER_HOME}/openssl -fPIC shared
+    make
+    make install
+
+    printf "\e[00;32m|---------------------------------------------------------------------------------\e[00m\n"
+    printf "\e[00;32m| ${OPENSSL_HOME} install success...\e[00m\n"
+    printf "\e[00;32m|---------------------------------------------------------------------------------\e[00m\n"
+fi
+
+# ------------------------------------------------------------------------------
 # 설치 여부 확인
 if [[ -d "${SERVER_HOME}/${HTTPD_HOME}" ]]; then
     printf "\e[00;32m|\e[00m \e[00;31m기존에 설치된 Apache가 있습니다. 삭제하고 다시 설치하려면 \"Y\"를 입력하세요.\e[00m\n"
@@ -191,7 +213,6 @@ if [[ -d "${SERVER_HOME}/${HTTPD_HOME}" ]]; then
     fi
 fi
 
-
 # ------------------------------------------------------------------------------
 # Domain Name 설정.
 if [[ -z ${DOMAIN_NAME} ]]; then
@@ -203,7 +224,6 @@ if [[ -z ${DOMAIN_NAME} ]]; then
     done
     printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
 fi
-
 
 cd ${SRC_HOME}
 
@@ -229,7 +249,6 @@ fi
 
 tar xvzf ${HTTPD_NAME}
 
-
 # ------------------------------------------------------------------------------
 # APR 추가
 cd ${SRC_HOME}
@@ -253,28 +272,37 @@ tar xvzf ${APR_UTIL_NAME} -C ${SRC_HOME}/${HTTPD_NAME%$EXTENSION}/srclib/
 cd ${SRC_HOME}/${HTTPD_NAME%$EXTENSION}/srclib/
 mv ${APR_UTIL_HOME} apr-util
 
+# APR Iconv
+cd ${SRC_HOME}
+if [ ! -f "${SRC_HOME}/${APR_ICONV_NAME}" ]; then
+    printf "\e[00;32m| ${APR_ICONV_NAME} download (URL : ${APR_ICONV_DOWNLOAD_URL})\e[00m\n"
+    curl -L -O ${APR_ICONV_DOWNLOAD_URL}
+fi
+
+tar xvzf ${APR_ICONV_NAME} -C ${SRC_HOME}/${HTTPD_NAME%$EXTENSION}/srclib/
+cd ${SRC_HOME}/${HTTPD_NAME%$EXTENSION}/srclib/
+mv ${APR_ICONV_HOME} apr-iconv
 
 # ------------------------------------------------------------------------------
 # PCRE 설치
 cd ${SRC_HOME}
-if [ ! -f "${SRC_HOME}/${PCRE_NAME}" ]; then
-    printf "\e[00;32m| ${PCRE_NAME} download (URL : ${PCRE_DOWNLOAD_URL})\e[00m\n"
-    curl -L -O ${PCRE_DOWNLOAD_URL}
+if [ ! -f "${SRC_HOME}/${PCRE2_NAME}" ]; then
+    printf "\e[00;32m| ${PCRE2_NAME} download (URL : ${PCRE2_DOWNLOAD_URL})\e[00m\n"
+    curl -L -O ${PCRE2_DOWNLOAD_URL}
 fi
 
-tar xvzf ${PCRE_NAME}
-cd ${SRC_HOME}/${PCRE_HOME}
+tar xvzf ${PCRE2_NAME}
+cd ${SRC_HOME}/${PCRE2_HOME}
 
-./configure --prefix=${SRC_HOME}/${HTTPD_NAME%$EXTENSION}/srclib/pcre
+./configure --prefix=${SRC_HOME}/${HTTPD_NAME%$EXTENSION}/srclib/pcre2
 make
 make install
 
 # Install source delete
-if [[ -d "${SRC_HOME}/${PCRE_HOME}" ]]; then
-    printf "\e[00;32m| \"${SRC_HOME}/${PCRE_HOME}\" delete...\e[00m\n"
-    rm -rf ${SRC_HOME}/${PCRE_HOME}
+if [[ -d "${SRC_HOME}/${PCRE2_HOME}" ]]; then
+    printf "\e[00;32m| \"${SRC_HOME}/${PCRE2_HOME}\" delete...\e[00m\n"
+    rm -rf ${SRC_HOME}/${PCRE2_HOME}
 fi
-
 
 # ------------------------------------------------------------------------------
 # MPM 모드 설정 변경.
@@ -282,14 +310,11 @@ if [ "$OS" == "linux" ]; then
     sed -i "75s/.*/#define DEFAULT_SERVER_LIMIT 1024/g" ${SRC_HOME}/${HTTPD_NAME%$EXTENSION}/server/mpm/prefork/prefork.c
 
     # ServerLimit과 ThreadsPerChild 값을 변경한다. 서버의 스팩에 따라서 적절하게 수정한다.
-    sed -i "87s/.*/#define DEFAULT_SERVER_LIMIT 128/g"  ${SRC_HOME}/${HTTPD_NAME%$EXTENSION}/server/mpm/worker/worker.c
-    sed -i "105s/.*/#define DEFAULT_THREAD_LIMIT 64/g"  ${SRC_HOME}/${HTTPD_NAME%$EXTENSION}/server/mpm/worker/worker.c
+    sed -i "87s/.*/#define DEFAULT_SERVER_LIMIT 128/g" ${SRC_HOME}/${HTTPD_NAME%$EXTENSION}/server/mpm/worker/worker.c
 
     # ServerLimit과 ThreadsPerChild 값을 변경한다. 서버의 스팩에 따라서 적절하게 수정한다.
     sed -i "115s/.*/#define DEFAULT_SERVER_LIMIT 128/g" ${SRC_HOME}/${HTTPD_NAME%$EXTENSION}/server/mpm/event/event.c
-    sed -i "133s/.*/#define DEFAULT_THREAD_LIMIT 64/g"  ${SRC_HOME}/${HTTPD_NAME%$EXTENSION}/server/mpm/event/event.c
 fi
-
 
 # ------------------------------------------------------------------------------
 INSTALL_CONFIG="--prefix=${SERVER_HOME}/${HTTPD_HOME}"
@@ -313,7 +338,9 @@ INSTALL_CONFIG="${INSTALL_CONFIG} --enable-so"
 INSTALL_CONFIG="${INSTALL_CONFIG} --enable-ssl"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-included-apr"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-mpm=event"
-INSTALL_CONFIG="${INSTALL_CONFIG} --with-pcre=${SRC_HOME}/${HTTPD_NAME%$EXTENSION}/srclib/pcre"
+INSTALL_CONFIG="${INSTALL_CONFIG} --with-pcre=${SRC_HOME}/${HTTPD_NAME%$EXTENSION}/srclib/pcre2"
+
+INSTALL_CONFIG="${INSTALL_CONFIG} --with-ssl=${SERVER_HOME}/openssl"
 
 cd ${SRC_HOME}/${HTTPD_NAME%$EXTENSION}
 
@@ -375,7 +402,6 @@ mkdir -p ${LOG_HOME}/jk/shm
 mkdir -p ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/uriworkermaps
 mkdir -p ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/vhosts
 
-
 # ------------------------------------------------------------------------------
 ## Tomcat Worker Name 설정.
 printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
@@ -387,12 +413,11 @@ printf "\e[00;32m| /_/  \____/_/ /_/ /_/\___/\__,_/\__/   \e[00m\n"
 printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
 if [[ -z ${INSTALL_WORKER_NAME} ]]; then
     printf "\e[00;32m| Enter the JK Connecter name\e[00m"
-    read -e -p ' (default. tomcat) > ' INSTALL_WORKER_NAME
-    if [[ -z ${CHECK_TOMCAT}  ]]; then
-        INSTALL_WORKER_NAME="tomcat"
+    read -e -p ' (default. default) > ' INSTALL_WORKER_NAME
+    if [[ -z ${CHECK_TOMCAT} ]]; then
+        INSTALL_WORKER_NAME="default"
     fi
 fi
-
 
 # ------------------------------------------------------------------------------
 echo "#!/bin/sh
@@ -446,8 +471,7 @@ if [[ ! -f \"${LOG_HOME}/httpd.pid\" ]]; then
     fi
 fi
 
-" > ${SERVER_HOME}/${HTTPD_HOME}/bin/start.sh
-
+" >${SERVER_HOME}/${HTTPD_HOME}/bin/start.sh
 
 # ------------------------------------------------------------------------------
 echo "#!/bin/sh
@@ -505,8 +529,7 @@ if [[ -n \"\$STOPD\" ]]; then
         printf \"                           [\e[00;32mFAILED\e[00m]\\\\n\"
     fi
 fi
-" > ${SERVER_HOME}/${HTTPD_HOME}/bin/stop.sh
-
+" >${SERVER_HOME}/${HTTPD_HOME}/bin/stop.sh
 
 # ------------------------------------------------------------------------------
 echo "#!/bin/sh
@@ -574,8 +597,7 @@ else
         printf \"                                           [\e[00;32mFAILED\e[00m]\\\\n\"
     fi
 fi
-" > ${SERVER_HOME}/${HTTPD_HOME}/bin/restart.sh
-
+" >${SERVER_HOME}/${HTTPD_HOME}/bin/restart.sh
 
 # ------------------------------------------------------------------------------
 echo "#!/bin/sh
@@ -609,8 +631,7 @@ else
     echo \"httpd (no pid file) not running.\"
     exit 1
 fi
-" > ${SERVER_HOME}/${HTTPD_HOME}/bin/status.sh
-
+" >${SERVER_HOME}/${HTTPD_HOME}/bin/status.sh
 
 # ------------------------------------------------------------------------------
 echo "#!/bin/sh
@@ -651,8 +672,7 @@ PRGDIR=\`dirname \"\$PRG\"\`
 export HTTPD_HOME=\`cd \"\$PRGDIR/..\" >/dev/null; pwd\`
 
 \$HTTPD_HOME/bin/apachectl configtest
-" > ${SERVER_HOME}/${HTTPD_HOME}/bin/configtest.sh
-
+" >${SERVER_HOME}/${HTTPD_HOME}/bin/configtest.sh
 
 # ------------------------------------------------------------------------------
 echo "#!/bin/sh
@@ -693,8 +713,7 @@ else
     echo \"httpd (no pid file) not running.\"
     exit 1
 fi
-" > ${SERVER_HOME}/${HTTPD_HOME}/bin/check-run-thread.sh
-
+" >${SERVER_HOME}/${HTTPD_HOME}/bin/check-run-thread.sh
 
 # ------------------------------------------------------------------------------
 echo "#!/bin/sh
@@ -760,8 +779,7 @@ done
 echo \"avg rps: \"\`expr \$rps_sum / \$times\`
 echo \"min rps: \$min\"
 echo \"max rps: \$max\"
-" > ${SERVER_HOME}/${HTTPD_HOME}/bin/stress.sh
-
+" >${SERVER_HOME}/${HTTPD_HOME}/bin/stress.sh
 
 # # ------------------------------------------------------------------------------
 # echo "#!/bin/sh
@@ -815,10 +833,8 @@ echo \"max rps: \$max\"
 # sed -i \"s/Group.*/Group \${GROUPNAME}/g\"     \${PRGDIR}/conf/httpd.conf
 # " > ${SERVER_HOME}/${HTTPD_HOME}/bin/change-user.sh
 
-
 # ------------------------------------------------------------------------------
 chmod +x ${SERVER_HOME}/${HTTPD_HOME}/bin/*.sh
-
 
 # ------------------------------------------------------------------------------
 # Apache Config 수정.
@@ -1218,13 +1234,11 @@ Include conf/extra/httpd-jk.conf
         Deny from all
     </LimitExcept>
 </Location>
-" > ${SERVER_HOME}/${HTTPD_HOME}/conf/httpd.conf
-
+" >${SERVER_HOME}/${HTTPD_HOME}/conf/httpd.conf
 
 # ------------------------------------------------------------------------------
 # httpd-default.conf에서 ServerTokens 설정 변경
 sed -i "55s/.*/ServerTokens Prod/g" ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-default.conf
-
 
 # ------------------------------------------------------------------------------
 # Apache Tomcat Connecter Config 추가.
@@ -1277,10 +1291,9 @@ LoadModule jk_module modules/mod_jk.so
     # Example for UnMounting requests using regexps
     #SetEnvIf REQUEST_URI \"\\.(htm|html|php|php3|phps|inc|phtml|css|gif|jpg|png|bmp|js)\$\" no-jk
 </IfModule>
-" > ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-jk.conf
+" >${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-jk.conf
 
-
-# ----------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # securety settings
 echo "# securety settings
 <Location /jkmanager>
@@ -1311,8 +1324,7 @@ echo "# securety settings
 <LocationMatch \"/META-INF\">
     Require all denied
 </LocationMatch>
-" > ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/security.conf
-
+" >${SERVER_HOME}/${HTTPD_HOME}/conf/extra/security.conf
 
 # ------------------------------------------------------------------------------
 # StartServers * ThreadsPerChild = MinSpareThreads
@@ -1340,16 +1352,15 @@ echo "# securety settings
 #sed -i "67s/.*/    MaxRequestWorkers       800/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
 #sed -i "68s/.*/    MaxConnectionsPerChild    0/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
 #sed -i "69s/.*/<\/IfModule>\\n/g"                   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
-sed -i "61s/.*/<IfModule mpm_event_module>/g"       ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
-sed -i "62s/.*/    StartServers              8/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
-sed -i "63s/.*/    ServerLimit              32/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
-sed -i "64s/.*/    MinSpareThreads         512/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
-sed -i "65s/.*/    MaxSpareThreads        1024/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
-sed -i "66s/.*/    ThreadsPerChild          64/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
-sed -i "67s/.*/    MaxRequestWorkers      2048/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
-sed -i "68s/.*/    MaxConnectionsPerChild    0/g"   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
-sed -i "69s/.*/<\/IfModule>\\n/g"                   ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
-
+sed -i "61s/.*/<IfModule mpm_event_module>/g" ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
+sed -i "62s/.*/    StartServers              8/g" ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
+sed -i "63s/.*/    ServerLimit              32/g" ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
+sed -i "64s/.*/    MinSpareThreads         512/g" ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
+sed -i "65s/.*/    MaxSpareThreads        1024/g" ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
+sed -i "66s/.*/    ThreadsPerChild          64/g" ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
+sed -i "67s/.*/    MaxRequestWorkers      2048/g" ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
+sed -i "68s/.*/    MaxConnectionsPerChild    0/g" ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
+sed -i "69s/.*/<\/IfModule>\\n/g" ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-mpm.conf
 
 # ------------------------------------------------------------------------------
 #  worker settings
@@ -1418,8 +1429,7 @@ worker.${INSTALL_WORKER_NAME}Wlb.balance_workers=${INSTALL_WORKER_NAME}01
 # Define status worker
 #
 worker.jkstatus.type=status
-" > ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/workers.properties
-
+" >${SERVER_HOME}/${HTTPD_HOME}/conf/extra/workers.properties
 
 # ------------------------------------------------------------------------------
 # uriworkermap settings
@@ -1446,8 +1456,7 @@ echo "# This file provides sample mappings for example wlb
 # ------------------------------------------------------------------------------
 # ROOT Settings
 /*=${INSTALL_WORKER_NAME}Wlb
-" > ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/uriworkermaps/${INSTALL_WORKER_NAME}.properties
-
+" >${SERVER_HOME}/${HTTPD_HOME}/conf/extra/uriworkermaps/${INSTALL_WORKER_NAME}.properties
 
 # ------------------------------------------------------------------------------
 # httpd-vhosts settings
@@ -1474,8 +1483,7 @@ echo "# Virtual Hosts
 # match a ServerName or ServerAlias in any <VirtualHost> block.
 #
 Include conf/extra/vhosts/${INSTALL_WORKER_NAME}.conf
-" > ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-vhosts.conf
-
+" >${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-vhosts.conf
 
 # ------------------------------------------------------------------------------
 # ${INSTALL_WORKER_NAME}.conf settings
@@ -1518,8 +1526,7 @@ echo "<VirtualHost *:80>
     # Mount JK File
     JkMountFile conf/extra/uriworkermaps/${INSTALL_WORKER_NAME}.properties
 </VirtualHost>
-" > ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/vhosts/${INSTALL_WORKER_NAME}.conf
-
+" >${SERVER_HOME}/${HTTPD_HOME}/conf/extra/vhosts/${INSTALL_WORKER_NAME}.conf
 
 # ------------------------------------------------------------------------------
 # httpd-vhosts settings
@@ -1644,60 +1651,58 @@ SSLSessionCacheTimeout  300
 ## SSL Virtual Host Context
 ##
 Include conf/extra/vhosts/${INSTALL_WORKER_NAME}-ssl.conf
-" > ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-ssl.conf
+" >${SERVER_HOME}/${HTTPD_HOME}/conf/extra/httpd-ssl.conf
 
+# # ------------------------------------------------------------------------------
+# # ${INSTALL_WORKER_NAME}-ssl.conf settings
+# echo "<VirtualHost _default_:443>
+#     ServerName  ${DOMAIN_NAME}
+#     ServerAlias ${DOMAIN_NAME}
+#     #ServerAdmin admin@kt.com
 
-# ------------------------------------------------------------------------------
-# ${INSTALL_WORKER_NAME}-ssl.conf settings
-echo "<VirtualHost _default_:443>
-    ServerName  ${DOMAIN_NAME}
-    ServerAlias ${DOMAIN_NAME}
-    #ServerAdmin admin@kt.com
+#     Include conf/extra/security.conf
 
-    Include conf/extra/security.conf
+#     SSLEngine on
 
-    SSLEngine on
+#     # TLSv1.2, TLSv1.3만 사용하고 모두 제외
+#     SSLProtocol -All +TLSv1.2 +TLSv1.3
+#     # TLSv1, TLSv1.1, TLSv1.2, TLSv1.3만 사용하고 모두 제외
+#     #SSLProtocol -All +TLSv1 +TLSv1.1 +TLSv1.2 +TLSv1.3
+#     # SSLv2, SSLv3, TLSv1, TLSv1.1 제외하고 모두 사용
+#     #SSLProtocol all -SSLv2 -SSLv3 -TLSv1 +TLSv1.1
+#     SSLCipherSuite HIGH:MEDIUM:!ADH:!AECDH:!PSK:!RC4:!SRP:!SSLv2
+#     # SSLCertificateFile conf/ssl/cert.pem
+#     # SSLCertificateKeyFile conf/ssl/newkey.pem
+#     # SSLCACertificateFile conf/ssl/TrueBusiness-Chain_sha2.pem
+#     # SSLCertificateChainFile conf/ssl/Comodo_Chain.pem
+#     SSLCertificateFile conf/ssl/${INSTALL_WORKER_NAME}.crt
+#     SSLCertificateKeyFile conf/ssl/${INSTALL_WORKER_NAME}.key
 
-    # TLSv1.2, TLSv1.3만 사용하고 모두 제외
-    SSLProtocol -All +TLSv1.2 +TLSv1.3
-    # TLSv1, TLSv1.1, TLSv1.2, TLSv1.3만 사용하고 모두 제외
-    #SSLProtocol -All +TLSv1 +TLSv1.1 +TLSv1.2 +TLSv1.3
-    # SSLv2, SSLv3, TLSv1, TLSv1.1 제외하고 모두 사용
-    #SSLProtocol all -SSLv2 -SSLv3 -TLSv1 +TLSv1.1
-    SSLCipherSuite HIGH:MEDIUM:!ADH:!AECDH:!PSK:!RC4:!SRP:!SSLv2
-    # SSLCertificateFile conf/ssl/cert.pem
-    # SSLCertificateKeyFile conf/ssl/newkey.pem
-    # SSLCACertificateFile conf/ssl/TrueBusiness-Chain_sha2.pem
-    # SSLCertificateChainFile conf/ssl/Comodo_Chain.pem
-    SSLCertificateFile conf/ssl/${INSTALL_WORKER_NAME}.crt
-    SSLCertificateKeyFile conf/ssl/${INSTALL_WORKER_NAME}.key
+#     DirectoryIndex index.html index.htm index.jsp
 
-    DirectoryIndex index.html index.htm index.jsp
+#     #Alias /document/ \"/data/document/\"
+#     #<Directory \"/home/server/tomcat/webapps/ROOT\">
+#     #    Options                     FollowSymLinks
+#     #    AllowOverride               None
+#     #    Require                     all granted
+#     #</Directory>
 
-    #Alias /document/ \"/data/document/\"
-    #<Directory \"/home/server/tomcat/webapps/ROOT\">
-    #    Options                     FollowSymLinks
-    #    AllowOverride               None
-    #    Require                     all granted
-    #</Directory>
+#     Redirect 404 /favicon.ico
+#     <Location /favicon.ico>
+#         ErrorDocument 404 \"No favicon\"
+#     </Location>
 
-    Redirect 404 /favicon.ico
-    <Location /favicon.ico>
-        ErrorDocument 404 \"No favicon\"
-    </Location>
+#     # AccessLog.
+#     #CustomLog \"|${SERVER_HOME}/${HTTPD_HOME}/bin/rotatelogs ${LOG_HOME}/${INSTALL_WORKER_NAME}.access.%Y-%m-%d.log 86400 +540\" combined env=!do_not_log
 
-    # AccessLog.
-    #CustomLog \"|${SERVER_HOME}/${HTTPD_HOME}/bin/rotatelogs ${LOG_HOME}/${INSTALL_WORKER_NAME}.access.%Y-%m-%d.log 86400 +540\" combined env=!do_not_log
+#     RewriteEngine On
+#     RewriteRule ^/?dummy\.html\$ - [R=404]
+#     ReWriteRule ^(.*);jsessionid=[A-Za-z0-9]+(.*)\$ \$1 [L,R=301]
 
-    RewriteEngine On
-    RewriteRule ^/?dummy\.html\$ - [R=404]
-    ReWriteRule ^(.*);jsessionid=[A-Za-z0-9]+(.*)\$ \$1 [L,R=301]
-
-    # Mount JK File
-    JkMountFile conf/extra/uriworkermaps/${INSTALL_WORKER_NAME}.properties
-</VirtualHost>
-" > ${SERVER_HOME}/${HTTPD_HOME}/conf/extra/vhosts/${INSTALL_WORKER_NAME}-ssl.conf
-
+#     # Mount JK File
+#     JkMountFile conf/extra/uriworkermaps/${INSTALL_WORKER_NAME}.properties
+# </VirtualHost>
+# " >${SERVER_HOME}/${HTTPD_HOME}/conf/extra/vhosts/${INSTALL_WORKER_NAME}-ssl.conf
 
 #------------------------------------------------------------------------------
 #if [[ -f ${BASH_FILE} ]]; then
@@ -1712,7 +1717,6 @@ echo "<VirtualHost _default_:443>
 #" >> ${BASH_FILE}
 #    fi
 #fi
-
 
 printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
 printf "\e[00;32m| \"${HTTPD_HOME}\" install success...\e[00m\n"

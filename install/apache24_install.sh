@@ -334,9 +334,9 @@ printf "\e[00;32m| /_/  \____/_/ /_/ /_/\___/\__,_/\__/   \e[00m\n"
 printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
 if [[ -z ${INSTALL_WORKER_NAME} ]]; then
     printf "\e[00;32m| Enter the JK Connecter name\e[00m"
-    read -e -p ' (default. tomcat) > ' INSTALL_WORKER_NAME
+    read -e -p ' (default. default) > ' INSTALL_WORKER_NAME
     if [[ -z ${CHECK_TOMCAT} ]]; then
-        INSTALL_WORKER_NAME="tomcat"
+        INSTALL_WORKER_NAME="default"
     fi
 fi
 

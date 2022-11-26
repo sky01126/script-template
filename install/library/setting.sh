@@ -78,14 +78,14 @@ export SRC_HOME=/var/tmp
 # Programe Home 경로 설정.
 # opt : 애드온(Add-on) 소프트웨어 패키지 디렉토리
 export PROGRAME_HOME='/opt/local'
-if [[ -z ${PROGRAME_HOME} ]]; then
+if [[ -z "${PROGRAME_HOME}" ]]; then
     printf "Enter the program install path (ex. /opt/local)"
     read -e -p " > " PROGRAME_HOME
     echo
 fi
-export PROGRAME_HOME=${PROGRAME_HOME#/}
-export PROGRAME_HOME=${PROGRAME_HOME%/}
-export PROGRAME_HOME=${PROGRAME_HOME/\/\//\/}
+export PROGRAME_HOME="${PROGRAME_HOME#/}"
+export PROGRAME_HOME="${PROGRAME_HOME%/}"
+export PROGRAME_HOME="${PROGRAME_HOME/\/\//\/}"
 if [[ ! -z ${PROGRAME_HOME} ]] && [[ ! -d "${SERVER_HOME}/${PROGRAME_HOME}" ]]; then
     printf "Create program install directory : \e[00;32m${SERVER_HOME}/${PROGRAME_HOME}\e[00m\n"
     mkdir -p ${SERVER_HOME}/${PROGRAME_HOME}
@@ -119,7 +119,7 @@ export OPENJAVA_DOWNLOAD_URL='https://github.com/AdoptOpenJDK/openjdk8-upstream-
 # ----------------------------------------------------------------------------------------------------------------------
 # PCRE
 export PCRE_ALIAS='pcre'
-if [[ -z ${PCRE_ALIAS} ]]; then
+if [[ -z "${PCRE_ALIAS}" ]]; then
     printf "Enter the pcre alias (ex. pcre)"
     read -e -p " > " PCRE_ALIAS
     echo
@@ -127,29 +127,29 @@ fi
 
 export PCRE_VERSION="8.45"
 export PCRE_DOWNLOAD_URL="http://sourceforge.net/projects/pcre/files/pcre/${PCRE_VERSION}/pcre-${PCRE_VERSION}.tar.gz"
-export PCRE_NAME=${PCRE_DOWNLOAD_URL##+(*/)}
-export PCRE_HOME=${PCRE_NAME%$EXTENSION}
+export PCRE_NAME="${PCRE_DOWNLOAD_URL##+(*/)}"
+export PCRE_HOME="${PCRE_NAME%$EXTENSION}"
 
 
 # ----------------------------------------------------------------------------------------------------------------------
 # PCRE2
 export PCRE2_ALIAS='pcre'
-if [[ -z ${PCRE2_ALIAS} ]]; then
+if [[ -z "${PCRE2_ALIAS}" ]]; then
     printf "Enter the pcre2 alias (ex. pcre2)"
     read -e -p " > " PCRE2_ALIAS
     echo
 fi
 
 export PCRE2_VERSION="10.37"
-export PCRE2_DOWNLOAD_URL="http://sourceforge.net/projects/pcre/files/pcre2/${PCRE_VERSION}/pcre2-${PCRE_VERSION}.tar.gz"
-export PCRE2_NAME=${PCRE2_DOWNLOAD_URL##+(*/)}
-export PCRE2_HOME=${PCRE2_NAME%$EXTENSION}
+export PCRE2_DOWNLOAD_URL="http://sourceforge.net/projects/pcre/files/pcre2/${PCRE2_VERSION}/pcre2-${PCRE2_VERSION}.tar.gz"
+export PCRE2_NAME="${PCRE2_DOWNLOAD_URL##+(*/)}"
+export PCRE2_HOME="${PCRE2_NAME%$EXTENSION}"
 
 
 # ----------------------------------------------------------------------------------------------------------------------
 # OpenSSL 설정.
 export OPENSSL_ALIAS='openssl'
-if [[ -z ${OPENSSL_ALIAS} ]]; then
+if [[ -z "${OPENSSL_ALIAS}" ]]; then
     printf "Enter the openssl alias (ex. openssl)"
     read -e -p " > " OPENSSL_ALIAS
     echo
@@ -157,14 +157,14 @@ fi
 
 export OPENSSL_VERSION="3.0.7"
 export OPENSSL_DOWNLOAD_URL="https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz"
-export OPENSSL_NAME=${OPENSSL_DOWNLOAD_URL##+(*/)}
-export OPENSSL_HOME=${OPENSSL_NAME%$EXTENSION}
+export OPENSSL_NAME="${OPENSSL_DOWNLOAD_URL##+(*/)}"
+export OPENSSL_HOME="${OPENSSL_NAME%$EXTENSION}"
 
 
 # ----------------------------------------------------------------------------------------------------------------------
 # APR
 export APR_ALIAS='apr'
-if [[ -z ${APR_ALIAS} ]]; then
+if [[ -z "${APR_ALIAS}" ]]; then
     printf "Enter the apr alias (ex. apr)"
     read -e -p " > " APR_ALIAS
     echo
@@ -172,16 +172,16 @@ fi
 
 export APR_VERSION="1.7.0"
 export APR_DOWNLOAD_URL="http://archive.apache.org/dist/apr/apr-${APR_VERSION}.tar.gz"
-export APR_NAME=${APR_DOWNLOAD_URL##+(*/)}
-export APR_HOME=${APR_NAME%$EXTENSION}
+export APR_NAME="${APR_DOWNLOAD_URL##+(*/)}"
+export APR_HOME="${APR_NAME%$EXTENSION}"
 
 export APR_UTIL_VERSION="1.6.1"
 export APR_UTIL_DOWNLOAD_URL="http://archive.apache.org/dist/apr/apr-util-${APR_UTIL_VERSION}.tar.gz"
-export APR_UTIL_NAME=${APR_UTIL_DOWNLOAD_URL##+(*/)}
-export APR_UTIL_HOME=${APR_UTIL_NAME%$EXTENSION}
+export APR_UTIL_NAME="${APR_UTIL_DOWNLOAD_URL##+(*/)}"
+export APR_UTIL_HOME="${APR_UTIL_NAME%$EXTENSION}"
 
 export APR_ICONV_VERSION="1.2.2"
 export APR_ICONV_DOWNLOAD_URL="http://archive.apache.org/dist/apr/apr-iconv-${APR_ICONV_VERSION}.tar.gz"
-export APR_ICONV_NAME=${APR_ICONV_DOWNLOAD_URL##+(*/)}
-export APR_ICONV_HOME=${APR_ICONV_NAME%$EXTENSION}
+export APR_ICONV_NAME="${APR_ICONV_DOWNLOAD_URL##+(*/)}"
+export APR_ICONV_HOME="${APR_ICONV_NAME%$EXTENSION}"
 

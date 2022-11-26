@@ -10,8 +10,6 @@
 # 멀티의 setting.sh 읽기
 # source /dev/stdin  <<< "$(curl -f -L -sS  http://shell.pe.kr/document/install/library/setting.sh)"
 
-echo "---------------- PCRE - v2022.01.10.003 ----------------"
-
 # Exit on error
 set -e
 

@@ -13,8 +13,6 @@
 # Exit on error
 set -e
 
-echo "---------------- APR - v2022.01.10.003 ----------------"
-
 # shopt은 shell option의 약자로 유틸이다.
 # 사용 하는 extglob 쉘 옵션 shopt 내장 명령을 사용 하 여 같은 확장된 패턴 일치 연산자를 사용
 shopt -s extglob

@@ -46,8 +46,6 @@
 #   Apache HTTP Server에서 입력값 검증이 미흡하여 발생하는 버퍼오버플로우 취약점(CVE-2021-44790)111
 #
 
-echo "---------------- Apache - v2022.01.19.001 ----------------"
-
 # ------------------------------------------------------------------------------
 # Exit on error
 set -e
@@ -125,7 +123,7 @@ if [[ -z "${LOG_HOME}" ]]; then
     printf "Enter the server home path"
     read -e -p " > " LOG_HOME
     while [[ -z "${LOG_HOME}" ]]; do
-        printf "Enter the server home path"
+        printf "Enter the http log path"
         read -e -p " > " LOG_HOME
     done
     echo

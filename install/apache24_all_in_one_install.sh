@@ -167,11 +167,6 @@ export APR_UTIL_DOWNLOAD_URL="http://archive.apache.org/dist/apr/apr-util-${APR_
 export APR_UTIL_NAME=${APR_UTIL_DOWNLOAD_URL##+(*/)}
 export APR_UTIL_HOME=${APR_UTIL_NAME%$EXTENSION}
 
-export APR_ICONV_VERSION="1.2.2"
-export APR_ICONV_DOWNLOAD_URL="http://archive.apache.org/dist/apr/apr-iconv-${APR_ICONV_VERSION}.tar.gz"
-export APR_ICONV_NAME="${APR_ICONV_DOWNLOAD_URL##+(*/)}"
-export APR_ICONV_HOME="${APR_ICONV_NAME%$EXTENSION}"
-
 # ------------------------------------------------------------------------------
 # Apache Tomcat Connector
 MOD_JK_VERSION="1.2.48"
@@ -295,7 +290,7 @@ tar xvzf ${APR_NAME} -C ${SRC_HOME}/${HTTPD_NAME%$EXTENSION}/srclib/
 cd ${SRC_HOME}/${HTTPD_NAME%$EXTENSION}/srclib/
 mv ${APR_HOME} apr
 
-# APR Util
+# APR Util 추가
 cd ${SRC_HOME}
 if [ ! -f "${SRC_HOME}/${APR_UTIL_NAME}" ]; then
     printf "\e[00;32m| ${APR_UTIL_NAME} download (URL : ${APR_UTIL_DOWNLOAD_URL})\e[00m\n"
@@ -305,17 +300,6 @@ fi
 tar xvzf ${APR_UTIL_NAME} -C ${SRC_HOME}/${HTTPD_NAME%$EXTENSION}/srclib/
 cd ${SRC_HOME}/${HTTPD_NAME%$EXTENSION}/srclib/
 mv ${APR_UTIL_HOME} apr-util
-
-# APR Iconv
-cd ${SRC_HOME}
-if [ ! -f "${SRC_HOME}/${APR_ICONV_NAME}" ]; then
-    printf "\e[00;32m| ${APR_ICONV_NAME} download (URL : ${APR_ICONV_DOWNLOAD_URL})\e[00m\n"
-    curl -L -O ${APR_ICONV_DOWNLOAD_URL}
-fi
-
-tar xvzf ${APR_ICONV_NAME} -C ${SRC_HOME}/${HTTPD_NAME%$EXTENSION}/srclib/
-cd ${SRC_HOME}/${HTTPD_NAME%$EXTENSION}/srclib/
-mv ${APR_ICONV_HOME} apr-iconv
 
 # ------------------------------------------------------------------------------
 # MPM 모드 설정 변경.

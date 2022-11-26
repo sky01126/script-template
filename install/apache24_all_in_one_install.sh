@@ -114,19 +114,17 @@ if [[ -z "${SERVER_HOME}" ]]; then
         printf "Enter the server home path"
         read -e -p " > " SERVER_HOME
     done
-    echo
 fi
 mkdir -p ${SERVER_HOME}
 
 # export LOG_HOME="/home/www/httpd_log"
 if [[ -z "${LOG_HOME}" ]]; then
-    printf "Enter the server home path"
+    printf "Enter the http log path"
     read -e -p " > " LOG_HOME
     while [[ -z "${LOG_HOME}" ]]; do
         printf "Enter the http log path"
         read -e -p " > " LOG_HOME
     done
-    echo
 fi
 mkdir -p ${LOG_HOME}
 

@@ -231,9 +231,11 @@ if [[ ! -d "${SERVER_HOME}/openssl" ]]; then
     make
     make install
 
-    printf "\e[00;32m|---------------------------------------------------------------------------------\e[00m\n"
-    printf "\e[00;32m| ${OPENSSL_HOME} install success...\e[00m\n"
-    printf "\e[00;32m|---------------------------------------------------------------------------------\e[00m\n"
+    # Install source delete
+    if [[ -d "${SRC_HOME}/${OPENSSL_HOME}" ]]; then
+        printf "\e[00;32m| \"${SRC_HOME}/${OPENSSL_HOME}\" delete...\e[00m\n"
+        rm -rf ${SRC_HOME}/${OPENSSL_HOME}
+    fi
 fi
 
 # ------------------------------------------------------------------------------
@@ -248,7 +250,7 @@ if [[ ! -d "${SERVER_HOME}/pcre2" ]]; then
     tar xvzf ${PCRE2_NAME}
     cd ${SRC_HOME}/${PCRE2_HOME}
 
-    ./configure --prefix=${SRC_HOME}/pcre2
+    ./configure --prefix=${SERVER_HOME}/pcre2
     make
     make install
 

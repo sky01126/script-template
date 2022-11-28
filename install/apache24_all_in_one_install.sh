@@ -354,6 +354,7 @@ INSTALL_CONFIG="${INSTALL_CONFIG} --with-included-apr"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-mpm=event"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-ssl=${SERVER_HOME}/openssl"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-pcre=${SERVER_HOME}/pcre2/bin/pcre2-config"
+INSTALL_CONFIG="${INSTALL_CONFIG} --enable-pie"
 
 cd ${SRC_HOME}/${HTTPD_NAME%$EXTENSION}
 

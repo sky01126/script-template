@@ -239,6 +239,7 @@ INSTALL_CONFIG="${INSTALL_CONFIG} --enable-rewrite"
 INSTALL_CONFIG="${INSTALL_CONFIG} --enable-so"
 INSTALL_CONFIG="${INSTALL_CONFIG} --enable-ssl"
 INSTALL_CONFIG="${INSTALL_CONFIG} --with-mpm=event"
+INSTALL_CONFIG="${INSTALL_CONFIG} --enable-pie"
 
 if [[ -z "${APR_HOME}" ]]; then
     INSTALL_CONFIG="${INSTALL_CONFIG} --with-apr=${SERVER_HOME}/${PROGRAME_HOME}/${APR_HOME}"

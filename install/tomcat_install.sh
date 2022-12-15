@@ -705,7 +705,6 @@ PRGDIR=\$(dirname \"\${PRG}\")
 source \${PRGDIR}/config.sh
 
 # ---------------------------------------------------------------------------------
-export HOSTNAME=\$(ostname)
 # export SERVER_PUBLIC_IP=\$(ifconfig -a | grep \"inet \" | grep \"Bcast:\" | awk '{print \$2}' | awk -F: '{print \$2}' | grep '^211')
 # export SERVER_PRIVATE_IP=\$(ifconfig -a | grep \"inet \" | grep \"Bcast:\" | awk '{print \$2}' | awk -F: '{print \$2}' | grep '^10')
 

@@ -21,4 +21,4 @@ tmpfs                   /var/cache/nginx        tmpfs   defaults,size=1G 0 0
   # useradd --shell /usr/sbin/nologin -d /nginx nginx
 
 - NginX 사용자 삭제
-# userdel -r nginx
+  # userdel -r nginx

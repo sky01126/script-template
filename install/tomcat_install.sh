@@ -20,12 +20,12 @@
 
 # ----------------------------------------------------------------------------------------------------------------------
 export SERVER_HOME="/home/server"
-#export SRC_HOME="$SERVER_HOME/src"
-#export CHECK_TOMCAT="Tomcat8"
+# export SRC_HOME="$SERVER_HOME/src"
+# export CHECK_TOMCAT="Tomcat8"
 # export CATALINA_NAME="tomcat8"
-#export MIN_MEMORY="1024"
-#export MAX_MEMORY="2048"
-#export HTTP_PORT="8080"
+# export MIN_MEMORY="1024"
+# export MAX_MEMORY="2048"
+# export HTTP_PORT="8080"
 # export LOG_HOME='${catalina.base}/logs'
 export LOG_HOME='/tc_log'
 
@@ -510,14 +510,14 @@ echo "#!/bin/sh
 PRG=\"\$0\"
 while [[ -h \"\${PRG}\" ]]; do
     ls=\`ls -ld \"\${PRG}\"\`
-    link=\`expr \"\$ls\" : '.*-> \(.*\)\$'\`
+    link=\$(expr \"\$ls\" : '.*-> \(.*\)\$')
     if expr \"\$link\" : '/.*' > /dev/null; then
         PRG=\"\$link\"
     else
-        PRG=\`dirname \"\${PRG}\"\`/\"\$link\"
+        PRG=\$(dirname \"\${PRG}\")/\"\$link\"
     fi
 done
-PRGDIR=\`dirname \"\${PRG}\"\`
+PRGDIR=\$(dirname \"\${PRG}\")
 
 # ---------------------------------------------------------------------------------
 # Custom Configuration Here
@@ -699,8 +699,8 @@ echo "#!/bin/sh
 
 # ---------------------------------------------------------------------------------
 # 기본 정보 설정.
-PRG=\$(realpath \$0\)
-PRGDIR=\$(dirname \"\${PRG}\"\)
+PRG=\$(realpath \$0)
+PRGDIR=\$(dirname \"\${PRG}\")
 
 source \${PRGDIR}/config.sh
 
@@ -1037,8 +1037,8 @@ echo "#!/bin/sh
 # :: Version ::              (v${TOMCAT_VERSION})
 # ---------------------------------------------------------------------------------
 # 기본 정보 설정.
-PRG=\$(realpath \$0\)
-PRGDIR=\$(dirname \"\${PRG}\"\)
+PRG=\$(realpath \$0)
+PRGDIR=\$(dirname \"\${PRG}\")
 
 source \${PRGDIR}/config.sh
 
@@ -1063,8 +1063,8 @@ echo "#!/bin/sh
 # :: Version ::              (v${TOMCAT_VERSION})
 # ---------------------------------------------------------------------------------
 # 기본 정보 설정.
-PRG=\$(realpath \$0\)
-PRGDIR=\$(dirname \"\${PRG}\"\)
+PRG=\$(realpath \$0)
+PRGDIR=\$(dirname \"\${PRG}\")
 
 source \${PRGDIR}/config.sh
 
@@ -1090,8 +1090,8 @@ echo "#!/bin/sh
 # :: Version ::              (v${TOMCAT_VERSION})
 # ---------------------------------------------------------------------------------
 # 기본 정보 설정.
-PRG=\$(realpath \$0\)
-PRGDIR=\$(dirname \"\${PRG}\"\)
+PRG=\$(realpath \$0)
+PRGDIR=\$(dirname \"\${PRG}\")
 
 source \${PRGDIR}/config.sh
 
@@ -1117,8 +1117,8 @@ echo "#!/bin/sh
 # :: Version ::              (v${TOMCAT_VERSION})
 # ---------------------------------------------------------------------------------
 # 기본 정보 설정.
-PRG=\$(realpath \$0\)
-PRGDIR=\$(dirname \"\${PRG}\"\)
+PRG=\$(realpath \$0)
+PRGDIR=\$(dirname \"\${PRG}\")
 
 source \${PRGDIR}/config.sh
 
@@ -1167,15 +1167,15 @@ source \${PRGDIR}/config.sh
 # # resolve links - \$0 may be a softlink
 # PRG=\"\$0\"
 # while [[ -h \"\${PRG}\" ]]; do
-#     ls=\$(ls -ld \"\${PRG}\"\)
-#     link=\$(expr \"\$ls\" : '.*-> \(.*\)\$'\)
+#     ls=\$(ls -ld \"\${PRG}\")
+#     link=\$(expr \"\$ls\" : '.*-> \(.*\)\$')
 #     if expr \"\$link\" : '/.*' > /dev/null; then
 #         PRG=\"\$link\"
 #     else
-#         PRG=\$(dirname \"\${PRG}\"\)/\"\$link\"
+#         PRG=\$(dirname \"\${PRG}\")/\"\$link\"
 #     fi
 # done
-# PRGDIR=\$(dirname \"\${PRG}\"\)
+# PRGDIR=\$(dirname \"\${PRG}\")
 
 # source \${PRGDIR}/config.sh
 
@@ -1215,7 +1215,7 @@ source \${PRGDIR}/config.sh
 # find . ! \\( -path \"./\${EXCEPTION_PATH}\" -prune \\) -name \"*\${FILE_EXTENSION}*\" -type f | while IFS= read -r FILE; do
 #     pushd \${FILE_PATH} > /dev/null
 
-#     BACKUP_FILE=\$(basename \"\${FILE}\"\)
+#     BACKUP_FILE=\$(basename \"\${FILE}\")
 #     BACKUP_NAME=\"\${BACKUP_FILE}.\$(date -d \"1 day ago\" +\"%Y-%m-%d\")\"
 
 #     COUNT=100001;
@@ -1273,15 +1273,15 @@ source \${PRGDIR}/config.sh
 # # resolve links - \$0 may be a softlink
 # PRG=\"\$0\"
 # while [[ -h \"\${PRG}\" ]]; do
-#     ls=\$(ls -ld \"\${PRG}\"\)
-#     link=\$(expr \"\$ls\" : '.*-> \(.*\)\$'\)
+#     ls=\$(ls -ld \"\${PRG}\")
+#     link=\$(expr \"\$ls\" : '.*-> \(.*\)\$')
 #     if expr \"\$link\" : '/.*' > /dev/null; then
 #         PRG=\"\$link\"
 #     else
-#         PRG=\$(dirname \"\${PRG}\"\)/\"\$link\"
+#         PRG=\$(dirname \"\${PRG}\")/\"\$link\"
 #     fi
 # done
-# PRGDIR=\$(dirname \"\${PRG}\"\)
+# PRGDIR=\$(dirname \"\${PRG}\")
 
 # source \${PRGDIR}/config.sh
 

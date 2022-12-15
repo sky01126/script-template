@@ -1498,8 +1498,10 @@ echo "<?xml version='1.0' encoding='utf-8'?>
       <Host name=\"localhost\"  appBase=\"webapps\"
             unpackWARs=\"true\" autoDeploy=\"false\">
 
-        <!-- Log the Access log using Logback. -->
-        <Valve className=\"ch.qos.logback.access.tomcat.LogbackValve\" quiet=\"true\" />
+        <!-- Access log processes all example.
+             Documentation at: /docs/config/valve.html
+             Note: The pattern used is equivalent to using pattern="common" -->
+        <Valve className="ch.qos.logback.access.tomcat.LogbackValve" quiet="true" />
 
         <!-- Error Report Valve (Tomcat 7.0.55 and later versions) -->
         <Valve className=\"org.apache.catalina.valves.ErrorReportValve\" showReport=\"false\" showServerInfo=\"false\" />

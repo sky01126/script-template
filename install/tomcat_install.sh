@@ -22,7 +22,7 @@
 export SERVER_HOME="/home/server"
 #export SRC_HOME="$SERVER_HOME/src"
 #export CHECK_TOMCAT="Tomcat8"
-#export TOMCAT_BASE="master"
+# export CATALINA_NAME="tomcat8"
 #export MIN_MEMORY="1024"
 #export MAX_MEMORY="2048"
 #export HTTP_PORT="8080"
@@ -303,17 +303,20 @@ LOG_LEVEL="INFO"
 
 # ----------------------------------------------------------------------------------------------------------------------
 ## Tomcat Base 경로 설정.
-if [[ -z ${TOMCAT_BASE} ]]; then
+if [[ -z ${CATALINA_NAME} ]]; then
     printf "\e[00;32m| Enter the tomcat base name\e[00m"
-    read -e -p " (ex. test) > " TOMCAT_BASE
-    if [[ -z ${TOMCAT_BASE} ]]; then
-        TOMCAT_BASE=${CATALINA_BASE##*/}
+    read -e -p " (ex. tomcat) > " CATALINA_NAME
+    if [[ -z ${CATALINA_NAME} ]]; then
+        CATALINA_NAME="tomcat"
+        CATALINA_BASE=${SERVER_HOME}/${CATALINA_NAME}
     else
-        CATALINA_BASE=${CATALINA_BASE}/${TOMCAT_BASE}
+        CATALINA_BASE=${SERVER_HOME}/${CATALINA_NAME}
     fi
 fi
 CATALINA_BASE=${CATALINA_BASE%/}
 
+# TODO 로그 강제 설정.
+LOG_HOME="${CATALINA_BASE}/logs"
 
 # ----------------------------------------------------------------------------------------------------------------------
 # 설치 여부 확인
@@ -321,7 +324,7 @@ if [[ -d "${CATALINA_BASE}" ]]; then
     printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
     printf "\e[00;32m|\e[00m \e[00;31m기존에 생성된 디렉토리가 있습니다. 삭제하고 다시 생성하려면 \"Y\"를 입력하세요.\e[00m\n"
     printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
-    printf "\e[00;32m| Enter whether to install \"${TOMCAT_BASE}\" service\e[00m"
+    printf "\e[00;32m| Enter whether to install \"${CATALINA_NAME}\" service\e[00m"
     read -e -p ' [Y / n](enter)] (default. n) > ' CHECK
     if [[ -z "${CHECK}" ]]; then
         CHECK="n"
@@ -329,7 +332,7 @@ if [[ -d "${CATALINA_BASE}" ]]; then
 
     if [[ "$(uppercase ${CHECK})" != "Y" ]]; then
         printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
-        printf "\e[00;32m|\e[00m \e[00;31m\"${TOMCAT_BASE}\" 서비스 생성 취소...\e[00m\n"
+        printf "\e[00;32m|\e[00m \e[00;31m\"${CATALINA_NAME}\" 서비스 생성 취소...\e[00m\n"
         printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
         exit 1
     fi
@@ -438,7 +441,7 @@ printf "\e[00;32m+-------------------+------------------------------------------
 printf "\e[00;32m| SERVER_HOME       |\e[00m ${SERVER_HOME}\n"
 printf "\e[00;32m| CATALINA_HOME     |\e[00m ${CATALINA_HOME}\n"
 printf "\e[00;32m| CATALINA_BASE     |\e[00m ${CATALINA_BASE}\n"
-printf "\e[00;32m| AUTO_RUN_SCRIPT   |\e[00m ${CATALINA_BASE}/bin/${TOMCAT_BASE}\n"
+printf "\e[00;32m| AUTO_RUN_SCRIPT   |\e[00m ${CATALINA_BASE}/bin/${CATALINA_NAME}\n"
 printf "\e[00;32m| MIN_MEMORY        |\e[00m ${MIN_MEMORY}\n"
 printf "\e[00;32m| MAX_MEMORY        |\e[00m ${MAX_MEMORY}\n"
 
@@ -456,7 +459,7 @@ printf "\e[00;32m| SHUTDOWN_PORT     |\e[00m ${SHUTDOWN_PORT}\n"
 printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
 printf "\e[00;32m| 위의 정보와 같이 서비스를 생성하려면 \"Y\"를 입력하세요.\e[00m\n"
 printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
-printf "\e[00;32m| Enter whether to install \"${TOMCAT_BASE}\" service\e[00m"
+printf "\e[00;32m| Enter whether to install \"${CATALINA_NAME}\" service\e[00m"
 read -e -p ' [Y(enter) / n] (default. Y) > ' CHECK
 if [[ -z "${CHECK}" ]]; then
     CHECK="Y"
@@ -464,7 +467,7 @@ fi
 
 if [[ "$(uppercase ${CHECK})" != "Y" ]]; then
     printf "\e[00;31m+---------------------------------------------------------------------------------\e[00m\n"
-    printf "\e[00;32m|\e[00m \e[00;31m\"${TOMCAT_BASE}\" 서비스 생성 취소...\e[00m\n"
+    printf "\e[00;32m|\e[00m \e[00;31m\"${CATALINA_NAME}\" 서비스 생성 취소...\e[00m\n"
     printf "\e[00;31m+---------------------------------------------------------------------------------\e[00m\n"
     exit 1
 fi
@@ -1146,7 +1149,7 @@ source \${PRGDIR}/config.sh
 # export CATALINA_USER=\""${USERNAME}"\"
 
 # su - \$CATALINA_USER -c \"\${CATALINA_BASE}/bin/tomcat.sh \$1\"
-# " > ${CATALINA_BASE}/bin/${TOMCAT_BASE}
+# " > ${CATALINA_BASE}/bin/${CATALINA_NAME}
 
 
 # # ----------------------------------------------------------------------------------------------------------------------
@@ -1341,7 +1344,7 @@ source \${PRGDIR}/config.sh
 # ----------------------------------------------------------------------------------------------------------------------
 # 실행 권한 설정
 chmod +x ${CATALINA_BASE}/bin/*.sh
-#chmod +x ${CATALINA_BASE}/bin/${TOMCAT_BASE}
+#chmod +x ${CATALINA_BASE}/bin/${CATALINA_NAME}
 
 # 실행 권한 삭제
 chmod -x ${CATALINA_BASE}/bin/config.sh
@@ -1473,12 +1476,12 @@ echo "<?xml version='1.0' encoding='utf-8'?>
                port=\"${AJP_PORT}\"
                protocol=\"AJP/1.3\"
                redirectPort=\"8443\"
-               secret=\"${TOMCAT_BASE}\"
+               secret=\"${CATALINA_NAME}\"
                URIEncoding=\"UTF-8\" />
     -->
 
     <!-- You should set jvmRoute to support load-balancing via AJP ie : -->
-    <!-- <Engine name=\"Catalina\" defaultHost=\"localhost\" jvmRoute=\"${TOMCAT_BASE}01\"> -->
+    <!-- <Engine name=\"Catalina\" defaultHost=\"localhost\" jvmRoute=\"${CATALINA_NAME}01\"> -->
     <Engine name=\"Catalina\" defaultHost=\"localhost\">
 
       <!--For clustering, please take a look at documentation at:
@@ -1629,18 +1632,18 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 
 # ----------------------------------------------------------------------------------------------------------------------
 #if [[ -f ${BASH_FILE} ]]; then
-#    if [[ "$TOMCAT_BASE" != "tomcat" ]]; then
-#        SET_TOMCAT_BASE=`awk "/# Tomcat(${TOMCAT_BASE}) Start \/ Restart \/ Stop script/" ${BASH_FILE}`
-#        if [[ ! -n ${SET_TOMCAT_BASE} ]]; then
-#            echo "# Tomcat(${TOMCAT_BASE}) Start / Restart / Stop script
-#alias $(lowercase ${TOMCAT_BASE})-start='${CATALINA_BASE}/bin/start.sh     && tail -f ${CATALINA_BASE}/logs/catalina.log'
-#alias $(lowercase ${TOMCAT_BASE})-stop='${CATALINA_BASE}/bin/stop.sh'
-#alias $(lowercase ${TOMCAT_BASE})-restart='${CATALINA_BASE}/bin/restart.sh && tail -f ${CATALINA_BASE}/logs/catalina.log'
+#    if [[ "$CATALINA_NAME" != "tomcat" ]]; then
+#        SET_CATALINA_NAME=`awk "/# Tomcat(${CATALINA_NAME}) Start \/ Restart \/ Stop script/" ${BASH_FILE}`
+#        if [[ ! -n ${SET_CATALINA_NAME} ]]; then
+#            echo "# Tomcat(${CATALINA_NAME}) Start / Restart / Stop script
+#alias $(lowercase ${CATALINA_NAME})-start='${CATALINA_BASE}/bin/start.sh     && tail -f ${CATALINA_BASE}/logs/catalina.log'
+#alias $(lowercase ${CATALINA_NAME})-stop='${CATALINA_BASE}/bin/stop.sh'
+#alias $(lowercase ${CATALINA_NAME})-restart='${CATALINA_BASE}/bin/restart.sh && tail -f ${CATALINA_BASE}/logs/catalina.log'
 #" >> ${BASH_FILE}
 #        fi
 #    else
-#        SET_TOMCAT_BASE=`awk "/# Tomcat Start \/ Restart \/ Stop script/" ${BASH_FILE}`
-#        if [[ ! -n ${SET_TOMCAT_BASE} ]]; then
+#        SET_CATALINA_NAME=`awk "/# Tomcat Start \/ Restart \/ Stop script/" ${BASH_FILE}`
+#        if [[ ! -n ${SET_CATALINA_NAME} ]]; then
 #            echo "# Tomcat Start / Restart / Stop script
 #alias tomcat-start='${CATALINA_BASE}/bin/start.sh     && tail -f ${CATALINA_BASE}/logs/catalina.log'
 #alias tomcat-stop='${CATALINA_BASE}/bin/stop.sh'
@@ -1687,6 +1690,6 @@ rm -rf ${SRC_HOME}/${TOMCAT_JULI_DIR}
 
 # ----------------------------------------------------------------------------------------------------------------------
 printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
-printf "\e[00;32m| \"${TOMCAT_HOME}\" / \"${TOMCAT_BASE}\" install success...\e[00m\n"
+printf "\e[00;32m| \"${TOMCAT_HOME}\" / \"${CATALINA_NAME}\" install success...\e[00m\n"
 printf "\e[00;32m+---------------------------------------------------------------------------------\e[00m\n"
 

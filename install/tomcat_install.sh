@@ -616,11 +616,11 @@ export CATALINA_OPTS=\"\${CATALINA_OPTS} -XX:+DisableExplicitGC\"
 
 if [[ ${JAVA_VERSION} -ge 9 ]]; then
     echo "# Java 9 이상에서 GC 로그 기록, 서버에 많은 부하를 주지는 않음, 별도의 GC 모니터링이 필요 하다면 추가
-export CATALINA_OPTS=\"\${CATALINA_OPTS} -Xlog:gc*:file=${LOG_HOME}/gclog/gc.log::filecount=10,filesize=10M\"
+export CATALINA_OPTS=\"\${CATALINA_OPTS} -Xlog:gc*:file=${LOG_HOME}/gc.log::filecount=10,filesize=10M\"
 " >> ${CATALINA_BASE}/bin/setenv.sh
 else
     echo "# GC 로그 기록, 서버에 많은 부하를 주지는 않음, 별도의 GC 모니터링이 필요 하다면 추가
-export CATALINA_OPTS=\"\${CATALINA_OPTS} -Xloggc:${LOG_HOME}/gclog/gc.log\"
+export CATALINA_OPTS=\"\${CATALINA_OPTS} -Xloggc:${LOG_HOME}/gc.log\"
 
 export CATALINA_OPTS=\"\${CATALINA_OPTS} -verbose:gc\"
 export CATALINA_OPTS=\"\${CATALINA_OPTS} -XX:+PrintGCDetails\"
@@ -1504,7 +1504,7 @@ echo "<?xml version='1.0' encoding='utf-8'?>
         <!-- Access log processes all example.
              Documentation at: /docs/config/valve.html
              Note: The pattern used is equivalent to using pattern="common" -->
-        <Valve className="ch.qos.logback.access.tomcat.LogbackValve" quiet="true" />
+        <Valve className=\"ch.qos.logback.access.tomcat.LogbackValve\" quiet=\"true\" />
 
         <!-- Error Report Valve (Tomcat 7.0.55 and later versions) -->
         <Valve className=\"org.apache.catalina.valves.ErrorReportValve\" showReport=\"false\" showServerInfo=\"false\" />

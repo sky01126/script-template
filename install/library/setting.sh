@@ -104,14 +104,13 @@ export JAVA_ALIAS='java'
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Open Java 설정.
-#export OPENJAVA_ALIAS='java'
-#export OPENJAVA_HOME='openjdk-11.0.8'
-#export OPENJAVA_DOWNLOAD_URL='https://github.com/AdoptOpenJDK/openjdk11-upstream-binaries/releases/download/jdk-11.0.8%2B10/OpenJDK11U-jdk_x64_linux_11.0.8_10.tar.gz'
 export OPENJAVA_ALIAS='java'
+# export OPENJAVA_HOME='openjdk-11.0.8'
+# export OPENJAVA_DOWNLOAD_URL='https://github.com/AdoptOpenJDK/openjdk11-upstream-binaries/releases/download/jdk-11.0.8%2B10/OpenJDK11U-jdk_x64_linux_11.0.8_10.tar.gz'
 # export OPENJAVA_HOME='openjdk-8u312-b07'
 # export OPENJAVA_DOWNLOAD_URL='https://github.com/AdoptOpenJDK/openjdk8-upstream-binaries/releases/download/jdk8u312-b07/OpenJDK8U-jdk_x64_linux_8u312b07.tar.gz'
-export OPENJAVA_HOME='openjdk-8u312-b07-jre'
-export OPENJAVA_DOWNLOAD_URL='https://github.com/AdoptOpenJDK/openjdk8-upstream-binaries/releases/download/jdk8u312-b07/OpenJDK8U-jre_x64_linux_8u312b07.tar.gz'
+export OPENJAVA_HOME='jdk8u352-b08'
+export OPENJAVA_DOWNLOAD_URL='https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u352-b08/OpenJDK8U-jdk_x64_linux_hotspot_8u352b08.tar.gz'
 
 
 # ----------------------------------------------------------------------------------------------------------------------

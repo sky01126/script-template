@@ -74,24 +74,24 @@ cd ${SRC_HOME}/${APR_UTIL_HOME}
 make
 make install
 
-# ----------------------------------------------------------------------------------------------------------------------
-# APR Iconv Install
-cd ${SRC_HOME}
+# # ----------------------------------------------------------------------------------------------------------------------
+# # APR Iconv Install
+# cd ${SRC_HOME}
 
-# verify that the source exists download
-if [ ! -f "${SRC_HOME}/${APR_ICONV_NAME}" ]; then
-    printf "\e[00;32m| ${APR_ICONV_NAME} download (URL : ${APR_ICONV_DOWNLOAD_URL})\e[00m\n"
-    curl -L -O ${APR_ICONV_DOWNLOAD_URL}
-fi
+# # verify that the source exists download
+# if [ ! -f "${SRC_HOME}/${APR_ICONV_NAME}" ]; then
+#     printf "\e[00;32m| ${APR_ICONV_NAME} download (URL : ${APR_ICONV_DOWNLOAD_URL})\e[00m\n"
+#     curl -L -O ${APR_ICONV_DOWNLOAD_URL}
+# fi
 
-tar xvzf ${APR_ICONV_NAME}
-cd ${SRC_HOME}/${APR_ICONV_HOME}
+# tar xvzf ${APR_ICONV_NAME}
+# cd ${SRC_HOME}/${APR_ICONV_HOME}
 
-./configure --prefix=${SERVER_HOME}/${PROGRAME_HOME}/${APR_HOME}                \
-            --with-apr=${SERVER_HOME}/${PROGRAME_HOME}/${APR_HOME}
-make
-make install
-sleep 0.5
+# ./configure --prefix=${SERVER_HOME}/${PROGRAME_HOME}/${APR_HOME}                \
+#             --with-apr=${SERVER_HOME}/${PROGRAME_HOME}/${APR_HOME}
+# make
+# make install
+# sleep 0.5
 
 # ----------------------------------------------------------------------------------------------------------------------
 if [[ -n "${APR_ALIAS}" ]]; then

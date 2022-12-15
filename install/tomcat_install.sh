@@ -18,10 +18,8 @@
 # " >> $HOME/.bash_aliases && source $HOME/.bashrc
 #
 
-echo "---------------- Tomcat - v2022.01.14.001 ----------------"
-
 # ----------------------------------------------------------------------------------------------------------------------
-export SERVER_HOME="/tomcat"
+export SERVER_HOME="/home/server"
 #export SRC_HOME="$SERVER_HOME/src"
 #export CHECK_TOMCAT="Tomcat8"
 #export TOMCAT_BASE="master"
@@ -86,21 +84,13 @@ printf "\e[00;32m+------------------+-------------------------------------------
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-# / Slf4j / Logback
-SLF4J_VERSION="1.7.25"
-LOGBACK_VERSION="1.2.3"
-LOGBACK_CORE_DOWNLOAD_URL="http://central.maven.org/maven2/ch/qos/logback/logback-core/${LOGBACK_VERSION}/logback-core-${LOGBACK_VERSION}.jar"
-LOGBACK_ACCESS_DOWNLOAD_URL="http://central.maven.org/maven2/ch/qos/logback/logback-access/${LOGBACK_VERSION}/logback-access-${LOGBACK_VERSION}.jar"
-
-
-# ----------------------------------------------------------------------------------------------------------------------
 # 선택된 Tomcat에 따라서 분리한다.
 if [[ -z ${CHECK_TOMCAT} ]]; then
     printf "\e[00;32m| Tomcat 설치를 진행하려면 아래 옵션 중 하나를 선택하십시오.\e[00m\n"
     printf "\e[00;32m+------------------+--------------------------------------------------------------\e[00m\n"
     printf "\e[00;32m| Tomcat8          |\e[00m Tomcat v8.5.X\n"
     printf "\e[00;32m| Tomcat9          |\e[00m Tomcat v9.0.X\n"
-    printf "\e[00;32m| Tomcat10         |\e[00m Tomcat v10.0.X\n"
+    printf "\e[00;32m| Tomcat10         |\e[00m Tomcat v10.1.X\n"
     printf "\e[00;32m+------------------+--------------------------------------------------------------\e[00m\n"
 
     # ARCHETYPE_ARTIFACT_ID을 받기위해서 대기한다.
@@ -122,28 +112,28 @@ fi
 CHECK_TOMCAT=${CHECK_TOMCAT##*( )}
 if [[ "${CHECK_TOMCAT}" == "Tomcat10" ]]; then
     # ------------------------------------------------------------------------------------------------------------------
-    # Tomcat 10.0.x
-    TOMCAT_VERSION='10.0.22'
-    TOMCAT_DOWNLOAD_URL="http://archive.apache.org/dist/tomcat/tomcat-7/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz"
+    # Tomcat 10.1.x
+    TOMCAT_VERSION='10.0.27'
+    TOMCAT_DOWNLOAD_URL="https://dlcdn.apache.org/tomcat/tomcat-10/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz"
     TOMCAT_NATIVE_HOME='tomcat-native-*-src'
 
-    TOMCAT_JULI_DOWNLOAD_URL="https://github.com/tomcat-slf4j-logback/tomcat-slf4j-logback/releases/download/tomcat10/tomcat10-slf4j-logback-10.0.0-M5-10.0.0-M5-slf4j-2.0.0-alpha1-logback-1.3.0-alpha5.zip"
+    TOMCAT_JULI_DOWNLOAD_URL="https://repo1.maven.org/maven2/com/github/tomcat-slf4j-logback/tomcat10-slf4j-logback/10.1.2/tomcat10-slf4j-logback-10.1.2-tomcat-10.1.2-slf4j-2.0.5-logback-1.4.5.zip"
 elif [[ "${CHECK_TOMCAT}" == "Tomcat9" ]]; then
     # ------------------------------------------------------------------------------------------------------------------
     # Tomcat 9.0.x
-    TOMCAT_VERSION='9.0.64'
+    TOMCAT_VERSION='9.0.70'
     TOMCAT_DOWNLOAD_URL="http://archive.apache.org/dist/tomcat/tomcat-9/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz"
     TOMCAT_NATIVE_HOME='tomcat-native-*-src'
 
-    TOMCAT_JULI_DOWNLOAD_URL="https://github.com/tomcat-slf4j-logback/tomcat-slf4j-logback/releases/download/tomcat9/tomcat-juli-9.0.14-slf4j-1.7.25-logback-1.2.3.zip"
+    TOMCAT_JULI_DOWNLOAD_URL="https://repo1.maven.org/maven2/com/github/tomcat-slf4j-logback/tomcat9-slf4j-logback/9.0.70/tomcat9-slf4j-logback-9.0.70-tomcat-9.0.70-slf4j-2.0.5-logback-1.3.5.zip"
 else
     # ------------------------------------------------------------------------------------------------------------------
     # Tomcat 8,5.x
-    TOMCAT_VERSION='8.5.81'
+    TOMCAT_VERSION='8.5.84'
     TOMCAT_DOWNLOAD_URL="http://archive.apache.org/dist/tomcat/tomcat-8/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz"
     TOMCAT_NATIVE_HOME='tomcat-native-*-src'
 
-    TOMCAT_JULI_DOWNLOAD_URL="https://github.com/tomcat-slf4j-logback/tomcat-slf4j-logback/releases/download/tomcat85/tomcat-juli-8.5.37-slf4j-1.7.25-logback-1.2.3.zip"
+    TOMCAT_JULI_DOWNLOAD_URL="https://repo1.maven.org/maven2/com/github/tomcat-slf4j-logback/tomcat85-slf4j-logback/8.5.84/tomcat85-slf4j-logback-8.5.84-tomcat-8.5.84-slf4j-2.0.5-logback-1.3.5.zip"
 fi
 
 
@@ -281,7 +271,6 @@ if [[ ! -d "${SERVER_HOME}/${PROGRAME_HOME}/${TOMCAT_HOME}" ]]; then
     rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${TOMCAT_HOME}/bin/shutdown.sh
     rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${TOMCAT_HOME}/bin/startup.sh
     rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${TOMCAT_HOME}/bin/${TOMCAT_NATIVE_HOME}
-    rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${TOMCAT_HOME}/LICENSE
     rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${TOMCAT_HOME}/logs
     rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${TOMCAT_HOME}/NOTICE
     rm -rf ${SERVER_HOME}/${PROGRAME_HOME}/${TOMCAT_HOME}/RELEASE-NOTES
@@ -516,16 +505,16 @@ echo "#!/bin/sh
 # ---------------------------------------------------------------------------------
 # resolve links - \$0 may be a softlink
 PRG=\"\$0\"
-while [[ -h \"\$PRG\" ]]; do
-    ls=\`ls -ld \"\$PRG\"\`
+while [[ -h \"\${PRG}\" ]]; do
+    ls=\`ls -ld \"\${PRG}\"\`
     link=\`expr \"\$ls\" : '.*-> \(.*\)\$'\`
     if expr \"\$link\" : '/.*' > /dev/null; then
         PRG=\"\$link\"
     else
-        PRG=\`dirname \"\$PRG\"\`/\"\$link\"
+        PRG=\`dirname \"\${PRG}\"\`/\"\$link\"
     fi
 done
-PRGDIR=\`dirname \"\$PRG\"\`
+PRGDIR=\`dirname \"\${PRG}\"\`
 
 # ---------------------------------------------------------------------------------
 # Custom Configuration Here
@@ -534,17 +523,17 @@ PRGDIR=\`dirname \"\$PRG\"\`
 export SERVER_HOME=\""${SERVER_HOME%/}"\"
 
 # JAVA_HOME is the location of the bin files of Java
-if [[ -z \"\$JAVA_HOME\" ]]; then
+if [[ -z \"\${JAVA_HOME}\" ]]; then
     export JAVA_HOME=\""${SERVER_HOME%/}/java"\"
 else
-    export JAVA_HOME=\$JAVA_HOME
+    export JAVA_HOME=\${JAVA_HOME}
 fi
 
 # CATALINA_HOME is the location of the bin files of Tomcat
 export CATALINA_HOME=\""${CATALINA_HOME}"\"
 
 # CATALINA_BASE is the location of the configuration files of this instance of Tomcat
-export CATALINA_BASE=\`cd \"\$PRGDIR/..\" >/dev/null; pwd\`
+export CATALINA_BASE=\`cd \"\${PRGDIR}/..\" >/dev/null; pwd\`
 
 # Full path to a file where stdout and stderr will be redirected.
 export CATALINA_OUT=\""${LOG_HOME}/catalina.out"\"
@@ -569,130 +558,124 @@ echo "#!/bin/sh
 export JAVA_HOME=\"${SERVER_HOME%/}/java\"
 export APR_HOME=\"${SERVER_HOME%/}/apr\"
 export OPENSSL_HOME=\"${SERVER_HOME%/}/openssl\"
-#export CLASSPATH=\$CLASSPATH
+#export CLASSPATH=\${CLASSPATH}
 " > ${CATALINA_BASE}/bin/setenv.sh
 
 # Mac OS는 java.library.path를 설정하고 Linux는 LD_LIBRARY_PATH를 설정한다.
 if [[ "$OS" == "darwin" ]]; then
     echo "# Library path setting
-if [[ -n \"\$LD_LIBRARY_PATH\" ]]; then
-    export CATALINA_OPTS=\"\$CATALINA_OPTS -Djava.library.path=\$APR_HOME/lib:\$CATALINA_HOME/lib:\$LD_LIBRARY_PATH\"
-else
-    export CATALINA_OPTS=\"\$CATALINA_OPTS -Djava.library.path=\$APR_HOME/lib:\$CATALINA_HOME/lib\"
-fi
+# Library path setting
+export LD_LIBRARY_PATH=\${LD_LIBRARY_PATH:+\$LD_LIBRARY_PATH:}\${APR_HOME}/lib:\${OPENSSL_HOME}/lib:\${CATALINA_HOME}/lib:\${LD_LIBRARY_PATH}
 " >> ${CATALINA_BASE}/bin/setenv.sh
 
 else
     echo "# Library path setting
-if [[ -n \"\$LD_LIBRARY_PATH\" ]]; then
-    export LD_LIBRARY_PATH=\$APR_HOME/lib:\$OPENSSL_HOME/lib:\$CATALINA_HOME/lib:\$LD_LIBRARY_PATH
-else
-    export LD_LIBRARY_PATH=\$APR_HOME/lib:\$OPENSSL_HOME/lib:\$CATALINA_HOME/lib
-fi
+# Library path setting
+export LD_LIBRARY_PATH=\${LD_LIBRARY_PATH:+\$LD_LIBRARY_PATH:}\${APR_HOME}/lib:\${OPENSSL_HOME}/lib:\${CATALINA_HOME}/lib:\${LD_LIBRARY_PATH}
 " >> ${CATALINA_BASE}/bin/setenv.sh
 fi
 
 echo "# ---------------------------------------------------------------------------------
 # discourage address map swapping by setting Xms and Xmx to the same value
 # http://confluence.atlassian.com/display/DOC/Garbage+Collector+Performance+Issues
-export CATALINA_OPTS=\"\$CATALINA_OPTS -Xms${MIN_MEMORY}m\"
-export CATALINA_OPTS=\"\$CATALINA_OPTS -Xmx${MAX_MEMORY}m\"
-# export CATALINA_OPTS=\"\$CATALINA_OPTS -XX:NewSize=256mm\"
-# export CATALINA_OPTS=\"\$CATALINA_OPTS -XX:MaxNewSize=512m\"
+export CATALINA_OPTS=\"\${CATALINA_OPTS} -Xms${MIN_MEMORY}m\"
+export CATALINA_OPTS=\"\${CATALINA_OPTS} -Xmx${MAX_MEMORY}m\"
+# export CATALINA_OPTS=\"\${CATALINA_OPTS} -XX:NewSize=256mm\"
+# export CATALINA_OPTS=\"\${CATALINA_OPTS} -XX:MaxNewSize=512m\"
 " >> ${CATALINA_BASE}/bin/setenv.sh
 
 
 if [[ ${JAVA_VERSION} -ge 8 ]]; then
     echo "# Java >= 8 : -XX:MetaspaceSize=<metaspace size>[g|m|k] -XX:MaxMetaspaceSize=<metaspace size>[g|m|k]
-# export CATALINA_OPTS=\"\$CATALINA_OPTS -XX:MetaspaceSize=512m\"
-# export CATALINA_OPTS=\"\$CATALINA_OPTS -XX:MaxMetaspaceSize=1024m\"
+# export CATALINA_OPTS=\"\${CATALINA_OPTS} -XX:MetaspaceSize=512m\"
+# export CATALINA_OPTS=\"\${CATALINA_OPTS} -XX:MaxMetaspaceSize=1024m\"
 " >> ${CATALINA_BASE}/bin/setenv.sh
 else
     echo "# Java < 8 : -XX:PermSize=<perm gen size>[g|m|k] -XX:MaxPermSize=<perm gen size>[g|m|k]
-# export CATALINA_OPTS=\"\$CATALINA_OPTS -XX:PermSize=512m\"
-# export CATALINA_OPTS=\"\$CATALINA_OPTS -XX:MaxPermSize=1024m\"
+# export CATALINA_OPTS=\"\${CATALINA_OPTS} -XX:PermSize=512m\"
+# export CATALINA_OPTS=\"\${CATALINA_OPTS} -XX:MaxPermSize=1024m\"
 " >> ${CATALINA_BASE}/bin/setenv.sh
 fi
 
 echo "# Reserved code cache size
-#export CATALINA_OPTS=\"\$CATALINA_OPTS -XX:ReservedCodeCacheSize=256m\"
+#export CATALINA_OPTS=\"\${CATALINA_OPTS} -XX:ReservedCodeCacheSize=256m\"
 
 # Setting GC option
-export CATALINA_OPTS=\"\$CATALINA_OPTS -XX:+UseG1GC\"
-export CATALINA_OPTS=\"\$CATALINA_OPTS -XX:MaxGCPauseMillis=20\"
-export CATALINA_OPTS=\"\$CATALINA_OPTS -XX:InitiatingHeapOccupancyPercent=35\"
-export CATALINA_OPTS=\"\$CATALINA_OPTS -XX:+ExplicitGCInvokesConcurrent\"
+export CATALINA_OPTS=\"\${CATALINA_OPTS} -XX:+UseG1GC\"
+export CATALINA_OPTS=\"\${CATALINA_OPTS} -XX:MaxGCPauseMillis=20\"
+export CATALINA_OPTS=\"\${CATALINA_OPTS} -XX:InitiatingHeapOccupancyPercent=35\"
+export CATALINA_OPTS=\"\${CATALINA_OPTS} -XX:+ExplicitGCInvokesConcurrent\"
 
 # Disable remote (distributed) garbage collection by Java clients
 # and remove ability for applications to call explicit GC collection
-export CATALINA_OPTS=\"\$CATALINA_OPTS -XX:+DisableExplicitGC\"
+export CATALINA_OPTS=\"\${CATALINA_OPTS} -XX:+DisableExplicitGC\"
 " >> ${CATALINA_BASE}/bin/setenv.sh
 
 if [[ ${JAVA_VERSION} -ge 9 ]]; then
     echo "# Java 9 이상에서 GC 로그 기록, 서버에 많은 부하를 주지는 않음, 별도의 GC 모니터링이 필요 하다면 추가
-export CATALINA_OPTS=\"\$CATALINA_OPTS -Xlog:gc*:file=${LOG_HOME}/gclog/gc.log::filecount=10,filesize=10M\"
+export CATALINA_OPTS=\"\${CATALINA_OPTS} -Xlog:gc*:file=${LOG_HOME}/gclog/gc.log::filecount=10,filesize=10M\"
 " >> ${CATALINA_BASE}/bin/setenv.sh
 else
     echo "# GC 로그 기록, 서버에 많은 부하를 주지는 않음, 별도의 GC 모니터링이 필요 하다면 추가
-export CATALINA_OPTS=\"\$CATALINA_OPTS -Xloggc:${LOG_HOME}/gclog/gc.log\"
+export CATALINA_OPTS=\"\${CATALINA_OPTS} -Xloggc:${LOG_HOME}/gclog/gc.log\"
 
-export CATALINA_OPTS=\"\$CATALINA_OPTS -verbose:gc\"
-export CATALINA_OPTS=\"\$CATALINA_OPTS -XX:+PrintGCDetails\"
-export CATALINA_OPTS=\"\$CATALINA_OPTS -XX:+PrintGCDateStamps\"
-export CATALINA_OPTS=\"\$CATALINA_OPTS -XX:+PrintGCTimeStamps\"
+export CATALINA_OPTS=\"\${CATALINA_OPTS} -verbose:gc\"
+export CATALINA_OPTS=\"\${CATALINA_OPTS} -XX:+PrintGCDetails\"
+export CATALINA_OPTS=\"\${CATALINA_OPTS} -XX:+PrintGCDateStamps\"
+export CATALINA_OPTS=\"\${CATALINA_OPTS} -XX:+PrintGCTimeStamps\"
 
 # Rolling Java GC Logging
-export CATALINA_OPTS=\"\$CATALINA_OPTS -XX:+UseGCLogFileRotation\"
-export CATALINA_OPTS=\"\$CATALINA_OPTS -XX:NumberOfGCLogFiles=10\"
-export CATALINA_OPTS=\"\$CATALINA_OPTS -XX:GCLogFileSize=10M\"
+export CATALINA_OPTS=\"\${CATALINA_OPTS} -XX:+UseGCLogFileRotation\"
+export CATALINA_OPTS=\"\${CATALINA_OPTS} -XX:NumberOfGCLogFiles=10\"
+export CATALINA_OPTS=\"\${CATALINA_OPTS} -XX:GCLogFileSize=10M\"
 " >> ${CATALINA_BASE}/bin/setenv.sh
 fi
 
 echo "# Save OutOfMemoryError to dump file
-export CATALINA_OPTS=\"\$CATALINA_OPTS -XX:+HeapDumpOnOutOfMemoryError\"
-export CATALINA_OPTS=\"\$CATALINA_OPTS -XX:HeapDumpPath=\$CATALINA_BASE/temp\"
+export CATALINA_OPTS=\"\${CATALINA_OPTS} -XX:+HeapDumpOnOutOfMemoryError\"
+export CATALINA_OPTS=\"\${CATALINA_OPTS} -XX:HeapDumpPath=\${CATALINA_BASE}/temp\"
 
 # Error Log
-export CATALINA_OPTS=\"\$CATALINA_OPTS -XX:ErrorFile=${LOG_HOME}/hs_err_%p.log\"
+export CATALINA_OPTS=\"\${CATALINA_OPTS} -XX:ErrorFile=${LOG_HOME}/hs_err_%p.log\"
 " >> ${CATALINA_BASE}/bin/setenv.sh
 
 # 아아피 주소가 공백이 아닌 경우에만 설정한다.
 if [[ ! -z ${SERVER_IP} ]]; then
     echo "## 아이피는 서버 설정에 맞게 수정한다.
-export CATALINA_OPTS=\"\$CATALINA_OPTS -Djava.rmi.server.hostname=${SERVER_IP}\"
+export CATALINA_OPTS=\"\${CATALINA_OPTS} -Djava.rmi.server.hostname=${SERVER_IP}\"
 " >> ${CATALINA_BASE}/bin/setenv.sh
 fi
 
 echo "# ----------------------------------------------------------------------------------------------------
 # The hotspot server JVM has specific code-path optimizations
 # which yield an approximate 10% gain over the client version.
-export JAVA_OPTS=\"-server \$JAVA_OPTS\"
+export JAVA_OPTS=\"-server \${JAVA_OPTS}\"
 
 # Option to change random number generator to / dev / urandom instead of / dev / random
-export JAVA_OPTS=\"\$JAVA_OPTS -Djava.security.egd=file:/dev/./urandom\"
+export JAVA_OPTS=\"\${JAVA_OPTS} -Djava.security.egd=file:/dev/./urandom\"
 
 # Globalization and Headless Environment
-export JAVA_OPTS=\"\$JAVA_OPTS -Dfile.encoding=UTF8\"
-export JAVA_OPTS=\"\$JAVA_OPTS -Dclient.encoding.override=UTF-8\"
-export JAVA_OPTS=\"\$JAVA_OPTS -Duser.timezone=GMT+09:00\"
-export JAVA_OPTS=\"\$JAVA_OPTS -Dsun.java2d.opengl=false\"
-export JAVA_OPTS=\"\$JAVA_OPTS -Djava.awt.headless=true\"
-export JAVA_OPTS=\"\$JAVA_OPTS -Djava.net.preferIPv4Stack=true\"
+export JAVA_OPTS=\"\${JAVA_OPTS} -Dfile.encoding=UTF8\"
+export JAVA_OPTS=\"\${JAVA_OPTS} -Dclient.encoding.override=UTF-8\"
+export JAVA_OPTS=\"\${JAVA_OPTS} -Duser.timezone=GMT+09:00\"
+export JAVA_OPTS=\"\${JAVA_OPTS} -Dsun.java2d.opengl=false\"
+export JAVA_OPTS=\"\${JAVA_OPTS} -Djava.awt.headless=true\"
+export JAVA_OPTS=\"\${JAVA_OPTS} -Djava.net.preferIPv4Stack=true\"
 
 # Setting Logback Info
-export JAVA_OPTS=\"\$JAVA_OPTS -Djuli-logback.logLevel='${LOG_LEVEL}'\"
-export JAVA_OPTS=\"\$JAVA_OPTS -Djuli-logback.configurationFile=\$CATALINA_BASE/conf/logback.xml\"
+export JAVA_OPTS=\"\${JAVA_OPTS} -Djuli-logback.logLevel='${LOG_LEVEL}'\"
+export JAVA_OPTS=\"\${JAVA_OPTS} -Djuli-logback.configurationFile=\${CATALINA_BASE}/conf/logback.xml\"
 
 # Setting spring boot profiles
-#export JAVA_OPTS=\"\$JAVA_OPTS -Dspring.profiles.active=dev\"
+# export JAVA_OPTS=\"\${JAVA_OPTS} -Dspring.profiles.active=dev\"
 
 # Setting spring boot external properties file
-#export JAVA_OPTS=\"\$JAVA_OPTS -Dspring.config.location=\$CATALINA_BASE/conf\"
-#export JAVA_OPTS=\"\$JAVA_OPTS -Dspring.config.name=application\"
+# export JAVA_OPTS=\"\${JAVA_OPTS} -Dspring.config.location=\${CATALINA_BASE}/conf\"
+# export JAVA_OPTS=\"\${JAVA_OPTS} -Dspring.config.name=application\"
 
 # Setting Docker Host Server Info
-# export JAVA_OPTS=\"\$JAVA_OPTS -Ddocker.host.server.address=127.0.0.1\"
-# export JAVA_OPTS=\"\$JAVA_OPTS -Ddocker.host.server.port=${HTTP_PORT}\"
+# export JAVA_OPTS=\"\${JAVA_OPTS} -Ddocker.host.server.address=127.0.0.1\"
+# export JAVA_OPTS=\"\${JAVA_OPTS} -Ddocker.host.server.port=${HTTP_PORT}\"
 " >> ${CATALINA_BASE}/bin/setenv.sh
 
 
@@ -713,52 +696,52 @@ echo "#!/bin/sh
 
 # ---------------------------------------------------------------------------------
 # 기본 정보 설정.
-PRG=\`realpath \$0\`
-PRGDIR=\`dirname \"\$PRG\"\`
+PRG=\$(realpath \$0\)
+PRGDIR=\$(dirname \"\${PRG}\"\)
 
-source \$PRGDIR/config.sh
+source \${PRGDIR}/config.sh
 
 # ---------------------------------------------------------------------------------
-export HOSTNAME=\`hostname\`
-# export SERVER_PUBLIC_IP=\`ifconfig -a | grep \"inet \" | grep \"Bcast:\" | awk '{print \$2}' | awk -F: '{print \$2}' | grep '^211'\`
-# export SERVER_PRIVATE_IP=\`ifconfig -a | grep \"inet \" | grep \"Bcast:\" | awk '{print \$2}' | awk -F: '{print \$2}' | grep '^10'\`
+export HOSTNAME=h\$(ostname)
+# export SERVER_PUBLIC_IP=\$(ifconfig -a | grep \"inet \" | grep \"Bcast:\" | awk '{print \$2}' | awk -F: '{print \$2}' | grep '^211')
+# export SERVER_PRIVATE_IP=\$(ifconfig -a | grep \"inet \" | grep \"Bcast:\" | awk '{print \$2}' | awk -F: '{print \$2}' | grep '^10')
 
 # CATALIAN PID
-#export CATALINA_PID=\"\$CATALINA_BASE/work/catalina.pid\"
+#export CATALINA_PID=\"\${CATALINA_BASE}/work/catalina.pid\"
 
 # 기본 디렉토리가 없는 경우 생성
-if [[ ! -d \"\$CATALINA_BASE/lib\" ]]; then
-    mkdir -p \$CATALINA_BASE/lib
+if [[ ! -d \"\${CATALINA_BASE}/lib\" ]]; then
+    mkdir -p \${CATALINA_BASE}/lib
 fi
-if [[ ! -d \"\$CATALINA_BASE/logs\" ]]; then
-    mkdir -p \$CATALINA_BASE/logs
+if [[ ! -d \"\${CATALINA_BASE}/logs\" ]]; then
+    mkdir -p \${CATALINA_BASE}/logs
 fi
-if [[ ! -d \"\$CATALINA_BASE/temp\" ]]; then
-    mkdir -p \$CATALINA_BASE/temp
+if [[ ! -d \"\${CATALINA_BASE}/temp\" ]]; then
+    mkdir -p \${CATALINA_BASE}/temp
 fi
-if [[ ! -d \"\$CATALINA_BASE/work\" ]]; then
-    mkdir -p \$CATALINA_BASE/work
+if [[ ! -d \"\${CATALINA_BASE}/work\" ]]; then
+    mkdir -p \${CATALINA_BASE}/work
 fi
-if [[ ! -d \"\$CATALINA_BASE/webapps\" ]]; then
-    mkdir -p \$CATALINA_BASE/webapps
+if [[ ! -d \"\${CATALINA_BASE}/webapps\" ]]; then
+    mkdir -p \${CATALINA_BASE}/webapps
 fi
 
 # Java Home이 환경 설정에 없는 경우 종료.
-if [[ -z \"\$JAVA_HOME\" ]]; then
+if [[ -z \"\${JAVA_HOME}\" ]]; then
     printf \"\e[00;31mError: JAVA_HOME이 설정되지 않았습니다.\e[00m\\\\n\"
     exit 1
-elif [[ ! -d \"\$JAVA_HOME\" ]]; then
-    printf \"\e[00;31mError: JAVA_HOME \"\$JAVA_HOME\"은(는) 디렉토리가 아닙니다.\e[00\\\\n\"
+elif [[ ! -d \"\${JAVA_HOME}\" ]]; then
+    printf \"\e[00;31mError: JAVA_HOME \"\${JAVA_HOME}\"은(는) 디렉토리가 아닙니다.\e[00\\\\n\"
     exit 1
 fi
 
 # CATALINA_HOME 설정 여부 확인.
-if [[ -z \"\$CATALINA_HOME\" ]]; then
+if [[ -z \"\${CATALINA_HOME}\" ]]; then
     printf \"\e[00;31mError: CATALINA_HOME이 설정되지 않았습니다.\e[00m\\\\n\"
     echo \"error: CATALINA_HOME is not set\"
     exit 1
-elif [[ ! -d \"\$CATALINA_HOME\" ]]; then
-    printf \"\e[00;31mError: CATALINA_HOME \"\$CATALINA_HOME\"은(는) 디렉토리가 아닙니다.\e[00m\\\\n\"
+elif [[ ! -d \"\${CATALINA_HOME}\" ]]; then
+    printf \"\e[00;31mError: CATALINA_HOME \"\${CATALINA_HOME}\"은(는) 디렉토리가 아닙니다.\e[00m\\\\n\"
     exit 1
 fi
 
@@ -779,20 +762,20 @@ logo() {
     printf \"\e[00;32m /_/  \____/_/ /_/ /_/\___/\__,_/\__/   \e[00m\\\\n\"
     printf \"\e[00;32m :: Version ::              (v${TOMCAT_VERSION})   \e[00m\\\\n\"
     echo
-    printf \"Using CATALINA_BASE:   \$CATALINA_BASE\\\\n\"
-    printf \"Using CATALINA_HOME:   \$CATALINA_HOME\\\\n\"
+    printf \"Using CATALINA_BASE:   \${CATALINA_BASE}\\\\n\"
+    printf \"Using CATALINA_HOME:   \${CATALINA_HOME}\\\\n\"
     if [ ! -z \"\$CATALINA_PID\" ]; then
         printf \"Using CATALINA_PID:    \$CATALINA_PID\\\\n\"
     fi
-    printf \"Using CATALINA_TMP:    \$CATALINA_BASE/temp\\\\n\"
-    printf \"Using JAVA_HOME:       \$JAVA_HOME\\\\n\"
+    printf \"Using CATALINA_TMP:    \${CATALINA_BASE}/temp\\\\n\"
+    printf \"Using JAVA_HOME:       \${JAVA_HOME}\\\\n\"
     echo
 }
 
 # ---------------------------------------------------------------------------------
 # Help
 usage() {
-    printf \"Script start and stop a Tomcat web instance by invoking the standard \$CATALINA_HOME/bin/catalina.sh file.\"
+    printf \"Script start and stop a Tomcat web instance by invoking the standard \${CATALINA_HOME}/bin/catalina.sh file.\"
     echo
     printf \"Usage: \$0 {\e[00;32mstart\e[00m|\e[00;31mstop\e[00m|\e[00;31mkill\e[00m|\e[00;31mterminate\e[00m|\e[00;32mstatus\e[00m|\e[00;31mrestart\e[00m|\e[00;32mconfigtest\e[00m|\e[00;32mversion\e[00m|\e[00;32mlog\e[00m}\"
     echo
@@ -819,37 +802,37 @@ SHUTDOWN_WAIT=60
 ## [중요] OS 계정이 8자가 넘어가면 프로세스 정보에서 계정명으로 보이지 않고 PID 번호로 보여주는 문제가 있음.
 server_pid() {
     bootstrap=\"org.apache.catalina.startup.Bootstrap\"
-    catalina=\"/\$(basename \`cd \"\$CATALINA_BASE/..\" >/dev/null; pwd\`)/\$(basename \$CATALINA_BASE)/\"
+    catalina=\"/\$(basename \`cd \"\${CATALINA_BASE}/..\" >/dev/null; pwd\`)/\$(basename \${CATALINA_BASE})/\"
     echo \`ps aux | grep -v grep | grep \$bootstrap | grep \$catalina | grep \$CATALINA_USER | awk '{ print \$2 }'\`
 }
 
 # ---------------------------------------------------------------------------------
 start() {
     # conf 디렉토리에서 start 스크립트를 실행하면 logback에서 에러 발생해서 디렉토리를 이동한 후 실행하는 스크립트 추가.
-    cd \$HOME
+    cd \${HOME}
 
     pid=\$(server_pid)
     if [[ -n \"\$pid\" ]]; then
         printf \"Tomcat\"
-        if [[ \"\$(basename \$CATALINA_BASE)\" != \"tomcat\" ]]; then
-            printf \" (\$(basename \$CATALINA_BASE))\"
+        if [[ \"\$(basename \${CATALINA_BASE})\" != \"tomcat\" ]]; then
+            printf \" (\$(basename \${CATALINA_BASE}))\"
         fi
         printf \" is already running. (PID: \e[00;32m\$pid\e[00m)\\\\n\"
         exit 1
     elif [[ \"\$USER\" != \"\$CATALINA_USER\" ]]; then
         printf \"You can not start this tomcat\"
-        if [[ \"\$(basename \$CATALINA_BASE)\" != \"tomcat\" ]]; then
-            printf \"(\$(basename \$CATALINA_BASE))\"
+        if [[ \"\$(basename \${CATALINA_BASE})\" != \"tomcat\" ]]; then
+            printf \"(\$(basename \${CATALINA_BASE}))\"
         fi
         printf \" with. \e[00;31m'\$CATALINA_USER'\e[00m\\\\n\"
         exit 1
     fi
 
-    nohup sh \$CATALINA_HOME/bin/catalina.sh start >> /dev/null 2>&1 &
+    nohup sh \${CATALINA_HOME}/bin/catalina.sh start >> /dev/null 2>&1 &
 
     printf \"Tomcat\"
-    if [[ \"\$(basename \$CATALINA_BASE)\" != \"tomcat\" ]]; then
-        printf \"(\$(basename \$CATALINA_BASE))\"
+    if [[ \"\$(basename \${CATALINA_BASE})\" != \"tomcat\" ]]; then
+        printf \"(\$(basename \${CATALINA_BASE}))\"
     fi
     printf \" Starting:\"
 
@@ -871,20 +854,20 @@ stop() {
         #if [[ \"\$USER\" != \"root\" ]] && [[ \"\$USER\" != \"\$CATALINA_USER\" ]]; then
         if [[ \"\$USER\" != \"\$CATALINA_USER\" ]]; then
             printf \"\e[00;31mYou can not stop this tomcat\"
-            if [[ \"\$(basename \$CATALINA_BASE)\" != \"tomcat\" ]]; then
-                printf \"(\$(basename \$CATALINA_BASE))\"
+            if [[ \"\$(basename \${CATALINA_BASE})\" != \"tomcat\" ]]; then
+                printf \"(\$(basename \${CATALINA_BASE}))\"
             fi
             printf \" with. '\$CATALINA_USER'\e[00m\\\\n\"
             exit 1
         fi
 
         printf \"Tomcat\"
-        if [[ \"\$(basename \$CATALINA_BASE)\" != \"tomcat\" ]]; then
-            printf \"(\$(basename \$CATALINA_BASE))\"
+        if [[ \"\$(basename \${CATALINA_BASE})\" != \"tomcat\" ]]; then
+            printf \"(\$(basename \${CATALINA_BASE}))\"
         fi
         printf \" Stopping:\"
 
-        sh \$CATALINA_HOME/bin/catalina.sh stop &> /dev/null
+        sh \${CATALINA_HOME}/bin/catalina.sh stop &> /dev/null
         sleep 1
 
         let kwait=\$SHUTDOWN_WAIT
@@ -906,8 +889,8 @@ stop() {
 
         if [[ \$count -gt 0 ]]; then
             printf \"Tomcat\"
-            if [[ \"\$(basename \$CATALINA_BASE)\" != \"tomcat\" ]]; then
-                printf \"(\$(basename \$CATALINA_BASE))\"
+            if [[ \"\$(basename \${CATALINA_BASE})\" != \"tomcat\" ]]; then
+                printf \"(\$(basename \${CATALINA_BASE}))\"
             fi
             printf \" Stop:    \"
         fi
@@ -920,11 +903,11 @@ stop() {
         fi
 
         # Tomcat 8의 경우에는 conf/Catalina를 삭제해야한다.
-        rm -rf \$CATALINA_BASE/conf/Catalina
+        rm -rf \${CATALINA_BASE}/conf/Catalina
     else
         printf \"\e[00;31mTomcat\"
-        if [[ \"\$(basename \$CATALINA_BASE)\" != \"tomcat\" ]]; then
-            printf \"(\$(basename \$CATALINA_BASE))\"
+        if [[ \"\$(basename \${CATALINA_BASE})\" != \"tomcat\" ]]; then
+            printf \"(\$(basename \${CATALINA_BASE}))\"
         fi
         printf \" is not running.\e[00m\\\\n\"
     fi
@@ -953,15 +936,15 @@ terminate() {
     pid=\$(server_pid)
     if [[ -z \"\$pid\" ]]; then
         printf \"\e[00;31mTomcat\"
-        if [[ \"\$(basename \$CATALINA_BASE)\" != \"tomcat\" ]]; then
-            printf \"(\$(basename \$CATALINA_BASE))\"
+        if [[ \"\$(basename \${CATALINA_BASE})\" != \"tomcat\" ]]; then
+            printf \"(\$(basename \${CATALINA_BASE}))\"
         fi
         printf \" is not running.\e[00m\\\\n\"
     fi
 
     printf \"\e[00;31mTerminating Tomcat\"
-    if [[ \"\$(basename \$CATALINA_BASE)\" != \"tomcat\" ]]; then
-        printf \"(\$(basename \$CATALINA_BASE))\"
+    if [[ \"\$(basename \${CATALINA_BASE})\" != \"tomcat\" ]]; then
+        printf \"(\$(basename \${CATALINA_BASE}))\"
     fi
     printf \"...\e[00m\\\\n\"
     echo
@@ -975,14 +958,14 @@ terminate() {
 
 # ---------------------------------------------------------------------------------
 configtest() {
-    sh \$CATALINA_HOME/bin/catalina.sh configtest
+    sh \${CATALINA_HOME}/bin/catalina.sh configtest
     echo
     return 0
 }
 
 # ---------------------------------------------------------------------------------
 version() {
-    sh \$CATALINA_HOME/bin/catalina.sh version
+    sh \${CATALINA_HOME}/bin/catalina.sh version
     echo
     return 0
 }
@@ -990,8 +973,8 @@ version() {
 # ---------------------------------------------------------------------------------
 heapdump() {
     pid=\$(server_pid)
-    \$JAVA_HOME/bin/jmap -dump:format=b,file=\$CATALINA_BASE/temp/dump-\$pid.hprof \$pid
-    chmod 644 \$CATALINA_BASE/temp/dump-\$pid.hprof
+    \${JAVA_HOME}/bin/jmap -dump:format=b,file=\${CATALINA_BASE}/temp/dump-\$pid.hprof \$pid
+    chmod 644 \${CATALINA_BASE}/temp/dump-\$pid.hprof
     echo
     return 0
 }
@@ -1051,16 +1034,16 @@ echo "#!/bin/sh
 # :: Version ::              (v${TOMCAT_VERSION})
 # ---------------------------------------------------------------------------------
 # 기본 정보 설정.
-PRG=\`realpath \$0\`
-PRGDIR=\`dirname \"\$PRG\"\`
+PRG=\$(realpath \$0\)
+PRGDIR=\$(dirname \"\${PRG}\"\)
 
-source \$PRGDIR/config.sh
+source \${PRGDIR}/config.sh
 
 # Tomcat Start...
 if [[ \"\$USER\" == \"root\" ]]; then
-    su - \$CATALINA_USER -c \"\$CATALINA_BASE/bin/tomcat.sh start\"
+    su - \$CATALINA_USER -c \"\${CATALINA_BASE}/bin/tomcat.sh start\"
 else
-    \$CATALINA_BASE/bin/tomcat.sh start
+    \${CATALINA_BASE}/bin/tomcat.sh start
 fi
 " > ${CATALINA_BASE}/bin/start.sh
 
@@ -1077,17 +1060,17 @@ echo "#!/bin/sh
 # :: Version ::              (v${TOMCAT_VERSION})
 # ---------------------------------------------------------------------------------
 # 기본 정보 설정.
-PRG=\`realpath \$0\`
-PRGDIR=\`dirname \"\$PRG\"\`
+PRG=\$(realpath \$0\)
+PRGDIR=\$(dirname \"\${PRG}\"\)
 
-source \$PRGDIR/config.sh
+source \${PRGDIR}/config.sh
 
 # ---------------------------------------------------------------------------------
 # Tomcat Stop...
 if [[ \"\$USER\" == \"root\" ]]; then
-    su - \$CATALINA_USER -c \"\$CATALINA_BASE/bin/tomcat.sh stop\"
+    su - \$CATALINA_USER -c \"\${CATALINA_BASE}/bin/tomcat.sh stop\"
 else
-    \$CATALINA_BASE/bin/tomcat.sh stop
+    \${CATALINA_BASE}/bin/tomcat.sh stop
 fi
 " > ${CATALINA_BASE}/bin/stop.sh
 
@@ -1104,17 +1087,17 @@ echo "#!/bin/sh
 # :: Version ::              (v${TOMCAT_VERSION})
 # ---------------------------------------------------------------------------------
 # 기본 정보 설정.
-PRG=\`realpath \$0\`
-PRGDIR=\`dirname \"\$PRG\"\`
+PRG=\$(realpath \$0\)
+PRGDIR=\$(dirname \"\${PRG}\"\)
 
-source \$PRGDIR/config.sh
+source \${PRGDIR}/config.sh
 
 # ---------------------------------------------------------------------------------
 # Tomcat Stop / Start...
 if [[ \"\$USER\" == \"root\" ]]; then
-    su - \$CATALINA_USER -c \"\$CATALINA_BASE/bin/tomcat.sh restart\"
+    su - \$CATALINA_USER -c \"\${CATALINA_BASE}/bin/tomcat.sh restart\"
 else
-    \$CATALINA_BASE/bin/tomcat.sh restart
+    \${CATALINA_BASE}/bin/tomcat.sh restart
 fi
 " > ${CATALINA_BASE}/bin/restart.sh
 
@@ -1131,13 +1114,13 @@ echo "#!/bin/sh
 # :: Version ::              (v${TOMCAT_VERSION})
 # ---------------------------------------------------------------------------------
 # 기본 정보 설정.
-PRG=\`realpath \$0\`
-PRGDIR=\`dirname \"\$PRG\"\`
+PRG=\$(realpath \$0\)
+PRGDIR=\$(dirname \"\${PRG}\"\)
 
-source \$PRGDIR/config.sh
+source \${PRGDIR}/config.sh
 
 # ---------------------------------------------------------------------------------
-\$CATALINA_BASE/bin/tomcat.sh status
+\${CATALINA_BASE}/bin/tomcat.sh status
 " > ${CATALINA_BASE}/bin/status.sh
 
 
@@ -1162,7 +1145,7 @@ source \$PRGDIR/config.sh
 # # CATALINA_USER is the default user of tomcat
 # export CATALINA_USER=\""${USERNAME}"\"
 
-# su - \$CATALINA_USER -c \"\$CATALINA_BASE/bin/tomcat.sh \$1\"
+# su - \$CATALINA_USER -c \"\${CATALINA_BASE}/bin/tomcat.sh \$1\"
 # " > ${CATALINA_BASE}/bin/${TOMCAT_BASE}
 
 
@@ -1180,18 +1163,18 @@ source \$PRGDIR/config.sh
 # # 기본 정보 설정.
 # # resolve links - \$0 may be a softlink
 # PRG=\"\$0\"
-# while [[ -h \"\$PRG\" ]]; do
-#     ls=\`ls -ld \"\$PRG\"\`
-#     link=\`expr \"\$ls\" : '.*-> \(.*\)\$'\`
+# while [[ -h \"\${PRG}\" ]]; do
+#     ls=\$(ls -ld \"\${PRG}\"\)
+#     link=\$(expr \"\$ls\" : '.*-> \(.*\)\$'\)
 #     if expr \"\$link\" : '/.*' > /dev/null; then
 #         PRG=\"\$link\"
 #     else
-#         PRG=\`dirname \"\$PRG\"\`/\"\$link\"
+#         PRG=\$(dirname \"\${PRG}\"\)/\"\$link\"
 #     fi
 # done
-# PRGDIR=\`dirname \"\$PRG\"\`
+# PRGDIR=\$(dirname \"\${PRG}\"\)
 
-# source \$PRGDIR/config.sh
+# source \${PRGDIR}/config.sh
 
 # # crontab 에 등록
 # # 0 0 * * * ${CATALINA_BASE}/bin/rotatelog.sh
@@ -1229,7 +1212,7 @@ source \$PRGDIR/config.sh
 # find . ! \\( -path \"./\${EXCEPTION_PATH}\" -prune \\) -name \"*\${FILE_EXTENSION}*\" -type f | while IFS= read -r FILE; do
 #     pushd \${FILE_PATH} > /dev/null
 
-#     BACKUP_FILE=\`basename \"\${FILE}\"\`
+#     BACKUP_FILE=\$(basename \"\${FILE}\"\)
 #     BACKUP_NAME=\"\${BACKUP_FILE}.\$(date -d \"1 day ago\" +\"%Y-%m-%d\")\"
 
 #     COUNT=100001;
@@ -1243,7 +1226,7 @@ source \$PRGDIR/config.sh
 #     echo \"BACKUP_FILE - \${BACKUP_FILE}\"
 #     echo \"BACKUP_NAME - \${BACKUP_NAME}\"
 
-#     FILE_SIZE=\`stat -c %s \${BACKUP_FILE}\`
+#     FILE_SIZE=\$(stat -c %s \${BACKUP_FILE}\)
 #     echo \"FILE_SIZE - \${FILE_SIZE}\"
 
 #     if [[ \${FILE_SIZE} = 0 ]]; then
@@ -1286,18 +1269,18 @@ source \$PRGDIR/config.sh
 # # 기본 정보 설정.
 # # resolve links - \$0 may be a softlink
 # PRG=\"\$0\"
-# while [[ -h \"\$PRG\" ]]; do
-#     ls=\`ls -ld \"\$PRG\"\`
-#     link=\`expr \"\$ls\" : '.*-> \(.*\)\$'\`
+# while [[ -h \"\${PRG}\" ]]; do
+#     ls=\$(ls -ld \"\${PRG}\"\)
+#     link=\$(expr \"\$ls\" : '.*-> \(.*\)\$'\)
 #     if expr \"\$link\" : '/.*' > /dev/null; then
 #         PRG=\"\$link\"
 #     else
-#         PRG=\`dirname \"\$PRG\"\`/\"\$link\"
+#         PRG=\$(dirname \"\${PRG}\"\)/\"\$link\"
 #     fi
 # done
-# PRGDIR=\`dirname \"\$PRG\"\`
+# PRGDIR=\$(dirname \"\${PRG}\"\)
 
-# source \$PRGDIR/config.sh
+# source \${PRGDIR}/config.sh
 
 # # crontab 에 등록
 # # 10 0 * * * ${CATALINA_BASE}/bin/log_delete.sh

@@ -843,7 +843,7 @@ start() {
     if [[ \$retval = 0 ]]; then
         printf \"                                           [  \e[00;32mOK\e[00m  ]\\\\n\"
     else
-        printf \"                                           [\e[00;32mFAILED\e[00m]\\\\n\"
+        printf \"                                           [\e[00;31mFAILED\e[00m]\\\\n\"
     fi
 
     return \$retval
@@ -901,7 +901,7 @@ stop() {
         if [[ \$retval = 0 ]]; then
             printf \"                                           [  \e[00;32mOK\e[00m  ]\\\\n\"
         else
-            printf \"                                           [\e[00;32mFAILED\e[00m]\\\\n\"
+            printf \"                                           [\e[00;31mFAILED\e[00m]\\\\n\"
         fi
 
         # Tomcat 8의 경우에는 conf/Catalina를 삭제해야한다.
